@@ -27,22 +27,23 @@ public class WiFiDirectServicesList extends ListFragment {
         public void connectP2p(WiFiP2pService wifiP2pService);
     }
 
-    /*@Override
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.content_main, container, false);
-    }*/
+        return inflater.inflate(R.layout.devices_list, container, false);
+    }
 
-    /*@Override
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
        listAdapter = new WiFiDevicesAdapter(this.getActivity(),
                 R.layout.id_list_name,R.id.message_list,
                 new ArrayList<WiFiP2pService>());
-        listAdapter = new WiFiDevicesAdapter(this.getActivity(),
+        /*listAdapter = new WiFiDevicesAdapter(this.getActivity(),
                 android.R.layout.simple_list_item_2, android.R.id.text1,
-                new ArrayList<WiFiP2pService>());
-    }*/
+                new ArrayList<WiFiP2pService>());*/
+        setListAdapter(listAdapter);
+    }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
@@ -53,25 +54,24 @@ public class WiFiDirectServicesList extends ListFragment {
 
     }
 
-    public static class WiFiDevicesAdapter extends ArrayAdapter<WiFiP2pService> {
+    public  class WiFiDevicesAdapter extends ArrayAdapter<WiFiP2pService> {
 
         private List<WiFiP2pService> items;
         private int resourceId;
-        public WiFiDevicesAdapter(Context context,
+        public WiFiDevicesAdapter(Context context,int resource,
                                   int textViewResourceId, List<WiFiP2pService> items) {
-            super(context,textViewResourceId, items);
+            super(context,resource,textViewResourceId, items);
             this.items = items;
-            resourceId=textViewResourceId;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                /*LayoutInflater vi = (LayoutInflater) getActivity()
+                LayoutInflater vi = (LayoutInflater) getActivity()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.id_list_name, null);*/
-                v=LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
+                v = vi.inflate(R.layout.id_list_name, null);
+                //v=LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
             }
             WiFiP2pService service = items.get(position);
             if (service != null) {
@@ -79,11 +79,28 @@ public class WiFiDirectServicesList extends ListFragment {
                         .findViewById(R.id.name_id);
 
                 if (nameText != null) {
-                    nameText.setText(service.device.deviceName + " - " + service.instanceName);
+                    if(service.device.deviceName.equals("Android_2aa3")) {
+                        nameText.setText("卢冬冬");
+                    }
+                    else if(service.device.deviceName.equals("Android_ff8e")||
+                            service.device.deviceAddress.equals("1a:f0:e4:73:b4:35")) {
+                        nameText.setText("吴宏俊");
+                    }
+                    else if(service.device.deviceName.equals("OnePlus 3T")) {
+                        nameText.setText("梁夏华");
+                    }
+                    else {
+                        nameText.setText(service.device.deviceName + " - " + service.instanceName);
+                    }
                 }
                 TextView statusText = (TextView) v
                         .findViewById(R.id.msg_last);
-                statusText.setText(getDeviceStatus(service.device.status));
+                if(service.device.deviceName.equals("Android_2aa3")||
+                        service.device.deviceName.equals("Android_ff8e")||
+                        service.device.deviceName.equals("OnePlus 3T"))
+                    statusText.setText("好友-  "+getDeviceStatus(service.device.status));
+                else
+                    statusText.setText("陌生-  "+getDeviceStatus(service.device.status));
                 ImageView img=(ImageView)v.findViewById(R.id.img_id);
                 img.setImageResource(service.getImgId());
             }

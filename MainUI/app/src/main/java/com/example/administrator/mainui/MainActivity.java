@@ -1,5 +1,6 @@
 package com.example.administrator.mainui;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity
         this.handler = handler;
     }
     @Override
+    @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -110,10 +112,10 @@ public class MainActivity extends AppCompatActivity
         //messageAdapter msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
         //ListView messageList=(ListView)findViewById(R.id.message_list);
         //messageList.setAdapter(msgAdapter);
-        WiFiDevicesAdapter listAdapter=new WiFiDevicesAdapter(MainActivity.this,
+        /*WiFiDevicesAdapter listAdapter=new WiFiDevicesAdapter(MainActivity.this,
                 R.layout.id_list_name,new ArrayList<WiFiP2pService>());
         ListView listView=(ListView)findViewById(R.id.message_list);
-        listView.setAdapter(listAdapter);
+        listView.setAdapter(listAdapter);*/
 
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -298,11 +300,22 @@ public class MainActivity extends AppCompatActivity
                                 service.device = srcDevice;
                                 service.instanceName = instanceName;
                                 service.serviceRegistrationType = registrationType;
-                                service.imgId=R.mipmap.pic3;
+                                if(service.device.deviceName.equals("Android_2aa3")){
+                                    service.imgId=R.mipmap.pic5;
+                                }
+                                else if(service.device.deviceName.equals("Android_ff8e")||
+                                        service.device.deviceAddress.equals("1a:f0:e4:73:b4:35")) {
+                                    service.imgId = R.mipmap.pic4;
+                                }
+                                else if(service.device.deviceName.equals("OnePlus 3T")) {
+                                    service.imgId = R.mipmap.pic2;
+                                }
+                                else {
+                                    service.imgId = R.mipmap.pic3;
+                                }
                                 adapter.add(service);
                                 adapter.notifyDataSetChanged();
-                                Log.d(TAG, "onBonjourServiceAvailable "
-                                        + instanceName);
+                                Log.d(TAG, "onBonjourServiceAvailable ");
                             }
                         }
 
