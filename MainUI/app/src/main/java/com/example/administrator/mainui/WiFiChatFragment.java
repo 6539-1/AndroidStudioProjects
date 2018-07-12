@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -97,7 +98,11 @@ public class WiFiChatFragment extends Fragment {
     public class ChatMessageAdapter extends ArrayAdapter<String> {
 
         List<String> messages = null;
-
+        LinearLayout leftlayout;
+        LinearLayout rightlayout;
+        TextView leftMsg;
+        TextView rightMsg;
+        View itemview;
         public ChatMessageAdapter(Context context, int textViewResourceId,
                                   List<String> items) {
             super(context, textViewResourceId, items);
@@ -107,23 +112,25 @@ public class WiFiChatFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(android.R.layout.simple_list_item_1, null);
+                v=LayoutInflater.from(parent.getContext()).inflate(R.layout.croom,parent,false);
             }
             String message = items.get(position);
             if (message != null && !message.isEmpty()) {
-                TextView nameText = (TextView) v
-                        .findViewById(android.R.id.text1);
+                leftlayout=(LinearLayout)v.findViewById(R.id.left_layout);
+                rightlayout=(LinearLayout)v.findViewById(R.id.right_layout);
+                leftMsg=(TextView)v.findViewById(R.id.left_msg);
+                rightMsg=(TextView)v.findViewById(R.id.right_msg);
 
-                if (nameText != null) {
-                    nameText.setText(message);
+                if (leftMsg != null&&rightMsg!=null) {
+
                     if (message.startsWith("Me: ")) {
-                        nameText.setTextAppearance(getActivity(),
-                                R.style.normalText);
+                        leftlayout.setVisibility(View.GONE);
+                        rightlayout.setVisibility(View.VISIBLE);
+                        rightMsg.setText(message.substring(3));
                     } else {
-                        nameText.setTextAppearance(getActivity(),
-                                R.style.boldText);
+                        leftlayout.setVisibility(View.VISIBLE);
+                        rightlayout.setVisibility(View.GONE);
+                        leftMsg.setText(message);
                     }
                 }
             }
