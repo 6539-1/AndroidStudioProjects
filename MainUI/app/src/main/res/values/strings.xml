@@ -5,10 +5,8 @@
     <string name="nav_header_title">夏华</string>
     <string name="nav_header_subtitle">ggOMG666</string>
     <string name="nav_header_desc">Navigation header</string>
-<<<<<<< HEAD
     <string name="finding_service">Finding local services</string>
-=======
+
     <string name="btn_send">Send</string>
     <string name="txt_hint">Type Message</string>
->>>>>>> ad31542049d5772fcfcb43bc9a75ed997c92776f
 </resources>
