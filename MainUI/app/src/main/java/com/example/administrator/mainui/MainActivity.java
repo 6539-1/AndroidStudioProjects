@@ -51,9 +51,11 @@ import com.example.administrator.mainui.WiFiDirectServicesList.WiFiDevicesAdapte
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,DeviceClickListener, Handler.Callback, MessageTarget,
-        ConnectionInfoListener {
+        ConnectionInfoListener
+ {
 
     private List<message> msgList=new ArrayList<>();
+
     public static final String TAG = "wifidirectdemo";
     public static final String TXTRECORD_PROP_AVAILABLE = "available";
     public static final String SERVICE_INSTANCE = "_wifidemotest";
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity
     public void setHandler(Handler handler) {
         this.handler = handler;
     }
+
     @Override
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,14 +111,14 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        //initMessage();
-        //messageAdapter msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
-        //ListView messageList=(ListView)findViewById(R.id.message_list);
-        //messageList.setAdapter(msgAdapter);
-        /*WiFiDevicesAdapter listAdapter=new WiFiDevicesAdapter(MainActivity.this,
+        /*initMessage();
+        messageAdapter msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
+        ListView messageList=(ListView)findViewById(R.id.message_list);
+        messageList.setAdapter(msgAdapter);*/
+        WiFiDevicesAdapter listAdapter=new WiFiDevicesAdapter(MainActivity.this,
                 R.layout.id_list_name,new ArrayList<WiFiP2pService>());
         ListView listView=(ListView)findViewById(R.id.message_list);
-        listView.setAdapter(listAdapter);*/
+        listView.setAdapter(listAdapter);
 
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -132,6 +135,7 @@ public class MainActivity extends AppCompatActivity
         servicesList = new WiFiDirectServicesList();
         getFragmentManager().beginTransaction()
                 .add(R.id.coordinatlayout, servicesList, "services").commit();
+
     }
 
     /*private void initMessage() {
@@ -232,6 +236,7 @@ public class MainActivity extends AppCompatActivity
         }
         super.onRestart();
     }
+
     @Override
     protected void onStop() {
         if (manager != null && channel != null) {
@@ -273,10 +278,6 @@ public class MainActivity extends AppCompatActivity
     }
     private void discoverService() {
 
-        /*
-         * Register listeners for DNS-SD services. These are callbacks invoked
-         * by the system when a service is actually discovered.
-         */
 
         manager.setDnsSdResponseListeners(channel,
                 new DnsSdServiceResponseListener() {
@@ -322,10 +323,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }, new DnsSdTxtRecordListener() {
 
-                    /**
-                     * A new TXT record is available. Pick up the advertised
-                     * buddy name.
-                     */
+
                     @Override
                     public void onDnsSdTxtRecordAvailable(
                             String fullDomainName, Map<String, String> record,
@@ -430,11 +428,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo p2pInfo) {
         Thread handler = null;
-        /*
-         * The group owner accepts connections using a server socket and then spawns a
-         * client socket for every client. This is handled by {@code
-         * GroupOwnerSocketHandler}
-         */
+
 
         if (p2pInfo.isGroupOwner) {
             Log.d(TAG, "Connected as group owner");

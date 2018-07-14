@@ -11,20 +11,14 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.util.Log;
 
-/**
- * A BroadcastReceiver that notifies of important wifi p2p events.
- */
+
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private WifiP2pManager manager;
     private Channel channel;
     private Activity activity;
 
-    /**
-     * @param manager WifiP2pManager system service
-     * @param channel Wifi p2p channel
-     * @param activity activity associated with the receiver
-     */
+
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
                                        Activity activity) {
         super();
@@ -33,11 +27,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.activity = activity;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see android.content.BroadcastReceiver#onReceive(android.content.Context,
-     * android.content.Intent)
-     */
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();

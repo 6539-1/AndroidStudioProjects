@@ -16,7 +16,7 @@ public class messageAdapter extends ArrayAdapter<message> {
         super(context,textViewResourceId,object);
         resourceId=textViewResourceId;
     }
-    /*@Override
+    @Override
     public View getView(int position, View convertView, ViewGroup parent){
         message msg=getItem(position);
         View view= LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
@@ -29,5 +29,5 @@ public class messageAdapter extends ArrayAdapter<message> {
         msg_last.setText(msg.getMsg_last());
         time_last.setText(msg.getTime());
         return view;
-    }*/
+    }
 }

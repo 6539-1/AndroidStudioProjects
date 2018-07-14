@@ -15,10 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple ListFragment that shows the available services as published by the
- * peers
- */
+
 public class WiFiDirectServicesList extends ListFragment {
 
     WiFiDevicesAdapter listAdapter = null;
@@ -39,9 +36,7 @@ public class WiFiDirectServicesList extends ListFragment {
        listAdapter = new WiFiDevicesAdapter(this.getActivity(),
                 R.layout.id_list_name,R.id.message_list,
                 new ArrayList<WiFiP2pService>());
-        /*listAdapter = new WiFiDevicesAdapter(this.getActivity(),
-                android.R.layout.simple_list_item_2, android.R.id.text1,
-                new ArrayList<WiFiP2pService>());*/
+
         setListAdapter(listAdapter);
     }
 

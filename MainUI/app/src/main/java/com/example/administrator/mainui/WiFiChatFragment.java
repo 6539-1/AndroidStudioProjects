@@ -1,4 +1,5 @@
 package com.example.administrator.mainui;
+
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
@@ -18,10 +19,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This fragment handles chat related UI which includes a list view for messages
- * and a message entry field with send button.
- */
+
 public class WiFiChatFragment extends Fragment {
 
     private View view;
@@ -93,9 +91,7 @@ public class WiFiChatFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    /**
-     * ArrayAdapter to manage chat messages.
-     */
+
     public class ChatMessageAdapter extends ArrayAdapter<String> {
 
         List<String> messages = null;

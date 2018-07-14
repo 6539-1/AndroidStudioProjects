@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">JSIP</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">夏华</string>
+    <string name="nav_header_subtitle">ggOMG666</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="finding_service">Finding local services</string>
+</resources>
