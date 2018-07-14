@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 24
 
     defaultConfig {
         applicationId "bupt.jsip_demo"
@@ -16,6 +16,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -27,6 +28,6 @@ dependencies {
     api files('libs/junit-3.8.1.jar')
     api files('libs/log4j-1.2.15.jar')
 
-    api 'com.android.support:appcompat-v7:21.0.3'
-    api 'com.android.support:support-v4:21.0.3'
+    api 'com.android.support:appcompat-v7:24.0.0'
+    api 'com.android.support:support-v4:24.0.0'
 }

@@ -29,9 +29,21 @@ public class DeviceImpl implements IDevice,Serializable {
 	SipManager 	 sipManager;
 	SipProfile 	 sipProfile;
 	SoundManager soundManager;
-
+	String reciveMessage;
 	boolean isInitialized;
-	public SipUADeviceListener sipuaDeviceListener = null;
+	public SipUADeviceListener sipuaDeviceListener = new SipUADeviceListener() {
+		@Override
+		public void onSipUAConnectionArrived(SipEvent event) {
+
+		}
+
+		@Override
+		public void onSipUAMessageArrived(SipEvent event) {
+			String msg = event.content;
+			System.out.println("msgmsgmsgmsg"+msg);
+			setReciveMessage(msg);
+		}
+	};
 	public SipUAConnectionListener sipuaConnectionListener = null;
 
 	private DeviceImpl(){
@@ -54,7 +66,12 @@ public class DeviceImpl implements IDevice,Serializable {
 		soundManager = new SoundManager(context,sipProfile.getLocalIp());
 		sipManager.addSipEventListener(this);
 	}
-	
+	public void setReciveMessage(String msg){
+		this.reciveMessage = msg;
+	}
+	public String getReciveMessage(){
+		return reciveMessage;
+	}
 	@Override
 	public void onSipMessage(final SipEvent sipEventObject) {
 		System.out.println("Sip Event fired");
