@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private List<message> msgList=new ArrayList<>();
     private String friendName;
+    private long lastBack = 0;
+    private ArrayList<Friend> friendList=new ArrayList<>();
+    SQLManeger sqlManeger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +42,10 @@ public class MainActivity extends AppCompatActivity
                 .penaltyLog().penaltyDeath().build());
         final Toolbar toolbar;toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        initFriend();
+        sqlManeger=new SQLManeger(MainActivity.this);
+        sqlManeger.add(friendList);
+        sqlManeger.closeDatabase();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -121,6 +127,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this,FriendListView.class);
+            startActivity(intent);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -136,5 +145,19 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    private void initFriend(){
+        for (int i=0 ;i<3;i++){
+            Friend xiahua=new Friend(100+i*10,"xiahua",R.mipmap.pic1,1);
+            friendList.add(xiahua);
+            Friend xionghao=new Friend(124+i*10,"xionghao",R.mipmap.pic2,2);
+            friendList.add(xionghao);
+            Friend hongjun=new Friend(125+i*10,"hongjun",R.mipmap.pic3,1);
+            friendList.add(hongjun);
+            Friend people1=new Friend(126+i*10,"people1",R.mipmap.pic4,0);
+            friendList.add(people1);
+            Friend people2=new Friend(127+i*10,"people2",R.mipmap.pic5,2);
+            friendList.add(people2);
+        }
     }
 }
