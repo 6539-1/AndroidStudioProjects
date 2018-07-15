@@ -64,6 +64,7 @@ public class WiFiChatFragment extends Fragment {
         return view;
     }
     private View.OnKeyListener backlistener=new View.OnKeyListener() {
+
         @Override
         public boolean onKey(View view, int i, KeyEvent keyEvent) {
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
