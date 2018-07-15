@@ -16,6 +16,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -27,4 +28,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    api files('libs/android-jain-sip-ri-1.2.228.jar')
+    api files('libs/android-logging-log4j-1.0.3.jar')
+    api files('libs/concurrent.jar')
+    api files('libs/jakarta-regexp-1.3.jar')
+    api files('libs/junit-3.8.1.jar')
+    api files('libs/log4j-1.2.15.jar')
 }
