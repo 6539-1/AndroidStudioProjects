@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private List<message> msgList=new ArrayList<>();
+    private long lastBack = 0;
+    private ArrayList<Friend> friendList=new ArrayList<>();
+    SQLManeger sqlManeger;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +43,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        initFriend();
+        sqlManeger=new SQLManeger(MainActivity.this);
+        sqlManeger.add(friendList);
+        sqlManeger.closeDatabase();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -77,15 +86,6 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -117,6 +117,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this,FriendListView.class);
+            startActivity(intent);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -126,11 +129,40 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (lastBack == 0 || System.currentTimeMillis() - lastBack > 800) {
+            Toast.makeText(MainActivity.this, "再按一次返回退出程序", Toast.LENGTH_SHORT).show();
+            lastBack = System.currentTimeMillis();
+            return;
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void initFriend(){
+        for (int i=0 ;i<3;i++){
+            Friend xiahua=new Friend(100+i*10,"xiahua",R.mipmap.pic2,1);
+            friendList.add(xiahua);
+            Friend xionghao=new Friend(124+i*10,"xionghao",R.mipmap.pic3,2);
+            friendList.add(xionghao);
+            Friend hongjun=new Friend(125+i*10,"hongjun",R.mipmap.pic4,1);
+            friendList.add(hongjun);
+            Friend people1=new Friend(126+i*10,"people1",R.mipmap.pic1,0);
+            friendList.add(people1);
+            Friend people2=new Friend(127+i*10,"people2",R.mipmap.pic5,2);
+            friendList.add(people2);
+        }
     }
 }

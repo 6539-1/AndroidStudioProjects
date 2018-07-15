@@ -16,6 +16,7 @@ public class messageAdapter extends ArrayAdapter<message> {
         super(context,textViewResourceId,object);
         resourceId=textViewResourceId;
     }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         message msg=getItem(position);
