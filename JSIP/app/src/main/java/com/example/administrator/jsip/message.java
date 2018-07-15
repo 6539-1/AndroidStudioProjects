@@ -5,6 +5,7 @@ public class message {
     private int imgId;
     private  String msg_last;
     private  String time;
+    private  String addr;
     public message(String id_name,int imgId,String msg_last,String time){
         this.id_name=id_name;
         this.imgId=imgId;
@@ -22,4 +23,5 @@ public class message {
     public String getTime() {
         return time;
     }
+    public String getAddr(){return addr;}
 }
