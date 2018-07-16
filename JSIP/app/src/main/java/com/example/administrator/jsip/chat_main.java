@@ -88,17 +88,6 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
 //        };
        // DeviceImpl.getInstance().setHandler(msgHandler);
         friendName  = getIntent().getStringExtra("friendname");
-        ArrayList rMessageList = new ArrayList();
-        rMessageList = getIntent().getStringArrayListExtra("messageList");
-        if (rMessageList.size()>=3){
-            for(int i = 0;i<3;i++){
-                pushMessage((String) rMessageList.get(rMessageList.size()-3+i));
-            }
-        }else if (rMessageList.size()<3){
-            for(int i = 0;i<rMessageList.size();i++){
-                pushMessage((String) rMessageList.get(i));
-            }
-        }
         getSupportActionBar().setTitle(friendName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        toolbar.setNavigationOnClickListener(new OnClickListener() {
@@ -188,7 +177,18 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
             String msg = intent.getStringExtra("message");
-            pushMessage(msg);
+            if (msg.equals("DATABASE_CHANGED"));
+            ArrayList rMessageList = new ArrayList();
+            //rMessageList = getIntent().getStringArrayListExtra("messageList");
+            if (rMessageList.size()>=3){
+                for(int i = 0;i<3;i++){
+                    pushMessage((String) rMessageList.get(rMessageList.size()-3+i));
+                }
+            }else if (rMessageList.size()<3){
+                for(int i = 0;i<rMessageList.size();i++){
+                    pushMessage((String) rMessageList.get(i));
+                }
+            }
         }
     }
     public class ChatMessageAdapter extends ArrayAdapter<String> {

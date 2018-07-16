@@ -1,6 +1,9 @@
 package com.example.administrator.jsip;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,10 +45,12 @@ public class MainActivity extends AppCompatActivity
     private long lastBack = 0;
     private ArrayList<Friend> friendList=new ArrayList<>();
     SQLManeger sqlManeger;
+    private InnerReceiver receiver = new InnerReceiver();
     private java.util.logging.Handler MsgHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startService(new Intent(this,MyService.class));
         setContentView(R.layout.activity_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads().detectDiskWrites().detectNetwork()
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> customHeaders = new HashMap<>();
         customHeaders.put("customHeader1","customValue1");
         customHeaders.put("customHeader2","customValue2");
-
+        onRestart();
         DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
 
 
@@ -103,22 +108,22 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        android.os.Handler msgHandler = new android.os.Handler(){
-            @Override
-            public void handleMessage(Message msg){
-                switch (msg.what){
-                    case 1:
-                        rcvMsg.add((String)msg.obj);
-                        message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
-                        msgList.set(0,newMsg);
-                        Intent intent = new Intent("test");
-                        intent.putExtra("message",(String)msg.obj);
-                        sendBroadcast(intent);
-                        break;
-                }
-            }
-        };
-        DeviceImpl.getInstance().setHandler(msgHandler);
+//        android.os.Handler msgHandler = new android.os.Handler(){
+//            @Override
+//            public void handleMessage(Message msg){
+//                switch (msg.what){
+//                    case 1:
+//                        rcvMsg.add((String)msg.obj);
+//                        message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
+//                        msgList.set(0,newMsg);
+//                        Intent intent = new Intent("test");
+//                        intent.putExtra("message",(String)msg.obj);
+//                        sendBroadcast(intent);
+//                        break;
+//                }
+//            }
+//        };
+//        DeviceImpl.getInstance().setHandler(msgHandler);
         final SwipeRefreshLayout swipeRefreshView=(SwipeRefreshLayout)findViewById(R.id.Swip_container) ;
         swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -273,6 +278,37 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //注册广播
+        IntentFilter filter = new IntentFilter("test");
+        registerReceiver(receiver, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //取消广播
+        unregisterReceiver(receiver);
+    }
+
+    public class InnerReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //使用intent获取发送过来的数据
+
+            String msg = intent.getStringExtra("message");
+            if (msg.equals("DATABASE_CHANGED"));
+
+            //pushMessage(msg);
+            rcvMsg.add(msg);
+            message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
+            msgList.set(0,newMsg);
+        }
     }
     private void initFriend(){
         for (int i=0 ;i<3;i++){

@@ -31,7 +31,15 @@ public class SQLHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(FRIEND_CREATE_TABLE_SQL);
-        sqLiteDatabase.execSQL(MESSAGE_CREATE_TABLE_SQL);
+        sqLiteDatabase.execSQL("create table if not exists "+"p1992"+"("
+                + "time varchar(20) NOT NULL,"
+                + "content varchar(20) NOT NULL,"
+                + "state integer NOT NULL,"
+                + "nickname varchar(20) NOT NULL,"
+                + "isMine integer NOT NULL"
+                + ");");
+       // sqLiteDatabase.execSQL(MESSAGE_CREATE_TABLE_SQL);
+
     }
 
     @Override
