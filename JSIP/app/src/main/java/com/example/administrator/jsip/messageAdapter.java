@@ -31,4 +31,5 @@ public class messageAdapter extends ArrayAdapter<message>{
         time_last.setText(msg.getTime());
         return view;
     }
+
 }

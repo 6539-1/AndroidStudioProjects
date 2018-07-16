@@ -78,7 +78,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         rMessageList = getIntent().getStringArrayListExtra("messageList");
         if (rMessageList.size()>=3){
             for(int i = 0;i<3;i++){
-                pushMessage((String) rMessageList.get(i));
+                pushMessage((String) rMessageList.get(rMessageList.size()-3+i));
             }
         }else if (rMessageList.size()<3){
             for(int i = 0;i<rMessageList.size();i++){

@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,8 +128,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run() {
 
-                        message msg5=new message("王宇",R.mipmap.pic1,"我是泡吧王！","13:13");
-                        msgList.add(msg5);
+                        //message msg5=new message("王宇",R.mipmap.pic1,"我是泡吧王！","13:13");
                         refresh();
                         msgAdapter.notifyDataSetChanged();
                         Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity
     }
     private void initMessage() {
 
-
-            message msg1=new message("卢冬冬",R.mipmap.pic5,"[转账]你已确定收钱","20:11");
+            if (rcvMsg.size()>0){
+            message msg1=new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
             message msg2=new message("梁夏华",R.mipmap.pic2,"泡吧???","12:00");
             message msg3=new message("熊昊",R.mipmap.pic3,"[动画表情]","06:34");
             message msg4=new message("吴宏俊",R.mipmap.pic4,"好!","17:56");
@@ -157,6 +157,17 @@ public class MainActivity extends AppCompatActivity
             msgList.add(msg2);
             msgList.add(msg3);
             msgList.add(msg4);
+            }
+            else {
+                message msg1=new message("卢冬冬",R.mipmap.pic5,"","20:11");
+                message msg2=new message("梁夏华",R.mipmap.pic2,"泡吧???","12:00");
+                message msg3=new message("熊昊",R.mipmap.pic3,"[动画表情]","06:34");
+                message msg4=new message("吴宏俊",R.mipmap.pic4,"好!","17:56");
+                msgList.add(msg1);
+                msgList.add(msg2);
+                msgList.add(msg3);
+                msgList.add(msg4);
+            }
 
 
     }
