@@ -175,7 +175,6 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
             if (v == null) {
                 v= LayoutInflater.from(parent.getContext()).inflate(R.layout.croom,parent,false);
             }
-            List<String> recmsgList = items;
             String message = items.get(position);
             if (message != null && !message.isEmpty()) {
                 leftlayout=(LinearLayout)v.findViewById(R.id.left_layout);

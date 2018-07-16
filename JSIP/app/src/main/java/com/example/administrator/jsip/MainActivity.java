@@ -9,6 +9,7 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity
 
 
         msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
+        final messageAdapter msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
         final ListView messageList=(ListView)findViewById(R.id.message_list);
         messageList.setAdapter(msgAdapter);
         messageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,6 +112,39 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+        final SwipeRefreshLayout swipeRefreshView=(SwipeRefreshLayout)findViewById(R.id.Swip_container) ;
+        swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                // 开始刷新，设置当前为刷新状态
+                //swipeRefreshLayout.setRefreshing(true);
+
+                // 这里是主线程
+                // 一些比较耗时的操作，比如联网获取数据，需要放到子线程去执行
+                // TODO 获取数据
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        message msg5=new message("王宇",R.mipmap.pic1,"我是泡吧王！","13:13");
+                        msgList.add(msg5);
+                        refresh();
+                        msgAdapter.notifyDataSetChanged();
+                        Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
+
+                        // 加载完数据设置为不刷新状态，将下拉进度收起来
+                        swipeRefreshView.setRefreshing(false);
+                    }
+                }, 1200);
+
+                // System.out.println(Thread.currentThread().getName());
+
+                // 这个不能写在外边，不然会直接收起来
+                //swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
     }
     private void initMessage() {
 
@@ -125,11 +160,10 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+    private void refresh(){
 
-//    public void pushMessage(String readMessage) {
-//        msgList.add(readMessage);
-//        msgAdapter.notifyDataSetChanged();
-//    }
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -156,6 +190,11 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent=new Intent(MainActivity.this,FriendListView.class);
+            startActivity(intent);
+            return true;
+        }
+        if(id==R.id.action_add){
             return true;
         }
 
@@ -199,6 +238,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
+            intent.putExtra("qunliao",1);
             intent.setClass(MainActivity.this,FriendListView.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
