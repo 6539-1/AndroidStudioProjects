@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private List<message> msgList=new ArrayList<>();
+    private String friendName;
     private long lastBack = 0;
     private ArrayList<Friend> friendList=new ArrayList<>();
     SQLManeger sqlManeger;
@@ -41,14 +41,12 @@ public class MainActivity extends AppCompatActivity
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                 .detectLeakedSqlLiteObjects().detectLeakedClosableObjects()
                 .penaltyLog().penaltyDeath().build());
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar;toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         initFriend();
         sqlManeger=new SQLManeger(MainActivity.this);
         sqlManeger.add(friendList);
         sqlManeger.closeDatabase();
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -67,7 +65,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 message msg=msgList.get(position);
+                friendName = msg.getId_name();
                 Intent intent=new Intent(MainActivity.this,chat_main.class);
+                intent.putExtra("friendname",friendName);
                 startActivity(intent);
 
             }
@@ -125,6 +125,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
@@ -172,37 +182,22 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    @Override
-    public void onBackPressed() {
-        if (lastBack == 0 || System.currentTimeMillis() - lastBack > 800) {
-            Toast.makeText(MainActivity.this, "再按一次返回退出程序", Toast.LENGTH_SHORT).show();
-            lastBack = System.currentTimeMillis();
-            return;
-        }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
     private void initFriend(){
         for (int i=0 ;i<3;i++){
-            Friend xiahua=new Friend(100+i*10,"xiahua",R.mipmap.pic2,1);
+            Friend xiahua=new Friend(100+i*10,"xiahua",R.mipmap.pic1,1);
             friendList.add(xiahua);
-            Friend xionghao=new Friend(124+i*10,"xionghao",R.mipmap.pic3,2);
+            Friend xionghao=new Friend(124+i*10,"xionghao",R.mipmap.pic2,2);
             friendList.add(xionghao);
-            Friend hongjun=new Friend(125+i*10,"hongjun",R.mipmap.pic4,1);
+            Friend hongjun=new Friend(125+i*10,"hongjun",R.mipmap.pic3,1);
             friendList.add(hongjun);
-            Friend people1=new Friend(126+i*10,"people1",R.mipmap.pic1,0);
+            Friend people1=new Friend(126+i*10,"people1",R.mipmap.pic4,0);
             friendList.add(people1);
             Friend people2=new Friend(127+i*10,"people2",R.mipmap.pic5,2);
             friendList.add(people2);

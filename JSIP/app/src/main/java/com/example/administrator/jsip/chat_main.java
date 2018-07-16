@@ -22,9 +22,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.example.administrator.jsip.R;
 import jsip_ua.SipProfile;
@@ -40,6 +42,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
         OnSharedPreferenceChangeListener {
     private SharedPreferences prefs;
     private EditText editTextTo;
+    private String ServiceIp = "sip:server@172.20.10.3:5050";
     private EditText editTextMessage;
     private TextView textViewChat;
     private SipProfile sipProfile;
@@ -47,8 +50,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
     private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
     private Handler MsgHandler;
-
-
+    private String friendName;
     @Override
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,14 +72,27 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
         DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
 
         Button btnSend = (Button) findViewById(R.id.btnSend);
+        ImageButton sdButton = (ImageButton) findViewById(R.id.sdButton);
         btnSend.setOnClickListener(this);
 
-        editTextTo = (EditText) findViewById(R.id.editTextTo);
+        sdButton.setOnClickListener(this);
+        //editTextTo = (EditText) findViewById(R.id.editTextTo);
         editTextMessage = (EditText) findViewById(R.id.editTextMessage);
         listView = (ListView) findViewById(android.R.id.list);
         adapter = new ChatMessageAdapter(chat_main.this, android.R.id.text1,
                 items);
         listView.setAdapter(adapter);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        friendName  = getIntent().getStringExtra("friendname");
+        getSupportActionBar().setTitle(friendName);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        toolbar.setNavigationOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                finish();
+//            }
+//        });
+
         android.os.Handler msgHandler = new android.os.Handler(){
             @Override
             public void handleMessage(Message msg){
@@ -118,6 +133,9 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
         }
+        else {
+            finish();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -126,12 +144,21 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case (R.id.btnSend):
-                DeviceImpl.getInstance().SendMessage(editTextTo.getText().toString(), editTextMessage.getText().toString() );
+                DeviceImpl.getInstance().SendMessage(ServiceIp, editTextMessage.getText().toString() );
                 pushMessage("Me: " + editTextMessage.getText().toString());
                 editTextMessage.setText("");
                 editTextMessage.requestFocus();
                 //DeviceImpl.getInstance().SendDTMF();
                 break;
+            case (R.id.sdButton):
+                if (editTextMessage.isFocusable()){
+                    editTextMessage.setFocusable(false);
+                    editTextMessage.setFocusableInTouchMode(false);
+                }
+                else {
+                    editTextMessage.setFocusable(true);
+                    editTextMessage.setFocusableInTouchMode(true);
+                }
         }
     }
 
