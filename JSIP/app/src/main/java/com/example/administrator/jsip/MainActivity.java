@@ -63,17 +63,7 @@ public class MainActivity extends AppCompatActivity
         customHeaders.put("customHeader2","customValue2");
 
         DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
-        android.os.Handler msgHandler = new android.os.Handler(){
-            @Override
-            public void handleMessage(Message msg){
-                switch (msg.what){
-                    case 1:
-                        rcvMsg.add((String)msg.obj);
-                        break;
-                }
-            }
-        };
-        DeviceImpl.getInstance().setHandler(msgHandler);
+
 
         // ////////////////////////////////////////////////////////////
 
@@ -113,6 +103,22 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+        android.os.Handler msgHandler = new android.os.Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                switch (msg.what){
+                    case 1:
+                        rcvMsg.add((String)msg.obj);
+                        message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
+                        msgList.set(0,newMsg);
+                        Intent intent = new Intent("test");
+                        intent.putExtra("message",(String)msg.obj);
+                        sendBroadcast(intent);
+                        break;
+                }
+            }
+        };
+        DeviceImpl.getInstance().setHandler(msgHandler);
         final SwipeRefreshLayout swipeRefreshView=(SwipeRefreshLayout)findViewById(R.id.Swip_container) ;
         swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

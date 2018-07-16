@@ -17,7 +17,6 @@ public class SQLManeger {
         sqldb=sqlHelper.getWritableDatabase();
         //sqldb.execSQL("INSERT INTO friendtable(id,name,image,state) VALUES (1,'ss',1,1)");
     }
-
     public void add(List<Friend> list){
         sqldb.execSQL("delete from friendtable");
         sqldb.beginTransaction();
