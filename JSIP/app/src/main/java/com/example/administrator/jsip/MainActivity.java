@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity
                 friendName = msg.getId_name();
                 Intent intent=new Intent(MainActivity.this,chat_main.class);
                 intent.putExtra("friendname",friendName);
-                intent.putStringArrayListExtra("messageList",rcvMsg);
+                //intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
 
             }
@@ -160,10 +160,12 @@ public class MainActivity extends AppCompatActivity
     private void initMessage() {
 
             if (rcvMsg.size()>0){
+            message msg0=new message("6539-1聊天室",R.mipmap.pic2,"泡吧???","12:00");
             message msg1=new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
             message msg2=new message("梁夏华",R.mipmap.pic2,"泡吧???","12:00");
             message msg3=new message("熊昊",R.mipmap.pic3,"[动画表情]","06:34");
             message msg4=new message("吴宏俊",R.mipmap.pic4,"好!","17:56");
+            msgList.add(msg0);
             msgList.add(msg1);
             msgList.add(msg2);
             msgList.add(msg3);
@@ -284,7 +286,7 @@ public class MainActivity extends AppCompatActivity
     protected void onRestart() {
         super.onRestart();
         //注册广播
-        IntentFilter filter = new IntentFilter("test");
+        IntentFilter filter = new IntentFilter("com.app.test");
         registerReceiver(receiver, filter);
     }
 
@@ -302,6 +304,7 @@ public class MainActivity extends AppCompatActivity
             //使用intent获取发送过来的数据
 
             String msg = intent.getStringExtra("message");
+            System.out.println("aaaaaaaaa:"+msg);
             if (msg.equals("DATABASE_CHANGED"));
 
             //pushMessage(msg);
@@ -312,6 +315,7 @@ public class MainActivity extends AppCompatActivity
     }
     private void initFriend(){
         for (int i=0 ;i<3;i++){
+
             Friend xiahua=new Friend(100+i*10,"xiahua",R.mipmap.pic1,1);
             friendList.add(xiahua);
             Friend xionghao=new Friend(124+i*10,"xionghao",R.mipmap.pic2,2);

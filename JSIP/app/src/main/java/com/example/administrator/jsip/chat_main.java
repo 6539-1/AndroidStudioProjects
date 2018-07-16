@@ -42,19 +42,22 @@ import java.util.logging.LogRecord;
 
 public class chat_main extends AppCompatActivity implements OnClickListener {
     private EditText editTextTo;
-    private String ServiceIp = "sip:alice@192.168.43.100:5050";
+    private String ServiceIp = "sip:alice@10.206.17.109:5050";
     private EditText editTextMessage;
     private TextView textViewChat;
     private ListView listView;
+    ArrayList<LocalMessage> rmessage = new ArrayList<>();
     private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
     private Handler MsgHandler;
     private String friendName;
+    private Context ctn;
     private InnerReceiver receiver = new InnerReceiver();
     @Override
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ctn= this;
         setContentView(R.layout.activity_chat_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads().detectDiskWrites().detectNetwork()
@@ -75,6 +78,11 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         adapter = new ChatMessageAdapter(chat_main.this, android.R.id.text1,
                 items);
         listView.setAdapter(adapter);
+        SQLManeger dbmanager = new SQLManeger(ctn);
+        //ArrayList<LocalMessage> getDblist= new ArrayList<>();
+        ArrayList<LocalMessage> testList = new ArrayList<>();
+        testList = dbmanager.Messagequery("p1992");//p1992 = friendname
+        historyMsg(testList);
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
 //        android.os.Handler msgHandler = new android.os.Handler(){
 //            @Override
@@ -100,7 +108,17 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
 
 
     }
+    void historyMsg(ArrayList<LocalMessage> testList) {
+        if (testList.size() >= 3) {
+            for (int i = 0;i<3;i++)
+            pushMessage((String) testList.get(testList.size() - 3+i).getContent());
 
+        } else if (testList.size() < 3) {
+            for (int i = 0; i < testList.size(); i++) {
+                pushMessage((String) testList.get(i).getContent());
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -161,7 +179,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     protected void onRestart() {
         super.onRestart();
         //注册广播
-        IntentFilter filter = new IntentFilter("test");
+        IntentFilter filter = new IntentFilter("com.app.test");
         registerReceiver(receiver, filter);
     }
 
@@ -177,20 +195,26 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
             String msg = intent.getStringExtra("message");
-            if (msg.equals("DATABASE_CHANGED"));
-            ArrayList rMessageList = new ArrayList();
+            System.out.println("bbbbbbbbb:"+msg);
+            if (msg.equals("DATABASE_CHANGED")){
+                SQLManeger dbmanager = new SQLManeger(ctn);
+                //ArrayList<LocalMessage> getDblist= new ArrayList<>();
+                ArrayList<LocalMessage> testList = new ArrayList<>();
+                testList = dbmanager.Messagequery("p1992");//p1992 = friendname
+                pushMessage((String) testList.get(testList.size()-1).getContent());
+//                for (int i=0;i<testList.size();i++){
+//
+//                }
+//
+//            };
+//            ArrayList rMessageList = new ArrayList();
             //rMessageList = getIntent().getStringArrayListExtra("messageList");
-            if (rMessageList.size()>=3){
-                for(int i = 0;i<3;i++){
-                    pushMessage((String) rMessageList.get(rMessageList.size()-3+i));
-                }
-            }else if (rMessageList.size()<3){
-                for(int i = 0;i<rMessageList.size();i++){
-                    pushMessage((String) rMessageList.get(i));
-                }
-            }
+
         }
     }
+
+
+}
     public class ChatMessageAdapter extends ArrayAdapter<String> {
         List<String> messages = null;
         LinearLayout leftlayout;
@@ -236,6 +260,5 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
 
 
     }
-
 }
 
