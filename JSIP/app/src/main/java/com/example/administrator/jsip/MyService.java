@@ -19,10 +19,10 @@ public class MyService extends Service implements SipUADeviceListener {
     SipProfile sipProfile;
     String reciveMessage;
     Handler mHandler;
-    ArrayList<LocalMessage> rmessage = null;
+    ArrayList<LocalMessage> rmessage = new ArrayList<>();
     SharedPreferences prefs;
 
-    private static String to = "sip:server@192.168.43.100:5050";
+    private static String to = "sip:server@192.168.43.73:5006";
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -107,7 +107,8 @@ public class MyService extends Service implements SipUADeviceListener {
                 break;
             }
         }
-               ArrayList<LocalMessage> testList = sqlm.Messagequery("p1992");
+               ArrayList<LocalMessage> testList = new ArrayList<>();
+                testList = sqlm.Messagequery("p1992");
                 Intent intent = new Intent("test");
                 intent.putExtra("message","DATABASE_CHANGED");
                 sendBroadcast(intent);

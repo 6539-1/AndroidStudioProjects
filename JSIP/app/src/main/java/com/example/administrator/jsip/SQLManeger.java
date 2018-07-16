@@ -74,7 +74,7 @@ public class SQLManeger {
             while(cursor.moveToNext()) {
                 LocalMessage localMessage = new LocalMessage(
                         cursor.getString(cursor.getColumnIndex("time")),
-                        cursor.getString(cursor.getColumnIndex("name")),
+                        cursor.getString(cursor.getColumnIndex("content")),
                         cursor.getString(cursor.getColumnIndex("nickname")),
                         cursor.getInt(cursor.getColumnIndex("state")),
                         cursor.getInt(cursor.getColumnIndex("isMine"))
