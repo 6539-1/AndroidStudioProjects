@@ -60,6 +60,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                 .detectLeakedSqlLiteObjects().detectLeakedClosableObjects()
                 .penaltyLog().penaltyDeath().build());
+        getSupportActionBar().setTitle(getIntent().getStringExtra("friendname"));
 
         sipProfile = new SipProfile();
         HashMap<String, String> customHeaders = new HashMap<>();
