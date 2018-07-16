@@ -1,5 +1,7 @@
 package com.example.administrator.jsip;
 
+import java.util.ArrayList;
+
 public class message {
     private String id_name;
     private int imgId;

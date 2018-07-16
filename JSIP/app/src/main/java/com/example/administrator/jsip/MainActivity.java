@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra("sentAll",sentAll);
 
                 intent.putExtra("friendname",friendName);
-                intent.putStringArrayListExtra("messageList",rcvMsg);
+                //intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
 
             }
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity
     protected void onRestart() {
         super.onRestart();
         //注册广播
-        IntentFilter filter = new IntentFilter("test");
+        IntentFilter filter = new IntentFilter("com.app.test");
         registerReceiver(receiver, filter);
     }
 
@@ -310,6 +310,7 @@ public class MainActivity extends AppCompatActivity
             //使用intent获取发送过来的数据
 
             String msg = intent.getStringExtra("message");
+            System.out.println("aaaaaaaaa:"+msg);
             if (msg.equals("DATABASE_CHANGED"));
 
             //pushMessage(msg);
@@ -320,6 +321,7 @@ public class MainActivity extends AppCompatActivity
     }
     private void initFriend(){
         for (int i=0 ;i<3;i++){
+
             Friend xiahua=new Friend(100+i*10,"xiahua",R.mipmap.pic1,1);
             friendList.add(xiahua);
             Friend xionghao=new Friend(124+i*10,"xionghao",R.mipmap.pic2,2);
