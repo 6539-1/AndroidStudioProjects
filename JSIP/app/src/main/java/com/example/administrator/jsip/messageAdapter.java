@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class messageAdapter extends ArrayAdapter<message> {
+public class messageAdapter extends ArrayAdapter<message>{
     private int resourceId;
     public messageAdapter(Context context, int textViewResourceId, List<message> object){
         super(context,textViewResourceId,object);

@@ -1,10 +1,12 @@
 package com.example.administrator.jsip;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -20,16 +22,25 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import jsip_ua.SipProfile;
+import jsip_ua.impl.DeviceImpl;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener ,
+        SharedPreferences.OnSharedPreferenceChangeListener {
     private List<message> msgList=new ArrayList<>();
     private String friendName;
+    private ArrayList<String> rcvMsg=new ArrayList<>();
+    private SharedPreferences prefs;
+    private SipProfile sipProfile;
+    private messageAdapter msgAdapter = null;
     private long lastBack = 0;
     private ArrayList<Friend> friendList=new ArrayList<>();
     SQLManeger sqlManeger;
-
+    private java.util.logging.Handler MsgHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +51,35 @@ public class MainActivity extends AppCompatActivity
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                 .detectLeakedSqlLiteObjects().detectLeakedClosableObjects()
                 .penaltyLog().penaltyDeath().build());
+
         final Toolbar toolbar;toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //inidl
+        sipProfile = new SipProfile();
+        HashMap<String, String> customHeaders = new HashMap<>();
+        customHeaders.put("customHeader1","customValue1");
+        customHeaders.put("customHeader2","customValue2");
+
+        DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
+        android.os.Handler msgHandler = new android.os.Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                switch (msg.what){
+                    case 1:
+                        rcvMsg.add((String)msg.obj);
+                        break;
+                }
+            }
+        };
+        DeviceImpl.getInstance().setHandler(msgHandler);
+
+        // ////////////////////////////////////////////////////////////
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // register preference change listener
+        prefs.registerOnSharedPreferenceChangeListener(this);
+        initializeSipFromPreferences();
         initFriend();
         sqlManeger=new SQLManeger(MainActivity.this);
         sqlManeger.add(friendList);
@@ -57,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         initMessage();
 
 
-        messageAdapter msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
+        msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
         final ListView messageList=(ListView)findViewById(R.id.message_list);
         messageList.setAdapter(msgAdapter);
         messageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -67,6 +105,7 @@ public class MainActivity extends AppCompatActivity
                 friendName = msg.getId_name();
                 Intent intent=new Intent(MainActivity.this,chat_main.class);
                 intent.putExtra("friendname",friendName);
+                intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
 
             }
@@ -87,6 +126,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+//    public void pushMessage(String readMessage) {
+//        msgList.add(readMessage);
+//        msgAdapter.notifyDataSetChanged();
+//    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -117,6 +160,34 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+                                          String key) {
+        if (key.equals("pref_proxy_ip")) {
+            sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "10.28.144.154")));
+        } else if (key.equals("pref_proxy_port")) {
+            sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
+                    "pref_proxy_port", "5060")));
+        }  else if (key.equals("pref_sip_user")) {
+            sipProfile.setSipUserName(prefs.getString("pref_sip_user",
+                    "alice"));
+        } else if (key.equals("pref_sip_password")) {
+            sipProfile.setSipPassword(prefs.getString("pref_sip_password",
+                    "1234"));
+        }
+
+    }
+
+    @SuppressWarnings("static-access")
+    private void initializeSipFromPreferences() {
+        sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "127.0.0.1")));
+        sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
+                "pref_proxy_port", "5050")));
+        sipProfile.setSipUserName(prefs.getString("pref_sip_user", "alice"));
+        sipProfile.setSipPassword(prefs
+                .getString("pref_sip_password", "1234"));
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

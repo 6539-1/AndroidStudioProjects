@@ -38,14 +38,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.LogRecord;
 
-public class chat_main extends AppCompatActivity implements OnClickListener,
-        OnSharedPreferenceChangeListener {
-    private SharedPreferences prefs;
+public class chat_main extends AppCompatActivity implements OnClickListener {
     private EditText editTextTo;
-    private String ServiceIp = "sip:server@172.20.10.3:5050";
+    private String ServiceIp = "sip:alice@172.20.10.3:5050";
     private EditText editTextMessage;
     private TextView textViewChat;
-    private SipProfile sipProfile;
     private ListView listView;
     private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
@@ -62,13 +59,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                 .detectLeakedSqlLiteObjects().detectLeakedClosableObjects()
                 .penaltyLog().penaltyDeath().build());
-
-        sipProfile = new SipProfile();
-        HashMap<String, String> customHeaders = new HashMap<>();
-        customHeaders.put("customHeader1","customValue1");
-        customHeaders.put("customHeader2","customValue2");
-
-        DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
+        // ini devl
 
         Button btnSend = (Button) findViewById(R.id.btnSend);
         ImageButton sdButton = (ImageButton) findViewById(R.id.sdButton);
@@ -83,6 +74,17 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
         listView.setAdapter(adapter);
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         friendName  = getIntent().getStringExtra("friendname");
+        ArrayList rMessageList = new ArrayList();
+        rMessageList = getIntent().getStringArrayListExtra("messageList");
+        if (rMessageList.size()>=3){
+            for(int i = 0;i<3;i++){
+                pushMessage((String) rMessageList.get(i));
+            }
+        }else if (rMessageList.size()<3){
+            for(int i = 0;i<rMessageList.size();i++){
+                pushMessage((String) rMessageList.get(i));
+            }
+        }
         getSupportActionBar().setTitle(friendName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        toolbar.setNavigationOnClickListener(new OnClickListener() {
@@ -92,25 +94,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
 //            }
 //        });
 
-        android.os.Handler msgHandler = new android.os.Handler(){
-            @Override
-            public void handleMessage(Message msg){
-                switch (msg.what){
-                    case 1:
-                        pushMessage((String)msg.obj);
-                        break;
-                }
-            }
-        };
-        DeviceImpl.getInstance().setHandler(msgHandler);
 
-        // ////////////////////////////////////////////////////////////
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // register preference change listener
-        prefs.registerOnSharedPreferenceChangeListener(this);
-        initializeSipFromPreferences();
 
     }
 
@@ -164,34 +148,6 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
 
     //存数据
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                          String key) {
-        if (key.equals("pref_proxy_ip")) {
-            sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "10.28.144.154")));
-        } else if (key.equals("pref_proxy_port")) {
-            sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
-                    "pref_proxy_port", "5060")));
-        }  else if (key.equals("pref_sip_user")) {
-            sipProfile.setSipUserName(prefs.getString("pref_sip_user",
-                    "alice"));
-        } else if (key.equals("pref_sip_password")) {
-            sipProfile.setSipPassword(prefs.getString("pref_sip_password",
-                    "1234"));
-        }
-
-    }
-
-    @SuppressWarnings("static-access")
-    private void initializeSipFromPreferences() {
-        sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "127.0.0.1")));
-        sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
-                "pref_proxy_port", "5050")));
-        sipProfile.setSipUserName(prefs.getString("pref_sip_user", "alice"));
-        sipProfile.setSipPassword(prefs
-                .getString("pref_sip_password", "1234"));
-
-    }
 
     public void pushMessage(String readMessage) {
         adapter.add(readMessage);
@@ -219,6 +175,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener,
             if (v == null) {
                 v= LayoutInflater.from(parent.getContext()).inflate(R.layout.croom,parent,false);
             }
+            List<String> recmsgList = items;
             String message = items.get(position);
             if (message != null && !message.isEmpty()) {
                 leftlayout=(LinearLayout)v.findViewById(R.id.left_layout);
