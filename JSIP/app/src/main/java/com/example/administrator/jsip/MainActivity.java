@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 message msg=msgList.get(position);
                 Intent intent=new Intent(MainActivity.this,chat_main.class);
-                intent.putExtra("friendname",msg.getId_name());
                 startActivity(intent);
 
             }
