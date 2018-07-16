@@ -87,8 +87,9 @@ public class MyService extends Service implements SipUADeviceListener {
                 }
                 LocalMessage lmsg = new LocalMessage(Rtime,nickname,message,1,0);
                 rmessage.add(lmsg);
-                sqlm.addMessage(rmessage,nickname);
-                break;}
+                sqlm.addMessage(rmessage,"p1992");
+                break;
+            }
             case("$sentall"):{
                 String Gid = M[1];
                 String nickname = M[2];
@@ -106,9 +107,11 @@ public class MyService extends Service implements SipUADeviceListener {
                 break;
             }
         }
+               ArrayList<LocalMessage> testList = sqlm.Messagequery("p1992");
                 Intent intent = new Intent("test");
                 intent.putExtra("message","DATABASE_CHANGED");
                 sendBroadcast(intent);
+
 
 
 
