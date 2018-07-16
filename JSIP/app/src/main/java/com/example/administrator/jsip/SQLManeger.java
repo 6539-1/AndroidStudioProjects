@@ -17,7 +17,6 @@ public class SQLManeger {
         sqldb=sqlHelper.getWritableDatabase();
         //sqldb.execSQL("INSERT INTO friendtable(id,name,image,state) VALUES (1,'ss',1,1)");
     }
-
     public void add(List<Friend> list){
         sqldb.execSQL("delete from friendtable");
         sqldb.beginTransaction();
@@ -56,7 +55,36 @@ public class SQLManeger {
         cursor.close();
         return friend_list;
     }
-
+    public void addMessage(List<LocalMessage> list,String OriginName){
+        sqldb.beginTransaction();
+        try{
+            for (LocalMessage localMessage:list){
+                sqldb.execSQL("INSERT INTO "+OriginName +"(time,content,state,nickname,isMine) VALUES(?,?,?,?,?)",
+                        new Object[]{localMessage.getTime(),localMessage.getContent(),localMessage.getState(),localMessage.getNickname(),localMessage.getIsMine()});
+            }
+            sqldb.setTransactionSuccessful();
+        }finally {
+            sqldb.endTransaction();
+        }
+    }
+    public ArrayList<LocalMessage> Messagequery(String OriginName){
+        ArrayList<LocalMessage> MessageList=new ArrayList<LocalMessage>();
+        Cursor cursor=sqldb.query(OriginName,null,null,null,null,null,null);
+        if (cursor != null) {
+            while(cursor.moveToNext()) {
+                LocalMessage localMessage = new LocalMessage(
+                        cursor.getString(cursor.getColumnIndex("time")),
+                        cursor.getString(cursor.getColumnIndex("content")),
+                        cursor.getString(cursor.getColumnIndex("nickname")),
+                        cursor.getInt(cursor.getColumnIndex("state")),
+                        cursor.getInt(cursor.getColumnIndex("isMine"))
+                );
+                MessageList.add(localMessage);
+            }
+        }
+        cursor.close();
+        return MessageList;
+    }
     public void closeDatabase(){
         sqldb.close();
     }

@@ -8,11 +8,19 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SQLHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "communication.db";
     public static final String TABLE_NAME = "friendtable";
+    public static final String MESSAGE_TABLE_NAME = null;
     private static final String FRIEND_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "("
             + "id integer NOT NULL,"
             + "name varchar(20) NOT NULL,"
             +"image intger NOT NULL,"
             + "state integer NOT NULL"
+            + ");";
+    private static final String MESSAGE_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + MESSAGE_TABLE_NAME + "("
+            + "time varchar(20) NOT NULL,"
+            + "content varchar(20) NOT NULL,"
+            + "state integer NOT NULL,"
+            + "nickname varchar(20) NOT NULL,"
+            + "isMine integer NOT NULL"
             + ");";
     private static final String DELETE_TABLE="drop table if exists " + TABLE_NAME;
 
@@ -23,6 +31,15 @@ public class SQLHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(FRIEND_CREATE_TABLE_SQL);
+        sqLiteDatabase.execSQL("create table if not exists "+"p1992"+"("
+                + "time varchar(20) NOT NULL,"
+                + "content varchar(20) NOT NULL,"
+                + "state integer NOT NULL,"
+                + "nickname varchar(20) NOT NULL,"
+                + "isMine integer NOT NULL"
+                + ");");
+       // sqLiteDatabase.execSQL(MESSAGE_CREATE_TABLE_SQL);
+
     }
 
     @Override

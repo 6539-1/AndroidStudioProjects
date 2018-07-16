@@ -1,8 +1,10 @@
 package com.example.administrator.jsip;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -40,7 +42,7 @@ import java.util.logging.LogRecord;
 
 public class chat_main extends AppCompatActivity implements OnClickListener {
     private EditText editTextTo;
-    private String ServiceIp = "sip:ace@192.168.43.52:5050";
+    private String ServiceIp = "sip:alice@172.20.10.3:5050";
     private EditText editTextMessage;
     private TextView textViewChat;
     private ListView listView;
@@ -48,6 +50,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private List<String> items = new ArrayList<String>();
     private Handler MsgHandler;
     private String friendName;
+    private InnerReceiver receiver = new InnerReceiver();
     @Override
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,31 +63,31 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 .detectLeakedSqlLiteObjects().detectLeakedClosableObjects()
                 .penaltyLog().penaltyDeath().build());
         // ini devl
-
+        onRestart();
         Button btnSend = (Button) findViewById(R.id.btnSend);
         ImageButton sdButton = (ImageButton) findViewById(R.id.sdButton);
         btnSend.setOnClickListener(this);
-
         sdButton.setOnClickListener(this);
         //editTextTo = (EditText) findViewById(R.id.editTextTo);
+
         editTextMessage = (EditText) findViewById(R.id.editTextMessage);
         listView = (ListView) findViewById(android.R.id.list);
         adapter = new ChatMessageAdapter(chat_main.this, android.R.id.text1,
                 items);
         listView.setAdapter(adapter);
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+//        android.os.Handler msgHandler = new android.os.Handler(){
+//            @Override
+//            public void handleMessage(Message msg){
+//                switch (msg.what){
+//                    case 1:
+//                        pushMessage((String)msg.obj);
+//                        break;
+//                }
+//            }
+//        };
+       // DeviceImpl.getInstance().setHandler(msgHandler);
         friendName  = getIntent().getStringExtra("friendname");
-        ArrayList rMessageList = new ArrayList();
-        rMessageList = getIntent().getStringArrayListExtra("messageList");
-        if (rMessageList.size()>=3){
-            for(int i = 0;i<3;i++){
-                pushMessage((String) rMessageList.get(rMessageList.size()-3+i));
-            }
-        }else if (rMessageList.size()<3){
-            for(int i = 0;i<rMessageList.size();i++){
-                pushMessage((String) rMessageList.get(i));
-            }
-        }
         getSupportActionBar().setTitle(friendName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        toolbar.setNavigationOnClickListener(new OnClickListener() {
@@ -154,8 +157,40 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         adapter.notifyDataSetChanged();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //注册广播
+        IntentFilter filter = new IntentFilter("test");
+        registerReceiver(receiver, filter);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //取消广播
+        unregisterReceiver(receiver);
+    }
+    public class InnerReceiver extends BroadcastReceiver {
 
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //使用intent获取发送过来的数据
+            String msg = intent.getStringExtra("message");
+            if (msg.equals("DATABASE_CHANGED"));
+            ArrayList rMessageList = new ArrayList();
+            //rMessageList = getIntent().getStringArrayListExtra("messageList");
+            if (rMessageList.size()>=3){
+                for(int i = 0;i<3;i++){
+                    pushMessage((String) rMessageList.get(rMessageList.size()-3+i));
+                }
+            }else if (rMessageList.size()<3){
+                for(int i = 0;i<rMessageList.size();i++){
+                    pushMessage((String) rMessageList.get(i));
+                }
+            }
+        }
+    }
     public class ChatMessageAdapter extends ArrayAdapter<String> {
         List<String> messages = null;
         LinearLayout leftlayout;
