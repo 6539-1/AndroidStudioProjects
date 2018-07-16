@@ -31,6 +31,7 @@ public class FriendListView extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         sqlManeger=new SQLManeger(FriendListView.this);
         friendList2=sqlManeger.query();
+        sqlManeger.closeDatabase();
         FriendArrayAdapter adapter = new FriendArrayAdapter(FriendListView.this, R.layout.friend_item, friendList2,Tag);
 
         ListView listviews = (ListView) findViewById(R.id.list_views);

@@ -82,6 +82,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         //ArrayList<LocalMessage> getDblist= new ArrayList<>();
         ArrayList<LocalMessage> testList = new ArrayList<>();
         testList = dbmanager.Messagequery("p1992");//p1992 = friendname
+        dbmanager.closeDatabase();
         historyMsg(testList);
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
 //        android.os.Handler msgHandler = new android.os.Handler(){
@@ -94,7 +95,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
 //                }
 //            }
 //        };
-       // DeviceImpl.getInstance().setHandler(msgHandler);
+       // DeviceImpl.getInstance().setHandler(msgHandler);      db
         friendName  = getIntent().getStringExtra("friendname");
         getSupportActionBar().setTitle(friendName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -139,6 +140,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         }
         else {
             finish();
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -151,7 +153,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 int sentAll=getIntent().getIntExtra("sentAll",0);
                 String add="$sent 123456 ";
                 switch (sentAll) {
-                    case 0:add="$sent 666 ";
+                    case 0:add="$sentall 666 ";
                         break;
                     case 1:add="$sent 654321 ";
                         break;
@@ -220,6 +222,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 ArrayList<LocalMessage> testList = new ArrayList<>();
                 testList = dbmanager.Messagequery("p1992");//p1992 = friendname
                 pushMessage((String) testList.get(testList.size()-1).getContent());
+                dbmanager.closeDatabase();
 //                for (int i=0;i<testList.size();i++){
 //
 //                }
@@ -278,5 +281,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
 
 
     }
+
+
 }
 

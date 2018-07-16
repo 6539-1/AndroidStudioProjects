@@ -85,7 +85,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     message+=" "+M[i];
                 }
-                LocalMessage lmsg = new LocalMessage(Rtime,nickname,message,1,0);
+                LocalMessage lmsg = new LocalMessage(Rtime,message,nickname,1,0);
                 rmessage.add(lmsg);
                 sqlm.addMessage(rmessage,"p1992");
                 break;
@@ -101,9 +101,10 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     message+=" "+M[i];
                 }
-                LocalMessage lmsg = new LocalMessage(Rtime,Gid,message,1,0);
+                message=nickname+":"+message;
+                LocalMessage lmsg = new LocalMessage(Rtime,message,Gid,1,0);
                 rmessage.add(lmsg);
-                sqlm.addMessage(rmessage,nickname);
+                sqlm.addMessage(rmessage,"p1992");
                 break;
             }
         }
@@ -115,6 +116,7 @@ public class MyService extends Service implements SipUADeviceListener {
 
 
 
+        sqlm.closeDatabase();
 
     }
     public void setReciveMessage(String msg){
