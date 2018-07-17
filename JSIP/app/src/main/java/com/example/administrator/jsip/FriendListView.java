@@ -4,6 +4,7 @@ package com.example.administrator.jsip;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,6 +28,7 @@ public class FriendListView extends AppCompatActivity {
              Tag=true;
         }
         getSupportActionBar().setTitle("好友列表");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         sqlManeger=new SQLManeger(FriendListView.this);
         friendList2=sqlManeger.query();
         FriendArrayAdapter adapter = new FriendArrayAdapter(FriendListView.this, R.layout.friend_item, friendList2,Tag);
@@ -47,6 +49,11 @@ public class FriendListView extends AppCompatActivity {
     public void onBackPressed() {
         sqlManeger.closeDatabase();
         super.onBackPressed();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        finish();
+        return super.onOptionsItemSelected(item);
     }
 
 
