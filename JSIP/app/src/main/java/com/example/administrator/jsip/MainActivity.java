@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
 
 
-        // ////////////////////////////////////////////////////////////
+        //change
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
