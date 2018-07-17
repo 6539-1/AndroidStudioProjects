@@ -6,4 +6,6 @@
     <string name="nav_header_subtitle">ggOMG666</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="finding_service">Finding local services</string>
+    <string name="psw_hint">请输入密码</string>
+    <string name="psw_digits">1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 </resources>
