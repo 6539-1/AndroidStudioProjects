@@ -56,11 +56,13 @@ public class MyService extends Service implements SipUADeviceListener {
         SQLManeger sqlm = new SQLManeger(this);
         String M[]=msg.split(" ");
         String flag = M[0];
+        String nickname=null;
+        String message=null;
         switch (flag){
             case("$sent") :{
-                String nickname = M[1];
+                nickname = M[1];
                 String Rtime = M[2];
-                String message = M[3];
+                message = M[3];
                 for (int i = 4;;i++){
                     if (M[i].equals("$end")){
                         break;
@@ -74,9 +76,9 @@ public class MyService extends Service implements SipUADeviceListener {
             }
             case("$sentall"):{
                 String Gid = M[1];
-                String nickname = M[2];
+                nickname = M[2];
                 String Rtime = M[3];
-                String message = M[4];
+                message = M[4];
                 for (int i = 5;;i++){
                     if (M[i].equals("$end")){
                         break;
@@ -94,6 +96,8 @@ public class MyService extends Service implements SipUADeviceListener {
                 testList = sqlm.Messagequery("p1992");
                 Intent intent = new Intent("com.app.test");
                 intent.putExtra("message","DATABASE_CHANGED");
+                intent.putExtra("nickname",nickname);
+                intent.putExtra("message_last",message);
                 sendBroadcast(intent);
 
 
