@@ -102,6 +102,10 @@ public class MainActivity extends AppCompatActivity
                 message msg=msgList.get(position);
                 friendName = msg.getId_name();
                 Intent intent=new Intent(MainActivity.this,chat_main.class);
+
+                int sentAll=position;
+                intent.putExtra("sentAll",sentAll);
+
                 intent.putExtra("friendname",friendName);
                 //intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
@@ -160,22 +164,24 @@ public class MainActivity extends AppCompatActivity
     private void initMessage() {
 
             if (rcvMsg.size()>0){
-            message msg0=new message("6539-1聊天室",R.mipmap.pic2,"泡吧???","12:00");
-            message msg1=new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
-            message msg2=new message("梁夏华",R.mipmap.pic2,"泡吧???","12:00");
-            message msg3=new message("熊昊",R.mipmap.pic3,"[动画表情]","06:34");
-            message msg4=new message("吴宏俊",R.mipmap.pic4,"好!","17:56");
-            msgList.add(msg0);
-            msgList.add(msg1);
-            msgList.add(msg2);
-            msgList.add(msg3);
-            msgList.add(msg4);
+                message msg0=new message("6539-1聊天室",R.mipmap.pic6,"","");
+                message msg1=new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
+                message msg2=new message("梁夏华",R.mipmap.pic2,"泡吧???","12:00");
+                message msg3=new message("熊昊",R.mipmap.pic3,"[动画表情]","06:34");
+                message msg4=new message("吴宏俊",R.mipmap.pic4,"好!","17:56");
+                msgList.add(msg0);
+                msgList.add(msg1);
+                msgList.add(msg2);
+                msgList.add(msg3);
+                msgList.add(msg4);
             }
             else {
+                message msg0=new message("6539-1聊天室",R.mipmap.pic6,"","");
                 message msg1=new message("卢冬冬",R.mipmap.pic5,"","20:11");
                 message msg2=new message("梁夏华",R.mipmap.pic2,"泡吧???","12:00");
                 message msg3=new message("熊昊",R.mipmap.pic3,"[动画表情]","06:34");
                 message msg4=new message("吴宏俊",R.mipmap.pic4,"好!","17:56");
+                msgList.add(msg0);
                 msgList.add(msg1);
                 msgList.add(msg2);
                 msgList.add(msg3);
