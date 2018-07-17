@@ -96,8 +96,6 @@ public class MyService extends Service implements SipUADeviceListener {
                 intent.putExtra("message","DATABASE_CHANGED");
                 sendBroadcast(intent);
 
-
-
         sqlm.closeDatabase();
 
     }

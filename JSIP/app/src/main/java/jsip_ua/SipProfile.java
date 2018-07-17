@@ -3,7 +3,7 @@ package jsip_ua;
 public class SipProfile {
     private String localIp;
     private  int localPort = 5080;
-    private String transport = "udp";
+    private String transport = "tcp";
 
     private String remoteIp = "23.23.228.238";
     private  int remotePort = 5060;
