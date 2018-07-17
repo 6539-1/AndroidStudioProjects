@@ -40,6 +40,7 @@ import jsip_ua.impl.DeviceImpl;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,
         SharedPreferences.OnSharedPreferenceChangeListener {
+
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
@@ -224,7 +225,11 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            final String[] items={"梁夏华","卢冬冬","吴宏俊","熊昊","路人甲","路人乙","路人丙","路人丁"};
+            String[] friend_qunliao=null;
+            for (int j=0;j<friendList.size();j++){
+                friend_qunliao[j]=friendList.get(j).getName();
+            }
+            final String[] items=friend_qunliao;
             integerList = new ArrayList<>();
             AlertDialog dialog=new AlertDialog.Builder(this).setTitle("选择成员").setIcon(R.mipmap.pic1)
                     .setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
