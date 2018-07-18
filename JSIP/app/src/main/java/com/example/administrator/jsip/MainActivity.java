@@ -140,16 +140,17 @@ public class MainActivity extends AppCompatActivity
         LocalMessage newMsg;
         int tag=0;
         for (int i=0;i<friends.size();i++){
-
-            newMsg=sqlManeger.get_message_by_id(Integer.toString(friends.get(i).getID()),Id).get(0);
-            if(newMsg!=null) {
+            if(sqlManeger.get_message_by_id(Integer.toString(friends.get(i).getID()),Id).size()!=0){
+                newMsg=sqlManeger.get_message_by_id(Integer.toString(friends.get(i).getID()),Id).get(0);
                 MessageList.add(newMsg);
                 tag++;
             }
         }
         for (int i=0;i<g_id.size();i++){
-            newMsg=sqlManeger.get_message_by_id(Integer.toString(g_id.get(i)),Id).get(0);
-            MessageList.add(newMsg);
+            if(sqlManeger.get_message_by_id(Integer.toString(g_id.get(i)),Id).size()!=0) {
+                newMsg = sqlManeger.get_message_by_id(Integer.toString(g_id.get(i)), Id).get(0);
+                MessageList.add(newMsg);
+            }
         }
         for (int i=0;i<MessageList.size();i++){
             id.add(MessageList.get(i).getOrigin_Id());
@@ -169,6 +170,7 @@ public class MainActivity extends AppCompatActivity
             else
                 msgList.add(new message(id.get(i),name.get(i),head.get(i),MessageList.get(i).getContent(),"2"));
         }
+        sqlManeger.closeDatabase();
 
     }
     private void refresh(){
