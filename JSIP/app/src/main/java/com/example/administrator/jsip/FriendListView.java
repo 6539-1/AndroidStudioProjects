@@ -40,7 +40,9 @@ public class FriendListView extends AppCompatActivity {
             Friend friend=friendList2.get(position);
             String ID=Integer.toString(friend.getID());
             Intent intent=new Intent(FriendListView.this,chat_main.class);
+            intent.putExtra("Id",Id);
             intent.putExtra("user",ID);
+            startActivity(intent);
         }
     });
 }

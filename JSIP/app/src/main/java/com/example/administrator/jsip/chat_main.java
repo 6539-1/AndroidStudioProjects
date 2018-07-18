@@ -55,12 +55,14 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private String friendName;
     private Context ctn;
     private String Id;
+    private String sent;
     private InnerReceiver receiver = new InnerReceiver();
     @Override
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Id = getIntent().getStringExtra("Id");
+        sent=getIntent().getStringExtra("user");
         ctn= this;
         setContentView(R.layout.activity_chat_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -158,8 +160,6 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case (R.id.btnSend):
-                String sent=getIntent().getStringExtra("user");
-                if(sent.equals(null))break;
                 int user=Integer.parseInt(sent);
                 String add;
                 if (user<10000)
@@ -222,18 +222,10 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
             String msg = intent.getStringExtra("sent");
-            int user=Integer.parseInt(msg);
-            if (user<10000){
+            if (!msg.equals(null)) {
                 SQLManeger dbmanager = new SQLManeger(ctn);
-                ArrayList<LocalMessage> testList = new ArrayList<>();
-               //testList = dbmanager.Messagequery("p1992");
-                pushMessage("id:" +user);
-                dbmanager.closeDatabase();
-            }else{
-                SQLManeger dbmanager = new SQLManeger(ctn);
-                ArrayList<LocalMessage> testList = new ArrayList<>();
-                //testList = dbmanager.Messagequery("p1992");
-                pushMessage("id:"+ user);
+                String Message=dbmanager.get_one_message(Id,msg);
+                pushMessage(Message);
                 dbmanager.closeDatabase();
             }
         }

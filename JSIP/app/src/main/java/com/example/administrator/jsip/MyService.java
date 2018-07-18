@@ -194,7 +194,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     if(M[i+1].equals("$end"))
                         break;
                     Friend friend=new Friend(
-                            Integer.valueOf(M[i]).intValue(),
+                            Integer.valueOf(M[i+1]).intValue(),
                             "   ",
                             0,
                             2

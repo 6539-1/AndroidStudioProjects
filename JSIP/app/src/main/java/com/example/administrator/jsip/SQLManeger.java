@@ -182,6 +182,18 @@ public class SQLManeger {
         return localMessages;
     }
 
+    public String get_one_message(String Id,String one){
+        String Message="";
+        String[] args = {one};
+        Cursor cursor=sqldb.query("MESSAGE_"+Id,null,"origin_id=?",args,null,null,null);
+        if (cursor != null) {
+            while(cursor.moveToNext()) {
+                        Message=cursor.getString(cursor.getColumnIndex("content"));
+            }
+        }
+        cursor.close();
+        return Message;
+    }
     /*
     * 往数据库中的Personal表添加一行信息
     * */
