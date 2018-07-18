@@ -39,6 +39,7 @@ public class addfriends extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addfriends);
+        onRestart();
         getSupportActionBar().setTitle("添加好友");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final LinearLayout addLine=(LinearLayout)findViewById(R.id.addLine);
@@ -49,6 +50,7 @@ public class addfriends extends AppCompatActivity {
         adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userList);
         listView_add.setAdapter(adapter);
         listView_add.setTextFilterEnabled(true);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
