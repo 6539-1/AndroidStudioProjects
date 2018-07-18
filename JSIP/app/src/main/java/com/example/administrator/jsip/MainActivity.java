@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity
         // register preference change listener
         prefs.registerOnSharedPreferenceChangeListener(this);
         initializeSipFromPreferences();
-        initFriend();
         //数据库
         //sqlManeger=new SQLManeger(MainActivity.this,Id);
         //sqlManeger.add(friendList);
@@ -96,6 +95,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        sqlManeger=new SQLManeger(this);
+        friendList=sqlManeger.query(Id);
+        sqlManeger.closeDatabase();
+
         initMessage();
 
 
@@ -418,19 +421,5 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-    private void initFriend(){
-        for (int i=0 ;i<3;i++){
 
-            Friend xiahua=new Friend(100+i*10,"xiahua",R.mipmap.pic1,1);
-            friendList.add(xiahua);
-            Friend xionghao=new Friend(124+i*10,"xionghao",R.mipmap.pic2,2);
-            friendList.add(xionghao);
-            Friend hongjun=new Friend(125+i*10,"hongjun",R.mipmap.pic3,1);
-            friendList.add(hongjun);
-            Friend people1=new Friend(126+i*10,"people1",R.mipmap.pic4,0);
-            friendList.add(people1);
-            Friend people2=new Friend(127+i*10,"people2",R.mipmap.pic5,2);
-            friendList.add(people2);
-        }
-    }
 }
