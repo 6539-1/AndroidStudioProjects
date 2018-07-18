@@ -47,10 +47,11 @@ public class MainActivity extends AppCompatActivity
     SQLManeger sqlManeger;
     private InnerReceiver receiver = new InnerReceiver();
     private java.util.logging.Handler MsgHandler;
+    private String Id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startService(new Intent(this,MyService.class));
+        this.Id = getIntent().getStringExtra("Id");
         setContentView(R.layout.activity_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads().detectDiskWrites().detectNetwork()
@@ -78,7 +79,8 @@ public class MainActivity extends AppCompatActivity
         prefs.registerOnSharedPreferenceChangeListener(this);
         initializeSipFromPreferences();
         initFriend();
-        sqlManeger=new SQLManeger(MainActivity.this);
+        //数据库
+        sqlManeger=new SQLManeger(MainActivity.this,Id);
         sqlManeger.add(friendList);
         sqlManeger.closeDatabase();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -105,8 +107,8 @@ public class MainActivity extends AppCompatActivity
 
                 int sentAll=position;
                 intent.putExtra("sentAll",sentAll);
-
                 intent.putExtra("friendname",friendName);
+                intent.putExtra("Id",Id);
                 //intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
 
@@ -268,7 +270,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
-            intent.putExtra("qunliao",1);
+            intent.putExtra("Id",1);
             intent.setClass(MainActivity.this,FriendListView.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {

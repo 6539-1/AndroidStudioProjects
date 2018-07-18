@@ -52,11 +52,13 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private Handler MsgHandler;
     private String friendName;
     private Context ctn;
+    private String Id;
     private InnerReceiver receiver = new InnerReceiver();
     @Override
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Id = getIntent().getStringExtra("Id");
         ctn= this;
         setContentView(R.layout.activity_chat_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -78,7 +80,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         adapter = new ChatMessageAdapter(chat_main.this, android.R.id.text1,
                 items);
         listView.setAdapter(adapter);
-        SQLManeger dbmanager = new SQLManeger(ctn);
+        SQLManeger dbmanager = new SQLManeger(ctn,Id);
         //ArrayList<LocalMessage> getDblist= new ArrayList<>();
         ArrayList<LocalMessage> testList = new ArrayList<>();
         testList = dbmanager.Messagequery("p1992");//p1992 = friendname
@@ -217,7 +219,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
             String msg = intent.getStringExtra("message");
             System.out.println("bbbbbbbbb:"+msg);
             if (msg.equals("DATABASE_CHANGED")){
-                SQLManeger dbmanager = new SQLManeger(ctn);
+                SQLManeger dbmanager = new SQLManeger(ctn,Id);
                 //ArrayList<LocalMessage> getDblist= new ArrayList<>();
                 ArrayList<LocalMessage> testList = new ArrayList<>();
                 testList = dbmanager.Messagequery("p1992");//p1992 = friendname
