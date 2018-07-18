@@ -83,10 +83,8 @@ public class MainActivity extends AppCompatActivity
         // register preference change listener
         prefs.registerOnSharedPreferenceChangeListener(this);
         initializeSipFromPreferences();
-        //数据库
-        //sqlManeger=new SQLManeger(MainActivity.this,Id);
-        //sqlManeger.add(friendList);
-        //sqlManeger.closeDatabase();
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -288,7 +286,6 @@ public class MainActivity extends AppCompatActivity
             sipProfile.setSipPassword(prefs.getString("pref_sip_password",
                     "1234"));
         }
-
     }
 
     @SuppressWarnings("static-access")
@@ -311,7 +308,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
-            intent.putExtra("Id",1);
+            intent.putExtra("Id", Id);
             intent.setClass(MainActivity.this,FriendListView.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
