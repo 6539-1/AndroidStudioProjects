@@ -8,7 +8,7 @@ public class LocalMessage {
     private String Id;
     private String Origin_Id;
 
-    public LocalMessage(String nickname,String content,int state,int isMine,String Id,String Origin_Id){
+    public LocalMessage(String nickname,String content,int state,int isMine,String Origin_Id,String Id){
         this.nickname=nickname;
         this.content=content;
         this.state=state;
