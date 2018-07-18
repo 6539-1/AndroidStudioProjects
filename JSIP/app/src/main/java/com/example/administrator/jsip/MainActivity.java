@@ -7,13 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -31,23 +26,20 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import jsip_ua.SipProfile;
 import jsip_ua.impl.DeviceImpl;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener ,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
-    private SharedPreferences prefs;
     private SipProfile sipProfile;
     private messageAdapter msgAdapter = null;
-    private long lastBack = 0;
+    private long firstTime = 0;
     private ArrayList<Friend> friendList=new ArrayList<>();
     SQLManeger sqlManeger;
     private InnerReceiver receiver = new InnerReceiver();
@@ -76,13 +68,8 @@ public class MainActivity extends AppCompatActivity
         DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
 
 
-        //change
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // register preference change listener
-        prefs.registerOnSharedPreferenceChangeListener(this);
-        initializeSipFromPreferences();
         initFriend();
         sqlManeger=new SQLManeger(MainActivity.this);
         sqlManeger.add(friendList);
@@ -110,61 +97,12 @@ public class MainActivity extends AppCompatActivity
 
                 int sentAll=position;
                 intent.putExtra("sentAll",sentAll);
-
                 intent.putExtra("friendname",friendName);
                 intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
 
             }
         });
-//        android.os.Handler msgHandler = new android.os.Handler(){
-//            @Override
-//            public void handleMessage(Message msg){
-//                switch (msg.what){
-//                    case 1:
-//                        rcvMsg.add((String)msg.obj);
-//                        message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
-//                        msgList.set(0,newMsg);
-//                        Intent intent = new Intent("test");
-//                        intent.putExtra("message",(String)msg.obj);
-//                        sendBroadcast(intent);
-//                        break;
-//                }
-//            }
-//        };
-//        DeviceImpl.getInstance().setHandler(msgHandler);
-        final SwipeRefreshLayout swipeRefreshView=(SwipeRefreshLayout)findViewById(R.id.Swip_container) ;
-        swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                // 开始刷新，设置当前为刷新状态
-                //swipeRefreshLayout.setRefreshing(true);
-
-                // 这里是主线程
-                // 一些比较耗时的操作，比如联网获取数据，需要放到子线程去执行
-                // TODO 获取数据
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        //message msg5=new message("王宇",R.mipmap.pic1,"我是泡吧王！","13:13");
-                        refresh();
-                        msgAdapter.notifyDataSetChanged();
-                        Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
-
-                        // 加载完数据设置为不刷新状态，将下拉进度收起来
-                        swipeRefreshView.setRefreshing(false);
-                    }
-                }, 1200);
-
-                // System.out.println(Thread.currentThread().getName());
-
-                // 这个不能写在外边，不然会直接收起来
-                //swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
     }
     private void initMessage() {
 
@@ -195,17 +133,16 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-    private void refresh(){
-
-    }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        long secondTime = System.currentTimeMillis();
+        if (secondTime - firstTime > 2000) {
+            Toast.makeText(MainActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            firstTime = secondTime;
         } else {
-            super.onBackPressed();
+            Toast.makeText(MainActivity.this, "再按2次退出程序", Toast.LENGTH_SHORT).show();
+            System.exit(0);
         }
     }
 
@@ -218,12 +155,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             String[] friend_qunliao=null;
             for (int j=0;j<friendList.size();j++){
@@ -266,34 +199,6 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                          String key) {
-        if (key.equals("pref_proxy_ip")) {
-            sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "10.28.144.154")));
-        } else if (key.equals("pref_proxy_port")) {
-            sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
-                    "pref_proxy_port", "5060")));
-        }  else if (key.equals("pref_sip_user")) {
-            sipProfile.setSipUserName(prefs.getString("pref_sip_user",
-                    "alice"));
-        } else if (key.equals("pref_sip_password")) {
-            sipProfile.setSipPassword(prefs.getString("pref_sip_password",
-                    "1234"));
-        }
-
-    }
-
-    @SuppressWarnings("static-access")
-    private void initializeSipFromPreferences() {
-        sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "127.0.0.1")));
-        sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
-                "pref_proxy_port", "5050")));
-        sipProfile.setSipUserName(prefs.getString("pref_sip_user", "alice"));
-        sipProfile.setSipPassword(prefs
-                .getString("pref_sip_password", "1234"));
-
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -304,7 +209,6 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
-            intent.putExtra("qunliao",1);
             intent.setClass(MainActivity.this,FriendListView.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
@@ -390,4 +294,5 @@ public class MainActivity extends AppCompatActivity
             friendList.add(people2);
         }
     }
+
 }

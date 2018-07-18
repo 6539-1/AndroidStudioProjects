@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
@@ -54,8 +55,9 @@ public class MyService extends Service implements SipUADeviceListener {
         String msg = event.content;
         System.out.println("msgmsgmsgmsg"+msg);
         setReciveMessage(msg);
-
-        SQLManeger sqlm = new SQLManeger(this);
+        Log.d("回************************************复",msg);
+        String M[]=msg.split(" ");
+        /*SQLManeger sqlm = new SQLManeger(this);
         String M[]=msg.split(" ");
         String flag = M[0];
         String nickname=null;
@@ -102,7 +104,7 @@ public class MyService extends Service implements SipUADeviceListener {
                 intent.putExtra("message_last",message);
                 sendBroadcast(intent);
 
-        sqlm.closeDatabase();
+        sqlm.closeDatabase();*/
 
     }
     public void setReciveMessage(String msg){
