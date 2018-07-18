@@ -222,7 +222,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
             String msg = intent.getStringExtra("sent");
-            if (!msg.equals(null)) {
+            if (msg.equals(sent)) {
                 SQLManeger dbmanager = new SQLManeger(ctn);
                 String Message=dbmanager.get_one_message(Id,msg);
                 pushMessage(Message);

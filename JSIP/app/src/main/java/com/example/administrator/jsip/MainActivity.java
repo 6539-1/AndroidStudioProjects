@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
         friendList=sqlManeger.query(Id);
         sqlManeger.closeDatabase();
 
-        initMessage();
+        //initMessage();
 
         msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
         ListView messageList=(ListView)findViewById(R.id.message_list);
