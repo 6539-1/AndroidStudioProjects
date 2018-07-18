@@ -1,13 +1,17 @@
 package com.example.administrator.jsip;
 
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +22,13 @@ import jsip_ua.impl.DeviceImpl;
 import jsip_ua.impl.SipEvent;
 
 public class MyService extends Service implements SipUADeviceListener {
-    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     SipProfile sipProfile;
     String reciveMessage;
     String Id;
     Handler mHandler;
     ArrayList<LocalMessage> rmessage = new ArrayList<>();
     SharedPreferences prefs;
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sipProfile = new SipProfile();
@@ -65,26 +69,35 @@ public class MyService extends Service implements SipUADeviceListener {
     }
 
     public void deal(String rmessage){
+        Intent intent_deal=new Intent("com.app.deal_msg");
         String M[]=rmessage.split(" ");
         switch(M[0]){
             case "$reg":{
                 if (M[1].equals("success"))
+                    intent_deal.putExtra("reg",true);
+                else {
+                    intent_deal.putExtra("reg",false);
+                }
+
                     this.Id=M[2];//注册成功
                 else
                     ;//注册失败
                 break;
             }
-            case "log":{
+            case "$log":{
                 switch(M[1]){
                     case "error1":{//账号有误
+                        intent_deal.putExtra("log",1);
                         break;
                     }
                     case "error2": {//密码有误
+                        intent_deal.putExtra("log",2);
                         break;
                     }
                     case "success":{//登录成功
                         String name=M[2];
                         int head=Integer.valueOf(M[3]).intValue();
+                        intent_deal.putExtra("log",0);
                         this.Id=M[4];
                     }
                         break;
@@ -93,6 +106,17 @@ public class MyService extends Service implements SipUADeviceListener {
                 }
                 break;
             }
+            case "$addall":{
+                ArrayList<String> userlist=new ArrayList<>();
+                for(int i=1 ;;i++) {
+                    if (M[i].equals("$end"))
+                        break;
+                    userlist.add(M[i]);
+                }
+                intent_deal.putExtra("userList",userlist);
+                break;
+
+            }
             case "add":{
                 switch(M[1]) {
                     case "none": {//查无此人
@@ -100,6 +124,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     case "error": {//拒绝
                         String id = M[2];
+                        intent_deal.putExtra("add",0);
                         String msg = "用户"+id+"拒绝你的好友申请";
                         SQLManeger sqlManeger = new SQLManeger(this);
                         sqlManeger.addSystem(msg,Id);
@@ -108,6 +133,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     case "success": {//申请成功
                         String id = M[2];
+                        intent_deal.putExtra("add",1);
                         String msg = "用户"+id+"同意你的好友申请，现在开始愉快地聊天吧";
                         SQLManeger sqlManeger = new SQLManeger(this);
                         sqlManeger.addSystem(msg,Id);
@@ -117,6 +143,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     default:{
                         String id = M[1];
                         String name = M[2];
+                        intent_deal.putExtra("add",2);
                         String msg = "用户"+name+"("+id+")"+"申请加为好友";//请求申请
                         SQLManeger sqlManeger = new SQLManeger(this);
                         sqlManeger.addSystem(msg,Id);
@@ -184,18 +211,18 @@ public class MyService extends Service implements SipUADeviceListener {
                 SQLManeger sqlManeger = new SQLManeger(this);
                 sqlManeger.add(friendList,Id);
                 sqlManeger.closeDatabase();
+                intent_deal.putExtra("flush",true);
                 break;
             }
             case "$creategroup":{    // 创群成功
                 DeviceImpl.getInstance().SendMessage(ServiceIp,"$flush");
+                String id=M[1];
+                intent_deal.putExtra("qunhao",id);
+                intent_deal.putExtra("creategroup",true);
                 break;
             }
 
         }
-
-    }
-
-    public void setId(String Id){
-        this.Id = Id;
+        sendBroadcast(intent_deal);
     }
 }

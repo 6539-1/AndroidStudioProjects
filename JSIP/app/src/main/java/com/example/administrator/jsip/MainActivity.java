@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<Friend> friendList=new ArrayList<>();
     SQLManeger sqlManeger;
     private InnerReceiver receiver = new InnerReceiver();
+    private AceptReceiver receiver_acept=new AceptReceiver();
     private java.util.logging.Handler MsgHandler;
     private List<Integer> integerList = new ArrayList<>();
     private String Id;
@@ -209,34 +210,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            String[] friend_qunliao=null;
+            String[] friend_qunliao=new String[friendList.size()];
+            final int[] friend_id=new int[friendList.size()];
+            final boolean[] tag=new boolean[friendList.size()];
             for (int j=0;j<friendList.size();j++){
                 friend_qunliao[j]=friendList.get(j).getName();
+                friend_id[j]=friendList.get(j).getID();
+                tag[j]=false;
             }
             final String[] items=friend_qunliao;
-            integerList = new ArrayList<>();
             AlertDialog dialog=new AlertDialog.Builder(this).setTitle("选择成员").setIcon(R.mipmap.pic1)
                     .setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            String hint="";
-                            for (int j=0;j<integerList.size();j++){
-                                hint=items[integerList.get(j)]+hint;
+                            String hint="$creategroup ";
+                            for (int j=0;j<friendList.size();j++){
+                                if(tag[j])
+                                    hint=hint+friend_id[j]+" ";
                             }
-                            Toast.makeText(MainActivity.this, "已向"+hint+"发送请求", Toast.LENGTH_SHORT).show();
+                            hint=hint+"$end";
+                            DeviceImpl.getInstance().SendMessage(ServiceIp,hint);
+                            Toast.makeText(MainActivity.this, "已发送请求", Toast.LENGTH_SHORT).show();
                         }
                     }).setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                            int a=i;
-                            if (b){
-                                integerList.add(a);
-                            }
-                            else {
-                                if(integerList.size()>0) {
-                                    integerList.remove(a);
-                                }
-                            }
+
+                                 tag[i]=b;
+
                         }
                     }).create();
             dialog.show();
@@ -245,6 +246,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(id==R.id.action_add){
             Intent intent_add=new Intent(this,addfriends.class);
             startActivity(intent_add);
+            String person_list="$list "+Id+" $end";
+            DeviceImpl.getInstance().SendMessage(ServiceIp,person_list);
             return true;
         }
 
@@ -297,6 +300,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //注册广播
         IntentFilter filter = new IntentFilter("com.app.test");
         registerReceiver(receiver, filter);
+        IntentFilter filter_acept=new IntentFilter("com.app.deal_msg");
+        registerReceiver(receiver_acept,filter_acept);
     }
 
     @Override
@@ -304,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onStop();
         //取消广播
         unregisterReceiver(receiver);
+        unregisterReceiver(receiver_acept);
     }
 
     public class InnerReceiver extends BroadcastReceiver {
@@ -329,6 +335,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             rcvMsg.add(msg);
             message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
             msgList.set(0,newMsg);
+        }
+    }
+    public class AceptReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String qunhao=intent.getStringExtra("qunhao");
+            boolean is_qun=intent.getBooleanExtra("creategroup",false);
+            if(is_qun){
+                message newQun=new message(qunhao,R.mipmap.pic6,"","");
+                msgList.add(newQun);
+                msgAdapter.notifyDataSetChanged();
+                Toast.makeText(MainActivity.this,"创建成功", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(MainActivity.this,"创建失败", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     private void initFriend(){

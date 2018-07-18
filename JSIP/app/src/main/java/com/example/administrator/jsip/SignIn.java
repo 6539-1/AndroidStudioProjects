@@ -1,6 +1,10 @@
 package com.example.administrator.jsip;
 
+import android.accounts.Account;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,10 +20,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import jsip_ua.SipProfile;
 import jsip_ua.impl.DeviceImpl;
 
@@ -36,14 +40,15 @@ public class SignIn extends AppCompatActivity implements SharedPreferences.OnSha
     private SharedPreferences prefs;
     private ArrayList<Personal> personals;
     private String Id;
+    private SignIn.InnerReceiver receiver = new SignIn.InnerReceiver();
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         //启动服务
-        //Intent serviceIntent = new Intent()
         startService(new Intent(this,MyService.class));
         signInSQL = new SQLManeger(this);
         personals=signInSQL.Personalquery();
         //生成界面
+        onRestart();
         setContentView(R.layout.sign_in);
         AccountView = findViewById(R.id.dropview);
         setAccountList();
@@ -138,6 +143,40 @@ public class SignIn extends AppCompatActivity implements SharedPreferences.OnSha
         sipProfile.setSipPassword(prefs
                 .getString("pref_sip_password", "1234"));
 
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //注册广播
+        IntentFilter filter = new IntentFilter("com.app.deal_msg");
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //取消广播
+        unregisterReceiver(receiver);
+    }
+    public class InnerReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //使用intent获取发送过来的数据
+            int is_SignIn = intent.getIntExtra("log",-1);
+            if(is_SignIn==0) {
+                Intent intent_Id = new Intent(SignIn.this, MainActivity.class);
+                intent_Id.putExtra("Id", Id);
+                startActivity(intent_Id);
+            }
+            else if(is_SignIn==1){
+                Toast.makeText(SignIn.this,"账号有误", Toast.LENGTH_SHORT).show();
+            }
+            else if(is_SignIn==2){
+                Toast.makeText(SignIn.this,"密码有误", Toast.LENGTH_SHORT).show();
+            }
+
+        }
     }
 
 }
