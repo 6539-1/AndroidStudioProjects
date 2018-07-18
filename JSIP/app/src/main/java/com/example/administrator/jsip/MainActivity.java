@@ -38,22 +38,17 @@ import jsip_ua.SipProfile;
 import jsip_ua.impl.DeviceImpl;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener ,
-        SharedPreferences.OnSharedPreferenceChangeListener {
-    private String ServiceIp = "sip:alice@192.168.43.73:5006";
+        implements NavigationView.OnNavigationItemSelectedListener{
+    //private String ServiceIp = "sip:alice@192.168.43.73:5006";
+    private String ServiceIp = "sip:alice@10.206.17.104:5006";
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
-    private SharedPreferences prefs;
-    private SipProfile sipProfile;
     private messageAdapter msgAdapter = null;
-    private long lastBack = 0;
     private ArrayList<Friend> friendList=new ArrayList<>();
     SQLManeger sqlManeger;
     private InnerReceiver receiver = new InnerReceiver();
     private AceptReceiver receiver_acept=new AceptReceiver();
-    private java.util.logging.Handler MsgHandler;
-    private List<Integer> integerList = new ArrayList<>();
     private String Id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,27 +61,10 @@ public class MainActivity extends AppCompatActivity
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                 .detectLeakedSqlLiteObjects().detectLeakedClosableObjects()
                 .penaltyLog().penaltyDeath().build());
-
+        onRestart();
         final Toolbar toolbar;toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //inidl
-        sipProfile = new SipProfile();
-        HashMap<String, String> customHeaders = new HashMap<>();
-        customHeaders.put("customHeader1","customValue1");
-        customHeaders.put("customHeader2","customValue2");
-        onRestart();
-        DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
-        //change
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // register preference change listener
-        prefs.registerOnSharedPreferenceChangeListener(this);
-        initializeSipFromPreferences();
-        //数据库
-        //sqlManeger=new SQLManeger(MainActivity.this,Id);
-        //sqlManeger.add(friendList);
-        //sqlManeger.closeDatabase();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -100,7 +78,6 @@ public class MainActivity extends AppCompatActivity
         sqlManeger.closeDatabase();
 
         initMessage();
-
 
         msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
         ListView messageList=(ListView)findViewById(R.id.message_list);
@@ -123,32 +100,12 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-//        android.os.Handler msgHandler = new android.os.Handler(){
-//            @Override
-//            public void handleMessage(Message msg){
-//                switch (msg.what){
-//                    case 1:
-//                        rcvMsg.add((String)msg.obj);
-//                        message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
-//                        msgList.set(0,newMsg);
-//                        Intent intent = new Intent("test");
-//                        intent.putExtra("message",(String)msg.obj);
-//                        sendBroadcast(intent);
-//                        break;
-//                }
-//            }
-//        };
-//        DeviceImpl.getInstance().setHandler(msgHandler);
+//
         final SwipeRefreshLayout swipeRefreshView=(SwipeRefreshLayout)findViewById(R.id.Swip_container) ;
         swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
-                // 开始刷新，设置当前为刷新状态
-                //swipeRefreshLayout.setRefreshing(true);
-
-                // 这里是主线程
-                // 一些比较耗时的操作，比如联网获取数据，需要放到子线程去执行
                 // TODO 获取数据
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -273,34 +230,7 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                          String key) {
-        if (key.equals("pref_proxy_ip")) {
-            sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "10.28.144.154")));
-        } else if (key.equals("pref_proxy_port")) {
-            sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
-                    "pref_proxy_port", "5060")));
-        }  else if (key.equals("pref_sip_user")) {
-            sipProfile.setSipUserName(prefs.getString("pref_sip_user",
-                    "alice"));
-        } else if (key.equals("pref_sip_password")) {
-            sipProfile.setSipPassword(prefs.getString("pref_sip_password",
-                    "1234"));
-        }
 
-    }
-
-    @SuppressWarnings("static-access")
-    private void initializeSipFromPreferences() {
-        sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "127.0.0.1")));
-        sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
-                "pref_proxy_port", "5050")));
-        sipProfile.setSipUserName(prefs.getString("pref_sip_user", "alice"));
-        sipProfile.setSipPassword(prefs
-                .getString("pref_sip_password", "1234"));
-
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -311,7 +241,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
-            intent.putExtra("Id",1);
+            intent.putExtra("Id",Id);
             intent.setClass(MainActivity.this,FriendListView.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
