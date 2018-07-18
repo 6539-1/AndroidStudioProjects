@@ -53,11 +53,13 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private Handler MsgHandler;
     private String friendName;
     private Context ctn;
+    private String Id;
     private InnerReceiver receiver = new InnerReceiver();
     @Override
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Id = getIntent().getStringExtra("Id");
         ctn= this;
         setContentView(R.layout.activity_chat_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -79,12 +81,16 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         adapter = new ChatMessageAdapter(chat_main.this, android.R.id.text1,
                 items);
         listView.setAdapter(adapter);
+        /*
         SQLManeger dbmanager = new SQLManeger(ctn);
         //ArrayList<LocalMessage> getDblist= new ArrayList<>();
         ArrayList<LocalMessage> testList = new ArrayList<>();
+
         testList = dbmanager.Messagequery("p1992");//p1992 = friendname
+
         dbmanager.closeDatabase();
         historyMsg(testList);
+        */
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
 //        android.os.Handler msgHandler = new android.os.Handler(){
 //            @Override
@@ -230,7 +236,9 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 SQLManeger dbmanager = new SQLManeger(ctn);
                 //ArrayList<LocalMessage> getDblist= new ArrayList<>();
                 ArrayList<LocalMessage> testList = new ArrayList<>();
-                testList = dbmanager.Messagequery("p1992");//p1992 = friendname
+
+               // testList = dbmanager.Messagequery("p1992");//p1992 = friendname
+
                 pushMessage((String) testList.get(testList.size()-1).getContent());
                 dbmanager.closeDatabase();
 //                for (int i=0;i<testList.size();i++){

@@ -15,18 +15,23 @@ import java.util.List;
 
 public class FriendListView extends AppCompatActivity {
     private ArrayList<Friend> friendList2=new ArrayList<>();
+    private String Id;
     SQLManeger sqlManeger;
     FriendArrayAdapter adapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friend_list_view);
-        //getSupportActionBar().setTitle("好友列表");
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Id=getIntent().getStringExtra("Id");
+        getSupportActionBar().setTitle("好友列表");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         sqlManeger=new SQLManeger(FriendListView.this);
-        friendList2=sqlManeger.query();
+        friendList2=sqlManeger.query(Id);
         sqlManeger.closeDatabase();
         FriendArrayAdapter adapter = new FriendArrayAdapter(FriendListView.this, R.layout.friend_item, friendList2);
+
         ListView listviews = (ListView) findViewById(R.id.list_views);
         listviews.setAdapter(adapter);
         listviews.setOnItemClickListener(new AdapterView.OnItemClickListener() {

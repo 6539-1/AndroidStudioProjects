@@ -7,8 +7,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -26,29 +31,31 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import jsip_ua.SipProfile;
 import jsip_ua.impl.DeviceImpl;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
-    private SipProfile sipProfile;
     private messageAdapter msgAdapter = null;
-    private long firstTime = 0;
+    private long lastBack = 0;
     private ArrayList<Friend> friendList=new ArrayList<>();
     SQLManeger sqlManeger;
     private InnerReceiver receiver = new InnerReceiver();
+    private AceptReceiver receiver_acept=new AceptReceiver();
     private java.util.logging.Handler MsgHandler;
     private List<Integer> integerList = new ArrayList<>();
+    private String Id;
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startService(new Intent(this,MyService.class));
+        this.Id = getIntent().getStringExtra("Id");
         setContentView(R.layout.activity_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads().detectDiskWrites().detectNetwork()
@@ -60,20 +67,11 @@ public class MainActivity extends AppCompatActivity
         final Toolbar toolbar;toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //inidl
-        sipProfile = new SipProfile();
-        HashMap<String, String> customHeaders = new HashMap<>();
-        customHeaders.put("customHeader1","customValue1");
-        customHeaders.put("customHeader2","customValue2");
+
         onRestart();
-        DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
-
-
-
 
         initFriend();
-        sqlManeger=new SQLManeger(MainActivity.this);
-        sqlManeger.add(friendList);
-        sqlManeger.closeDatabase();
+        //数据库
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -98,11 +96,61 @@ public class MainActivity extends AppCompatActivity
                 int sentAll=position;
                 intent.putExtra("sentAll",sentAll);
                 intent.putExtra("friendname",friendName);
+                intent.putExtra("Id",Id);
+                //intent.putStringArrayListExtra("messageList",rcvMsg);
                 intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
 
             }
         });
+//        android.os.Handler msgHandler = new android.os.Handler(){
+//            @Override
+//            public void handleMessage(Message msg){
+//                switch (msg.what){
+//                    case 1:
+//                        rcvMsg.add((String)msg.obj);
+//                        message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
+//                        msgList.set(0,newMsg);
+//                        Intent intent = new Intent("test");
+//                        intent.putExtra("message",(String)msg.obj);
+//                        sendBroadcast(intent);
+//                        break;
+//                }
+//            }
+//        };
+//        DeviceImpl.getInstance().setHandler(msgHandler);
+        final SwipeRefreshLayout swipeRefreshView=(SwipeRefreshLayout)findViewById(R.id.Swip_container) ;
+        swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                // 开始刷新，设置当前为刷新状态
+                //swipeRefreshLayout.setRefreshing(true);
+
+                // 这里是主线程
+                // 一些比较耗时的操作，比如联网获取数据，需要放到子线程去执行
+                // TODO 获取数据
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        //message msg5=new message("王宇",R.mipmap.pic1,"我是泡吧王！","13:13");
+                        refresh();
+                        msgAdapter.notifyDataSetChanged();
+                        Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
+
+                        // 加载完数据设置为不刷新状态，将下拉进度收起来
+                        swipeRefreshView.setRefreshing(false);
+                    }
+                }, 1200);
+
+                // System.out.println(Thread.currentThread().getName());
+
+                // 这个不能写在外边，不然会直接收起来
+                //swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
     }
     private void initMessage() {
 
@@ -133,16 +181,17 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+    private void refresh(){
+
+    }
 
     @Override
     public void onBackPressed() {
-        long secondTime = System.currentTimeMillis();
-        if (secondTime - firstTime > 2000) {
-            Toast.makeText(MainActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-            firstTime = secondTime;
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
-            Toast.makeText(MainActivity.this, "再按2次退出程序", Toast.LENGTH_SHORT).show();
-            System.exit(0);
+            super.onBackPressed();
         }
     }
 
@@ -155,37 +204,41 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            String[] friend_qunliao=null;
+            String[] friend_qunliao=new String[friendList.size()];
+            final int[] friend_id=new int[friendList.size()];
+            final boolean[] tag=new boolean[friendList.size()];
             for (int j=0;j<friendList.size();j++){
                 friend_qunliao[j]=friendList.get(j).getName();
+                friend_id[j]=friendList.get(j).getID();
+                tag[j]=false;
             }
             final String[] items=friend_qunliao;
-            integerList = new ArrayList<>();
             AlertDialog dialog=new AlertDialog.Builder(this).setTitle("选择成员").setIcon(R.mipmap.pic1)
                     .setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            String hint="";
-                            for (int j=0;j<integerList.size();j++){
-                                hint=items[integerList.get(j)]+hint;
+                            String hint="$creategroup ";
+                            for (int j=0;j<friendList.size();j++){
+                                if(tag[j])
+                                    hint=hint+friend_id[j]+" ";
                             }
-                            Toast.makeText(MainActivity.this, "已向"+hint+"发送请求", Toast.LENGTH_SHORT).show();
+                            hint=hint+"$end";
+                            DeviceImpl.getInstance().SendMessage(ServiceIp,hint);
+                            Toast.makeText(MainActivity.this, "已发送请求", Toast.LENGTH_SHORT).show();
                         }
                     }).setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                            int a=i;
-                            if (b){
-                                integerList.add(a);
-                            }
-                            else {
-                                if(integerList.size()>0) {
-                                    integerList.remove(a);
-                                }
-                            }
+
+                                 tag[i]=b;
+
                         }
                     }).create();
             dialog.show();
@@ -194,6 +247,8 @@ public class MainActivity extends AppCompatActivity
         if(id==R.id.action_add){
             Intent intent_add=new Intent(this,addfriends.class);
             startActivity(intent_add);
+            String person_list="$list "+Id+" $end";
+            DeviceImpl.getInstance().SendMessage(ServiceIp,person_list);
             return true;
         }
 
@@ -209,6 +264,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
+            intent.putExtra("Id",Id);
             intent.setClass(MainActivity.this,FriendListView.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
@@ -243,8 +299,10 @@ public class MainActivity extends AppCompatActivity
     protected void onRestart() {
         super.onRestart();
         //注册广播
-        IntentFilter filter = new IntentFilter("test");
+        IntentFilter filter = new IntentFilter("com.app.test");
         registerReceiver(receiver, filter);
+        IntentFilter filter_acept=new IntentFilter("com.app.deal_msg");
+        registerReceiver(receiver_acept,filter_acept);
     }
 
     @Override
@@ -252,6 +310,7 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
         //取消广播
         unregisterReceiver(receiver);
+        unregisterReceiver(receiver_acept);
     }
 
     public class InnerReceiver extends BroadcastReceiver {
@@ -279,6 +338,21 @@ public class MainActivity extends AppCompatActivity
             msgList.set(0,newMsg);
         }
     }
+    public class AceptReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String qunhao=intent.getStringExtra("qunhao");
+            boolean is_qun=intent.getBooleanExtra("creategroup",false);
+            if(is_qun){
+                message newQun=new message(qunhao,R.mipmap.pic6,"","");
+                msgList.add(newQun);
+                msgAdapter.notifyDataSetChanged();
+                Toast.makeText(MainActivity.this,"创建成功", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(MainActivity.this,"创建失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private void initFriend(){
         for (int i=0 ;i<3;i++){
 
@@ -294,5 +368,4 @@ public class MainActivity extends AppCompatActivity
             friendList.add(people2);
         }
     }
-
 }

@@ -13,12 +13,18 @@ import java.util.List;
 
 public class FriendArrayAdapter extends ArrayAdapter<Friend>{
     private int resourceId;
+    public boolean Tag;
 
     public FriendArrayAdapter(Context context, int TextViewResourceId, List<Friend> objects){
         super(context,TextViewResourceId,objects);
         resourceId=TextViewResourceId;
     }
 
+    public FriendArrayAdapter(Context context,int TextViewResourceId,List<Friend> objects,boolean Tag){
+        super(context,TextViewResourceId,objects);
+        resourceId=TextViewResourceId;
+        this.Tag=Tag;
+    }
     @Override
     public View getView(int position,View converView,ViewGroup parent){
         Friend friend=getItem(position);
@@ -29,6 +35,7 @@ public class FriendArrayAdapter extends ArrayAdapter<Friend>{
             viewHolder=new ViewHolder();
             viewHolder.friendImage=(ImageView) view.findViewById(R.id.friend_image);
             viewHolder.friendName=(TextView) view.findViewById(R.id.friend_name);
+            viewHolder.checkBox=(CheckBox)view.findViewById(R.id.checkbox);
             view.setTag(viewHolder);
         }
         else {
