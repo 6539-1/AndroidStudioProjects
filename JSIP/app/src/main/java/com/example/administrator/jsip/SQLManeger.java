@@ -27,11 +27,11 @@ public class SQLManeger {
             + ");";
     private String MESSAGE_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + MESSAGE_TABLE_NAME + "("
             + "id varchar(20) NOT NULL,"
-            + "origin_id varchar(20) NOT NULL"
+            + "origin_id varchar(20) NOT NULL,"
             + "nickname varchar(20) NOT NULL,"
             + "content varchar(20) NOT NULL,"
             + "state integer NOT NULL,"
-            + "isMine integer NOT NULL,"
+            + "isMine integer NOT NULL"
             + ");";
 
     public SQLManeger(Context context){
@@ -131,13 +131,13 @@ public class SQLManeger {
     * @parms List<LocalMessage> , OriginName : String
     * */
     public void addMessage(LocalMessage localMessage,String Id){
-        sqldb.execSQL("INSERT INTO MESSAGE_"+Id +"(content,state,nickname,isMine) VALUES(?,?,?,?,?,?)",
-                        new Object[]{localMessage.getId(),localMessage.getOrigin_Id(),localMessage.getNickname(),localMessage.getContent(),localMessage.getState(),localMessage.getIsMine()});
+        sqldb.execSQL("INSERT INTO MESSAGE_"+Id +"(id,origin_id,content,state,nickname,isMine) VALUES(?,?,?,?,?,?)",
+                        new Object[]{localMessage.getId(),localMessage.getOrigin_Id(),localMessage.getContent(),localMessage.getState(),localMessage.getNickname(),localMessage.getIsMine()});
     }
     /*
-    * 从数据库中名为OriginName的表中读取消息
+    * 从数据库中名为Message_id的表中读取消息
     * */
-    public ArrayList<LocalMessage> Messagequery(String Origin_Id,String Id){
+    public ArrayList<LocalMessage> get_message_by_id(String Origin_Id,String Id){
         ArrayList<LocalMessage> MessageList=new ArrayList<LocalMessage>();
         String[] args = {Origin_Id,"0"};
         Cursor cursor=sqldb.query("MESSAGE_"+Id,null,"origin_id=? and state=?",args,null,null,null);
@@ -148,8 +148,8 @@ public class SQLManeger {
                         cursor.getString(cursor.getColumnIndex("nickname")),
                         cursor.getInt(cursor.getColumnIndex("state")),
                         cursor.getInt(cursor.getColumnIndex("isMine")),
-                        cursor.getString(cursor.getColumnIndex("Id")),
-                        cursor.getString(cursor.getColumnIndex("origin_id"))
+                        cursor.getString(cursor.getColumnIndex("origin_id")),
+                        cursor.getString(cursor.getColumnIndex("id"))
                 );
                 MessageList.add(localMessage);
             }
@@ -159,7 +159,26 @@ public class SQLManeger {
         return MessageList;
     }
 
-    //123
+    public ArrayList<LocalMessage> get_message(String Id){
+        ArrayList<LocalMessage> localMessages = new ArrayList<>();
+        String[] args = {"0"};
+        Cursor cursor=sqldb.query("MESSAGE_"+Id,null,"state=?",args,null,null,null);
+        if (cursor != null) {
+            while(cursor.moveToNext()) {
+                LocalMessage localMessage = new LocalMessage(
+                        cursor.getString(cursor.getColumnIndex("content")),
+                        cursor.getString(cursor.getColumnIndex("nickname")),
+                        cursor.getInt(cursor.getColumnIndex("state")),
+                        cursor.getInt(cursor.getColumnIndex("isMine")),
+                        cursor.getString(cursor.getColumnIndex("origin_id")),
+                        cursor.getString(cursor.getColumnIndex("id"))
+                );
+                localMessages.add(localMessage);
+            }
+        }
+        cursor.close();
+        return localMessages;
+    }
 
     /*
     * 往数据库中的Personal表添加一行信息
@@ -220,6 +239,19 @@ public class SQLManeger {
         }
         cursor.close();
         return SystemMsg;
+    }
+
+    public int getHead(String Id,String origin_id){
+        int Head=0;
+        String[] col = {"image"};
+        String[] args = {origin_id};
+        Cursor cursor = sqldb.query("friendTable_"+Id,col,"id=?",args,null,null,null);
+        if (cursor!=null){
+             Head = cursor.getInt(cursor.getColumnIndex("image"));
+
+        }
+        cursor.close();
+        return Head;
     }
 
     public void closeDatabase(){

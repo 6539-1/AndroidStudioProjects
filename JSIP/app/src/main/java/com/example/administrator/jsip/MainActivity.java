@@ -153,32 +153,48 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
     private void initMessage() {
+        SQLManeger sqlManeger = new SQLManeger(this);
+        ArrayList<Friend> friends = sqlManeger.query(Id);
+        ArrayList<Integer> g_id = sqlManeger.get_group_Id(Id);
 
-            if (rcvMsg.size()>0){
-                message msg0=new message("6539-1聊天室",R.mipmap.pic6,"","");
-                message msg1=new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
-                message msg2=new message("梁夏华",R.mipmap.pic2,"泡吧???","12:00");
-                message msg3=new message("熊昊",R.mipmap.pic3,"[动画表情]","06:34");
-                message msg4=new message("吴宏俊",R.mipmap.pic4,"好!","17:56");
-                msgList.add(msg0);
-                msgList.add(msg1);
-                msgList.add(msg2);
-                msgList.add(msg3);
-                msgList.add(msg4);
-            }
-            else {
-                message msg0=new message("6539-1聊天室",R.mipmap.pic6,"","");
-                message msg1=new message("卢冬冬",R.mipmap.pic5,"","20:11");
-                message msg2=new message("梁夏华",R.mipmap.pic2,"泡吧???","12:00");
-                message msg3=new message("熊昊",R.mipmap.pic3,"[动画表情]","06:34");
-                message msg4=new message("吴宏俊",R.mipmap.pic4,"好!","17:56");
-                msgList.add(msg0);
-                msgList.add(msg1);
-                msgList.add(msg2);
-                msgList.add(msg3);
-                msgList.add(msg4);
-            }
+        ArrayList<Integer> head = new ArrayList<>();
+        ArrayList<String> name = new ArrayList<>();
+        ArrayList<String> id = new ArrayList<>();
+        ArrayList<String> message = new ArrayList<>();
 
+        ArrayList<LocalMessage> MessageList = new ArrayList<>();
+        LocalMessage newMsg;
+        int tag=0;
+        for (int i=0;i<friends.size();i++){
+
+            newMsg=sqlManeger.get_message_by_id(Integer.toString(friends.get(i).getID()),Id).get(0);
+            if(newMsg!=null) {
+                MessageList.add(newMsg);
+                tag++;
+            }
+        }
+        for (int i=0;i<g_id.size();i++){
+            newMsg=sqlManeger.get_message_by_id(Integer.toString(g_id.get(i)),Id).get(0);
+            MessageList.add(newMsg);
+        }
+        for (int i=0;i<MessageList.size();i++){
+            id.add(MessageList.get(i).getOrigin_Id());
+        }
+        for (int i=0;i<id.size();i++){
+            if (i<=tag){
+                name.add(sqlManeger.getNickname(Id,id.get(i)));
+                head.add(sqlManeger.getHead(Id,id.get(i)));
+            }else {
+                head.add(10);
+                name.add(id.get(i));
+            }
+        }
+        for (int i=0;i<id.size();i++) {
+            if (i<tag)
+                msgList.add(new message(id.get(i),name.get(i),head.get(i),MessageList.get(i).getContent(),"1"));
+            else
+                msgList.add(new message(id.get(i),name.get(i),head.get(i),MessageList.get(i).getContent(),"2"));
+        }
 
     }
     private void refresh(){
