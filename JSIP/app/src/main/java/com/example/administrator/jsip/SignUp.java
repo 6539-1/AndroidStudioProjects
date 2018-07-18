@@ -15,6 +15,8 @@ import android.widget.Toast;
 import jsip_ua.impl.DeviceImpl;
 import com.example.administrator.jsip.R;
 
+import java.lang.reflect.Field;
+
 public class SignUp extends AppCompatActivity {
     private EditText newAccout,newNickName,newPsw;
     private Button SignUpBtn;
@@ -42,10 +44,8 @@ public class SignUp extends AppCompatActivity {
                 String Account = newAccout.getText().toString();
                 String psw = newPsw.getText().toString();
                 String nickname = newNickName.getText().toString();
-                //imageDropView DropView = findViewById(R.id.image_input);
-                //DropView.initHandler(handler);
-                //handler.handleMessage(ImageMsg);
-                //handler.handleMessage(Message );
+                ImageView img = findViewById(R.id.image_new);
+
                 String regMsg = "$reg "+ Account +" "+nickname+" "+ psw+" " +"0";
                 DeviceImpl.getInstance().SendMessage(ServiceIp,regMsg);
                 Toast.makeText(context,regMsg,Toast.LENGTH_LONG).show();
