@@ -1,13 +1,17 @@
 package com.example.administrator.jsip;
 
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,7 @@ public class MyService extends Service implements SipUADeviceListener {
     Handler mHandler;
     ArrayList<LocalMessage> rmessage = new ArrayList<>();
     SharedPreferences prefs;
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sipProfile = new SipProfile();
@@ -54,8 +59,8 @@ public class MyService extends Service implements SipUADeviceListener {
         String msg = event.content;
         System.out.println("msgmsgmsgmsg"+msg);
         setReciveMessage(msg);
-
-        SQLManeger sqlm = new SQLManeger(this);
+        deal(msg);
+        /*SQLManeger sqlm = new SQLManeger(this);
         String M[]=msg.split(" ");
         String flag = M[0];
         String nickname=null;
@@ -102,7 +107,7 @@ public class MyService extends Service implements SipUADeviceListener {
                 intent.putExtra("message_last",message);
                 sendBroadcast(intent);
 
-        sqlm.closeDatabase();
+        sqlm.closeDatabase();*/
 
     }
     public void setReciveMessage(String msg){
@@ -113,7 +118,7 @@ public class MyService extends Service implements SipUADeviceListener {
     }
 
     public void deal(String rmessage){
-        Intent intent_deal=new Intent();
+        Intent intent_deal=new Intent("com.app.deal_msg");
         String M[]=rmessage.split(" ");
         switch(M[0]){
             case "$reg":{
@@ -159,9 +164,7 @@ public class MyService extends Service implements SipUADeviceListener {
             }
             case "$add":{
                 switch(M[1]) {
-                    case "list": {
-                        break;
-                    }
+
                     case "error2": {//拒绝
                         String id = M[2];
                         intent_deal.putExtra("add",0);
@@ -173,9 +176,50 @@ public class MyService extends Service implements SipUADeviceListener {
                         break;
                     }
                     default:{
-                        String id = M[1];
+                        final String id = M[1];
                         String name = M[2];
                         intent_deal.putExtra("add",2);
+                        /*
+                        AlertDialog dialog=new AlertDialog.Builder(this);
+                        dialog.setTitle("好友请求");
+                        dialog.setMessage("用户:"+id+"申请成为你的好友");
+                        dialog.setCancelable(false);
+                        dialog.setPositiveButton("接受", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String select="$addsuccess "+id;
+                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+                            }
+                        });
+                        dialog.setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String select="$addfailed "+id;
+                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+                            }
+                        }).create();
+                        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+                        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                        dialog.show();
+                        */
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                        AlertDialog dialog=builder.setTitle("好友请求").setMessage("用户:"+id+"申请成为你的好友")
+                                .setCancelable(false).setPositiveButton("接受", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        String select="$addsuccess "+id;
+                                        DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+                                    }
+                                }).setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        String select="$addfailed "+id;
+                                        DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+                                    }
+                                }).create();
+                        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+                        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                        dialog.show();
                         //请求申请
                         break;
                     }
@@ -191,7 +235,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     content+=" "+M[i];
                 }
-                LocalMessage lmsg = new LocalMessage(Rtime,content,id,1,0);
+                //LocalMessage lmsg = new LocalMessage(Rtime,content,id,1,0);
                 break;
             }
             case "$sentall":{
@@ -205,7 +249,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     content+=" "+M[i];
                 }
-                LocalMessage lmsg = new LocalMessage(Rtime,content,q_id,1,0);
+                //LocalMessage lmsg = new LocalMessage(Rtime,content,q_id,1,0);
                 break;
             }
             case "$flush":{
@@ -226,11 +270,12 @@ public class MyService extends Service implements SipUADeviceListener {
             }
             case "$creategroup":{    // 创群成功
                 String id=M[1];
+                intent_deal.putExtra("qunhao",id);
                 intent_deal.putExtra("creategroup",true);
                 break;
             }
 
         }
-
+        sendBroadcast(intent_deal);
     }
 }

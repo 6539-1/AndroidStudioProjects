@@ -40,7 +40,6 @@ import jsip_ua.impl.DeviceImpl;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,
         SharedPreferences.OnSharedPreferenceChangeListener {
-
     private String ServiceIp = "sip:alice@192.168.43.73:5006";
     private List<message> msgList=new ArrayList<>();
     private String friendName;
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Friend> friendList=new ArrayList<>();
     SQLManeger sqlManeger;
     private InnerReceiver receiver = new InnerReceiver();
+    private AceptReceiver receiver_acept=new AceptReceiver();
     private java.util.logging.Handler MsgHandler;
     private List<Integer> integerList = new ArrayList<>();
     private String Id;
@@ -87,9 +87,9 @@ public class MainActivity extends AppCompatActivity
         initializeSipFromPreferences();
         initFriend();
         //数据库
-        sqlManeger=new SQLManeger(MainActivity.this,Id);
-        sqlManeger.add(friendList);
-        sqlManeger.closeDatabase();
+        //sqlManeger=new SQLManeger(MainActivity.this,Id);
+        //sqlManeger.add(friendList);
+        //sqlManeger.closeDatabase();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -98,30 +98,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        if(Id!=null){
-            AlertDialog.Builder dialog=new AlertDialog.Builder(MainActivity.this);
-            dialog.setTitle("好友请求");
-            dialog.setMessage("用户"+Id+"申请成为你的好友");
-            dialog.setCancelable(false);
-            dialog.setPositiveButton("接受", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                    Toast.makeText(MainActivity.this,"接受好友请求", Toast.LENGTH_SHORT).show();
-                }
-            });
-            dialog.setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                    Toast.makeText(MainActivity.this,"拒绝好友请求", Toast.LENGTH_SHORT).show();
-                }
-            });
-            dialog.show();
-        }
-
-
         initMessage();
 
 
@@ -372,6 +348,8 @@ public class MainActivity extends AppCompatActivity
         //注册广播
         IntentFilter filter = new IntentFilter("com.app.test");
         registerReceiver(receiver, filter);
+        IntentFilter filter_acept=new IntentFilter("com.app.deal_msg");
+        registerReceiver(receiver_acept,filter_acept);
     }
 
     @Override
@@ -379,6 +357,7 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
         //取消广播
         unregisterReceiver(receiver);
+        unregisterReceiver(receiver_acept);
     }
 
     public class InnerReceiver extends BroadcastReceiver {
@@ -404,6 +383,21 @@ public class MainActivity extends AppCompatActivity
             rcvMsg.add(msg);
             message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
             msgList.set(0,newMsg);
+        }
+    }
+    public class AceptReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String qunhao=intent.getStringExtra("qunhao");
+            boolean is_qun=intent.getBooleanExtra("creategroup",false);
+            if(is_qun){
+                message newQun=new message(qunhao,R.mipmap.pic6,"","");
+                msgList.add(newQun);
+                msgAdapter.notifyDataSetChanged();
+                Toast.makeText(MainActivity.this,"创建成功", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(MainActivity.this,"创建失败", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     private void initFriend(){

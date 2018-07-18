@@ -1,6 +1,10 @@
 package com.example.administrator.jsip;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,16 +33,14 @@ public class addfriends extends AppCompatActivity {
     private ArrayAdapter adapter;
     private ArrayList<String>   msearchList=new ArrayList<>();
     private String ID;
-    private int is_add;
     private ArrayList<String> userList=new ArrayList<>();
+    private InnerReceiver receiver = new InnerReceiver();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addfriends);
         getSupportActionBar().setTitle("添加好友");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        is_add=getIntent().getIntExtra("add",-1);
-        userList=getIntent().getStringArrayListExtra("userList");
         final LinearLayout addLine=(LinearLayout)findViewById(R.id.addLine);
         addLine.setVisibility(View.GONE);
         final SearchView searchView=(SearchView)findViewById(R.id.search);
@@ -104,5 +106,37 @@ public class addfriends extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         finish();
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //注册广播
+        IntentFilter filter = new IntentFilter("com.app.deal_msg");
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //取消广播
+        unregisterReceiver(receiver);
+    }
+    public class InnerReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //使用intent获取发送过来的数据
+            int is_add=intent.getIntExtra("add",-1);
+            userList=intent.getStringArrayListExtra("userList");
+            if(is_add==0){
+                Toast.makeText(addfriends.this, "用户"+ID + "残忍拒绝了你", Toast.LENGTH_SHORT).show();
+            }
+            else if(is_add==1){
+                Toast.makeText(addfriends.this, "好友："+ID + "添加成功", Toast.LENGTH_SHORT).show();
+            }
+            else if(is_add==2){
+
+            }
+        }
+
     }
    }
