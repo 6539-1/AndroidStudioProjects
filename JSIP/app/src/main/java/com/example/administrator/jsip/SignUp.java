@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import jsip_ua.impl.DeviceImpl;
 import com.example.administrator.jsip.R;
 
 public class SignUp extends AppCompatActivity {
@@ -39,8 +39,17 @@ public class SignUp extends AppCompatActivity {
         SignUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Toast.makeText(context,"注册成功",Toast.LENGTH_LONG).show();
+                String Account = newAccout.getText().toString();
+                String psw = newPsw.getText().toString();
+                String nickname = newNickName.getText().toString();
+                //imageDropView DropView = findViewById(R.id.image_input);
+                //DropView.initHandler(handler);
+                //handler.handleMessage(ImageMsg);
+                //handler.handleMessage(Message );
+                String regMsg = "$reg "+ Account +" "+nickname+" "+ psw+" " +"0";
+                DeviceImpl.getInstance().SendMessage(ServiceIp,regMsg);
+                Toast.makeText(context,regMsg,Toast.LENGTH_LONG).show();
+                //等待服务器响应
             }
         });
     }
@@ -75,5 +84,3 @@ public class SignUp extends AppCompatActivity {
         }
     }
 }
-
-

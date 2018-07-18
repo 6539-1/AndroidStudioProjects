@@ -1,7 +1,6 @@
 package com.example.administrator.jsip;
 
 public class LocalMessage {
-    private String time;
     private String nickname;
     private String content;
     private int state;
@@ -9,8 +8,7 @@ public class LocalMessage {
     private String Id;
     private String Origin_Id;
 
-    public LocalMessage(String time,String nickname,String content,int state,int isMine,String Id,String Origin_Id){
-        this.time=time;
+    public LocalMessage(String nickname,String content,int state,int isMine,String Id,String Origin_Id){
         this.nickname=nickname;
         this.content=content;
         this.state=state;
@@ -33,10 +31,6 @@ public class LocalMessage {
 
     public String getContent() {
         return content;
-    }
-
-    public String getTime() {
-        return time;
     }
 
     public String getId() {

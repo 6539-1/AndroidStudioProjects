@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity
         customHeaders.put("customHeader2","customValue2");
         onRestart();
         DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
+
+
         //change
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -151,6 +153,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run() {
 
+                        //message msg5=new message("王宇",R.mipmap.pic1,"我是泡吧王！","13:13");
                         refresh();
                         msgAdapter.notifyDataSetChanged();
                         Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
@@ -394,29 +397,6 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this,"创建成功", Toast.LENGTH_SHORT).show();
             }else {
                 Toast.makeText(MainActivity.this,"创建失败", Toast.LENGTH_SHORT).show();
-            }
-
-            int is_add=intent.getIntExtra("add",-1);
-            if(is_add==2){
-                final String id=intent.getStringExtra("id");
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                AlertDialog dialog=builder.setTitle("好友请求").setMessage("用户:"+id+"申请成为你的好友")
-                        .setCancelable(false).setPositiveButton("接受", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String select="$addsuccess "+id;
-                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
-
-                            }
-                        }).setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String select="$addfailed "+id;
-                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
-
-                            }
-                        }).create();
-                dialog.show();
             }
         }
     }
