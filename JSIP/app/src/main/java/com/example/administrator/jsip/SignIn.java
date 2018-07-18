@@ -28,12 +28,12 @@ public class SignIn extends AppCompatActivity{
     private String ServiceIp = "sip:alice@10.206.17.104:5006";
     private ArrayList<String> AccountList;
     private Button signInBtn;
+    private SipProfile sipProfile;
     private AcDropView AccountView;
     private EditText PasswordView;
     private CheckBox is_show_psw;
     private TextView signUpBtn;
     private SQLManeger signInSQL;
-    private SipProfile sipProfile;
     private SharedPreferences prefs;
     private ArrayList<Personal> personals;
     private String Id;

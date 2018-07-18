@@ -136,6 +136,25 @@ public class addfriends extends AppCompatActivity {
                 Toast.makeText(addfriends.this, "好友："+ID + "添加成功", Toast.LENGTH_SHORT).show();
             }
             else if(is_add==2){
+                final String id=intent.getStringExtra("id");
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog dialog=builder.setTitle("好友请求").setMessage("用户:"+id+"申请成为你的好友")
+                        .setCancelable(false).setPositiveButton("接受", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String select="$addsuccess "+id;
+                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+
+                            }
+                        }).setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String select="$addfailed "+id;
+                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+
+                            }
+                        }).create();
+                dialog.show();
 
             }
         }

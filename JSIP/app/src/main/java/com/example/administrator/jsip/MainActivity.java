@@ -37,11 +37,15 @@ import java.util.List;
 import jsip_ua.SipProfile;
 import jsip_ua.impl.DeviceImpl;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
-
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener ,
+        SharedPreferences.OnSharedPreferenceChangeListener {
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
+    private SharedPreferences prefs;
+    private SipProfile sipProfile;
     private messageAdapter msgAdapter = null;
     private long lastBack = 0;
     private ArrayList<Friend> friendList=new ArrayList<>();
@@ -51,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private java.util.logging.Handler MsgHandler;
     private List<Integer> integerList = new ArrayList<>();
     private String Id;
-    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,11 +70,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final Toolbar toolbar;toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //inidl
-
+        sipProfile = new SipProfile();
+        HashMap<String, String> customHeaders = new HashMap<>();
+        customHeaders.put("customHeader1","customValue1");
+        customHeaders.put("customHeader2","customValue2");
         onRestart();
+        DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
+        //change
 
-        initFriend();
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // register preference change listener
+        prefs.registerOnSharedPreferenceChangeListener(this);
+        initializeSipFromPreferences();
         //数据库
+        //sqlManeger=new SQLManeger(MainActivity.this,Id);
+        //sqlManeger.add(friendList);
+        //sqlManeger.closeDatabase();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -80,6 +95,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        sqlManeger=new SQLManeger(this);
+        friendList=sqlManeger.query(Id);
+        sqlManeger.closeDatabase();
+
         initMessage();
 
 
@@ -95,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 int sentAll=position;
                 intent.putExtra("sentAll",sentAll);
+
                 intent.putExtra("friendname",friendName);
                 intent.putExtra("Id",Id);
                 //intent.putStringArrayListExtra("messageList",rcvMsg);
@@ -134,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void run() {
 
-                        //message msg5=new message("王宇",R.mipmap.pic1,"我是泡吧王！","13:13");
                         refresh();
                         msgAdapter.notifyDataSetChanged();
                         Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
@@ -254,6 +273,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+                                          String key) {
+        if (key.equals("pref_proxy_ip")) {
+            sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "10.28.144.154")));
+        } else if (key.equals("pref_proxy_port")) {
+            sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
+                    "pref_proxy_port", "5060")));
+        }  else if (key.equals("pref_sip_user")) {
+            sipProfile.setSipUserName(prefs.getString("pref_sip_user",
+                    "alice"));
+        } else if (key.equals("pref_sip_password")) {
+            sipProfile.setSipPassword(prefs.getString("pref_sip_password",
+                    "1234"));
+        }
+
+    }
+
+    @SuppressWarnings("static-access")
+    private void initializeSipFromPreferences() {
+        sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "127.0.0.1")));
+        sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
+                "pref_proxy_port", "5050")));
+        sipProfile.setSipUserName(prefs.getString("pref_sip_user", "alice"));
+        sipProfile.setSipPassword(prefs
+                .getString("pref_sip_password", "1234"));
+
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -264,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
-            intent.putExtra("Id",Id);
+            intent.putExtra("Id",1);
             intent.setClass(MainActivity.this,FriendListView.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
@@ -349,21 +396,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 msgAdapter.notifyDataSetChanged();
                 Toast.makeText(MainActivity.this,"创建成功", Toast.LENGTH_SHORT).show();
             }
-        }
-    }
-    private void initFriend(){
-        for (int i=0 ;i<3;i++){
 
-            Friend xiahua=new Friend(100+i*10,"xiahua",R.mipmap.pic1,1);
-            friendList.add(xiahua);
-            Friend xionghao=new Friend(124+i*10,"xionghao",R.mipmap.pic2,2);
-            friendList.add(xionghao);
-            Friend hongjun=new Friend(125+i*10,"hongjun",R.mipmap.pic3,1);
-            friendList.add(hongjun);
-            Friend people1=new Friend(126+i*10,"people1",R.mipmap.pic4,0);
-            friendList.add(people1);
-            Friend people2=new Friend(127+i*10,"people2",R.mipmap.pic5,2);
-            friendList.add(people2);
+            int is_add=intent.getIntExtra("add",-1);
+            if(is_add==2){
+                final String id=intent.getStringExtra("id");
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog dialog=builder.setTitle("好友请求").setMessage("用户:"+id+"申请成为你的好友")
+                        .setCancelable(false).setPositiveButton("接受", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String select="$addsuccess "+id;
+                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+
+                            }
+                        }).setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String select="$addfailed "+id;
+                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+
+                            }
+                        }).create();
+                dialog.show();
+            }
         }
     }
+
 }

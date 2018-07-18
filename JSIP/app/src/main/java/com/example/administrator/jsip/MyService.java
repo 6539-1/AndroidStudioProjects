@@ -108,12 +108,10 @@ public class MyService extends Service implements SipUADeviceListener {
                 break;
 
             }
-            case "add":{
+            case "$add":{
                 switch(M[1]) {
-                    case "none": {//查无此人
-                        break;
-                    }
-                    case "error": {//拒绝
+
+                    case "error2": {//拒绝
                         String id = M[2];
                         intent_deal.putExtra("add",0);
                         String msg = "用户"+id+"拒绝你的好友申请";
@@ -134,11 +132,13 @@ public class MyService extends Service implements SipUADeviceListener {
                     default:{
                         String id = M[1];
                         String name = M[2];
+                        intent_deal.putExtra("id",id);
                         intent_deal.putExtra("add",2);
                         String msg = "用户"+name+"("+id+")"+"申请加为好友";//请求申请
                         SQLManeger sqlManeger = new SQLManeger(this);
                         sqlManeger.addSystem(msg,Id);
                         sqlManeger.closeDatabase();
+                        //请求申请
                         break;
                     }
                 }
