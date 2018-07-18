@@ -392,8 +392,6 @@ public class MainActivity extends AppCompatActivity
                 msgList.add(newQun);
                 msgAdapter.notifyDataSetChanged();
                 Toast.makeText(MainActivity.this,"创建成功", Toast.LENGTH_SHORT).show();
-            }else {
-                Toast.makeText(MainActivity.this,"创建失败", Toast.LENGTH_SHORT).show();
             }
 
             int is_add=intent.getIntExtra("add",-1);

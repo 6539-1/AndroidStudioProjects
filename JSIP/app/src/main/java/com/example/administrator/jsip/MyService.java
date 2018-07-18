@@ -1,17 +1,11 @@
 package com.example.administrator.jsip;
 
 import android.app.Service;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
-import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +22,8 @@ public class MyService extends Service implements SipUADeviceListener {
     Handler mHandler;
     ArrayList<LocalMessage> rmessage = new ArrayList<>();
     SharedPreferences prefs;
-    private String ServiceIp = "sip:alice@192.168.43.73:5006";
+    private String ServiceIp = "sip:alice@10.206.17.104:5006";
+    //private String ServiceIp = "sip:alice@192.168.43.73:5006";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sipProfile = new SipProfile();
@@ -58,14 +53,7 @@ public class MyService extends Service implements SipUADeviceListener {
     @Override
     public void onSipUAMessageArrived(SipEvent event) {
         String msg = event.content;
-        setReciveMessage(msg);
         deal(msg);
-    }
-    public void setReciveMessage(String msg){
-        this.reciveMessage = msg;
-    }
-    public String getReciveMessage(){
-        return reciveMessage;
     }
 
     public void deal(String rmessage){
@@ -75,6 +63,9 @@ public class MyService extends Service implements SipUADeviceListener {
             case "$reg":{
                 if (M[1].equals("success")) {
                     this.Id=M[2];
+                    SQLManeger sqlManeger = new SQLManeger(this);
+                    sqlManeger.CreateTable(Id);
+                    sqlManeger.closeDatabase();
                     intent_deal.putExtra("reg", true);
                 }
                 else {
@@ -94,8 +85,11 @@ public class MyService extends Service implements SipUADeviceListener {
                     case "success":{//登录成功
                         String name=M[2];
                         int head=Integer.valueOf(M[3]).intValue();
-                        intent_deal.putExtra("log",0);
                         this.Id=M[4];
+                        SQLManeger sqlManeger = new SQLManeger(this);
+                        sqlManeger.CreateTable(Id);
+                        sqlManeger.closeDatabase();
+                        intent_deal.putExtra("log",0);
                     }
                         break;
                     default:
@@ -182,7 +176,7 @@ public class MyService extends Service implements SipUADeviceListener {
             }
             case "$flush":{
                 List<Friend> friendList= new ArrayList<>();
-                int i=1;
+                int i;
                 for(i=1;;i=i+4){
                     if(M[i].equals("$group"))
                         break;
@@ -194,8 +188,8 @@ public class MyService extends Service implements SipUADeviceListener {
                     );
                     friendList.add(friend);
                 }
-                for(i=1;;i++){
-                    if(M[i].equals("$end"))
+                for(;;i++){
+                    if(M[i+1].equals("$end"))
                         break;
                     Friend friend=new Friend(
                             Integer.valueOf(M[i]).intValue(),

@@ -42,7 +42,8 @@ public class FriendArrayAdapter extends ArrayAdapter<Friend>{
             view=converView;
             viewHolder=(ViewHolder) view.getTag();
         }
-        viewHolder.friendImage.setImageResource(friend.getImageId());
+        if(friend.getImageId()==1)
+        viewHolder.friendImage.setImageResource(R.mipmap.img1);
         viewHolder.friendName.setText(friend.getName());
         return view;
     }
