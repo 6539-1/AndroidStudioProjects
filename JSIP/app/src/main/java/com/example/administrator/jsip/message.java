@@ -7,13 +7,22 @@ public class message {
     private int imgId;
     private  String msg_last;
     private  String time;
-    private  String addr;
+    private  String id;
     public message(String id_name,int imgId,String msg_last,String time){
         this.id_name=id_name;
         this.imgId=imgId;
         this.msg_last=msg_last;
         this.time=time;
     }
+    public message(String id,String id_name,int imgId,String msg_last,String time){
+        this.id=id;
+        this.id_name=id_name;
+        this.imgId=imgId;
+        this.msg_last=msg_last;
+        this.time=time;
+    }
+
+
     public String getId_name(){
         return id_name;
     }
@@ -25,5 +34,5 @@ public class message {
     public String getTime() {
         return time;
     }
-    public String getAddr(){return addr;}
+    public String getId(){return id;}
 }

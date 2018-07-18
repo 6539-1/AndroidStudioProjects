@@ -39,6 +39,7 @@ public class addfriends extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addfriends);
+        onRestart();
         getSupportActionBar().setTitle("添加好友");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final LinearLayout addLine=(LinearLayout)findViewById(R.id.addLine);

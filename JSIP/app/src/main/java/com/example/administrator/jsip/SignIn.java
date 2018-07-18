@@ -37,12 +37,10 @@ public class SignIn extends AppCompatActivity implements SharedPreferences.OnSha
     private CheckBox is_show_psw;
     private TextView signUpBtn;
     private SQLManeger signInSQL;
-    private SipProfile sipProfile;
     private SharedPreferences prefs;
     private ArrayList<Personal> personals;
     private String Id;
     private SignIn.InnerReceiver receiver = new SignIn.InnerReceiver();
-    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         //启动服务
