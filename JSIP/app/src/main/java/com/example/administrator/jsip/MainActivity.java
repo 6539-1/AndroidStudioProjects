@@ -88,12 +88,10 @@ public class MainActivity extends AppCompatActivity
                 message msg=msgList.get(position);
                 friendName = msg.getId_name();
                 Intent intent=new Intent(MainActivity.this,chat_main.class);
-
-                int sentAll=position;
-                intent.putExtra("sentAll",sentAll);
-
+                intent.putExtra("user",msg.getId());
                 intent.putExtra("friendname",friendName);
                 intent.putExtra("Id",Id);
+
                 //intent.putStringArrayListExtra("messageList",rcvMsg);
                 intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);

@@ -156,6 +156,7 @@ public class MyService extends Service implements SipUADeviceListener {
                 LocalMessage lmsg = new LocalMessage(sqlManeger.getNickname(Id,id),content,0,0,Id,id);
                 sqlManeger.addMessage(lmsg,Id);
                 sqlManeger.closeDatabase();
+                intent_deal.putExtra("sent",id);
                 break;
             }
             case "$sentall":{
@@ -172,6 +173,7 @@ public class MyService extends Service implements SipUADeviceListener {
                 LocalMessage lmsg = new LocalMessage(sqlManeger.getNickname(Id,id),content,0,0,g_id,Id);
                 sqlManeger.addMessage(lmsg,Id);
                 sqlManeger.closeDatabase();
+                intent_deal.putExtra("sent",g_id);
                 break;
             }
             case "$flush":{
