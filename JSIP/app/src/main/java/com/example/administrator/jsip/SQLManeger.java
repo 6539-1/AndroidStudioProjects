@@ -15,24 +15,9 @@ public class SQLManeger {
     private String MESSAGE_TABLE_NAME;
     private String SYSTEM_TABLE_NAME;
 
-    private String SYSTEM_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS" + SYSTEM_TABLE_NAME + "("
-            + "content varchar(20) NOT NULL,"
-            + "state integer NOT NULL"
-            + ");";
-    private String FRIEND_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + FRIEND_TABLE_NAME + "("
-            + "id integer NOT NULL,"
-            + "name varchar(20) NOT NULL,"
-            + "image intger NOT NULL,"
-            + "state integer NOT NULL"
-            + ");";
-    private String MESSAGE_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + MESSAGE_TABLE_NAME + "("
-            + "id varchar(20) NOT NULL,"
-            + "origin_id varchar(20) NOT NULL,"
-            + "nickname varchar(20) NOT NULL,"
-            + "content varchar(20) NOT NULL,"
-            + "state integer NOT NULL,"
-            + "isMine integer NOT NULL"
-            + ");";
+    private String SYSTEM_CREATE_TABLE_SQL;
+    private String FRIEND_CREATE_TABLE_SQL;
+    private String MESSAGE_CREATE_TABLE_SQL;
 
     public SQLManeger(Context context){
         sqlHelper=new SQLHelper(context,1);
@@ -43,11 +28,28 @@ public class SQLManeger {
         MESSAGE_TABLE_NAME = "MESSAGE_" + Id;
         FRIEND_TABLE_NAME = "FRIENDTABLE_" + Id;
         SYSTEM_TABLE_NAME = "SYSTEMTABLE_" + Id;
+        SYSTEM_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + SYSTEM_TABLE_NAME + "("
+                + "content varchar(20) NOT NULL,"
+                + "state integer NOT NULL"
+                + ");";
+        FRIEND_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + FRIEND_TABLE_NAME + "("
+                + "id integer NOT NULL,"
+                + "name varchar(20) NOT NULL,"
+                + "image intger NOT NULL,"
+                + "state integer NOT NULL"
+                + ");";
+        MESSAGE_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + MESSAGE_TABLE_NAME + "("
+                + "id varchar(20) NOT NULL,"
+                + "origin_id varchar(20) NOT NULL,"
+                + "nickname varchar(20) NOT NULL,"
+                + "content varchar(20) NOT NULL,"
+                + "state integer NOT NULL,"
+                + "isMine integer NOT NULL"
+                + ");";
         sqldb.execSQL(FRIEND_CREATE_TABLE_SQL);
         sqldb.execSQL(MESSAGE_CREATE_TABLE_SQL);
         sqldb.execSQL(SYSTEM_CREATE_TABLE_SQL);
     }
-
     /*
     * 往表Friendtable中添加数据
     * @parms List<Friend>
@@ -63,7 +65,7 @@ public class SQLManeger {
                 values.put("name",friend.getName());
                 values.put("image",friend.getImageId());
                 values.put("state",friend.getState());
-                sqldb.insert("friendtable",null,values);
+                sqldb.insert("friendtable_"+Id,null,values);
                 values.clear();
                 //sqldb.execSQL("INSERT INTO friendtable(id,name,image,state) VALUES(?,?,?,?)",
                 //new Object[]{friend.getID(),friend.getName(),friend.getImageId(),friend.getState()});

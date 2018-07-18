@@ -39,6 +39,7 @@ public class addfriends extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addfriends);
+        onRestart();
         getSupportActionBar().setTitle("添加好友");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final LinearLayout addLine=(LinearLayout)findViewById(R.id.addLine);
@@ -49,6 +50,7 @@ public class addfriends extends AppCompatActivity {
         adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userList);
         listView_add.setAdapter(adapter);
         listView_add.setTextFilterEnabled(true);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -134,6 +136,25 @@ public class addfriends extends AppCompatActivity {
                 Toast.makeText(addfriends.this, "好友："+ID + "添加成功", Toast.LENGTH_SHORT).show();
             }
             else if(is_add==2){
+                final String id=intent.getStringExtra("id");
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog dialog=builder.setTitle("好友请求").setMessage("用户:"+id+"申请成为你的好友")
+                        .setCancelable(false).setPositiveButton("接受", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String select="$addsuccess "+id;
+                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+
+                            }
+                        }).setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String select="$addfailed "+id;
+                                DeviceImpl.getInstance().SendMessage(ServiceIp,select);
+
+                            }
+                        }).create();
+                dialog.show();
 
             }
         }
