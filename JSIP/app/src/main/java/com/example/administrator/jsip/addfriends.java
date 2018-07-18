@@ -70,26 +70,7 @@ public class addfriends extends AppCompatActivity {
                     SearchView.SearchAutoComplete textView = ( SearchView.SearchAutoComplete)
                             searchView.findViewById(R.id.search_src_text);
                     textView.setText(Id);
-                    AlertDialog.Builder dialog=new AlertDialog.Builder(addfriends.this);
-                    dialog.setTitle("好友请求");
-                    dialog.setMessage("用户"+Id+"申请成为你的好友");
-                    dialog.setCancelable(false);
-                    dialog.setPositiveButton("接受", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                            Toast.makeText(addfriends.this,"接受好友请求", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    dialog.setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                          Toast.makeText(addfriends.this,"拒绝好友请求", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    dialog.show();
-                    //Toast.makeText(addfriends.this,ID+"添加成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(addfriends.this,ID+"添加成功", Toast.LENGTH_SHORT).show();
                 }
             });
 

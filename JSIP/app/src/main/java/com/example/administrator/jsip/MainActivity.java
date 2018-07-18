@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     private InnerReceiver receiver = new InnerReceiver();
     private java.util.logging.Handler MsgHandler;
     private List<Integer> integerList = new ArrayList<>();
+    private String Id=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +96,30 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if(Id!=null){
+            AlertDialog.Builder dialog=new AlertDialog.Builder(MainActivity.this);
+            dialog.setTitle("好友请求");
+            dialog.setMessage("用户"+Id+"申请成为你的好友");
+            dialog.setCancelable(false);
+            dialog.setPositiveButton("接受", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    Toast.makeText(MainActivity.this,"接受好友请求", Toast.LENGTH_SHORT).show();
+                }
+            });
+            dialog.setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    Toast.makeText(MainActivity.this,"拒绝好友请求", Toast.LENGTH_SHORT).show();
+                }
+            });
+            dialog.show();
+        }
+
+
         initMessage();
 
 
@@ -225,34 +250,30 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            String[] friend_qunliao=null;
+            String[] friend_qunliao=new String[friendList.size()];
+            final boolean[] tag=new boolean[friendList.size()];
             for (int j=0;j<friendList.size();j++){
                 friend_qunliao[j]=friendList.get(j).getName();
+                tag[j]=false;
             }
             final String[] items=friend_qunliao;
-            integerList = new ArrayList<>();
             AlertDialog dialog=new AlertDialog.Builder(this).setTitle("选择成员").setIcon(R.mipmap.pic1)
                     .setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             String hint="";
-                            for (int j=0;j<integerList.size();j++){
-                                hint=items[integerList.get(j)]+hint;
+                            for (int j=0;j<friendList.size();j++){
+                                if(tag[j])
+                                hint=items[j]+hint;
                             }
                             Toast.makeText(MainActivity.this, "已向"+hint+"发送请求", Toast.LENGTH_SHORT).show();
                         }
                     }).setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                            int a=i;
-                            if (b){
-                                integerList.add(a);
-                            }
-                            else {
-                                if(integerList.size()>0) {
-                                    integerList.remove(a);
-                                }
-                            }
+
+                                 tag[i]=b;
+
                         }
                     }).create();
             dialog.show();

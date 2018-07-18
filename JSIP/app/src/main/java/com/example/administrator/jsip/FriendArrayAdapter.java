@@ -36,9 +36,6 @@ public class FriendArrayAdapter extends ArrayAdapter<Friend>{
             viewHolder.friendImage=(ImageView) view.findViewById(R.id.friend_image);
             viewHolder.friendName=(TextView) view.findViewById(R.id.friend_name);
             viewHolder.checkBox=(CheckBox)view.findViewById(R.id.checkbox);
-            if (Tag) {
-                viewHolder.checkBox.setVisibility(View.GONE);
-            }
             view.setTag(viewHolder);
         }
         else {
