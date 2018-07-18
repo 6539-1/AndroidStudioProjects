@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
@@ -53,11 +54,11 @@ public class MainActivity extends AppCompatActivity
     private InnerReceiver receiver = new InnerReceiver();
     private java.util.logging.Handler MsgHandler;
     private List<Integer> integerList = new ArrayList<>();
-    private String Id=null;
+    private String Id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startService(new Intent(this,MyService.class));
+        this.Id = getIntent().getStringExtra("Id");
         setContentView(R.layout.activity_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads().detectDiskWrites().detectNetwork()
@@ -85,7 +86,8 @@ public class MainActivity extends AppCompatActivity
         prefs.registerOnSharedPreferenceChangeListener(this);
         initializeSipFromPreferences();
         initFriend();
-        sqlManeger=new SQLManeger(MainActivity.this);
+        //数据库
+        sqlManeger=new SQLManeger(MainActivity.this,Id);
         sqlManeger.add(friendList);
         sqlManeger.closeDatabase();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -137,6 +139,8 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra("sentAll",sentAll);
 
                 intent.putExtra("friendname",friendName);
+                intent.putExtra("Id",Id);
+                //intent.putStringArrayListExtra("messageList",rcvMsg);
                 intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
 
@@ -251,9 +255,11 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             String[] friend_qunliao=new String[friendList.size()];
+            final int[] friend_id=new int[friendList.size()];
             final boolean[] tag=new boolean[friendList.size()];
             for (int j=0;j<friendList.size();j++){
                 friend_qunliao[j]=friendList.get(j).getName();
+                friend_id[j]=friendList.get(j).getID();
                 tag[j]=false;
             }
             final String[] items=friend_qunliao;
@@ -261,12 +267,14 @@ public class MainActivity extends AppCompatActivity
                     .setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            String hint="";
+                            String hint="$creategroup ";
                             for (int j=0;j<friendList.size();j++){
                                 if(tag[j])
-                                hint=items[j]+hint;
+                                    hint=hint+friend_id[j]+" ";
                             }
-                            Toast.makeText(MainActivity.this, "已向"+hint+"发送请求", Toast.LENGTH_SHORT).show();
+                            hint=hint+"$end";
+                            DeviceImpl.getInstance().SendMessage(ServiceIp,hint);
+                            Toast.makeText(MainActivity.this, "已发送请求", Toast.LENGTH_SHORT).show();
                         }
                     }).setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
                         @Override
@@ -282,6 +290,8 @@ public class MainActivity extends AppCompatActivity
         if(id==R.id.action_add){
             Intent intent_add=new Intent(this,addfriends.class);
             startActivity(intent_add);
+            String person_list="$list "+Id+" $end";
+            DeviceImpl.getInstance().SendMessage(ServiceIp,person_list);
             return true;
         }
 
@@ -325,7 +335,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
-            intent.putExtra("qunliao",1);
+            intent.putExtra("Id",1);
             intent.setClass(MainActivity.this,FriendListView.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
@@ -360,7 +370,7 @@ public class MainActivity extends AppCompatActivity
     protected void onRestart() {
         super.onRestart();
         //注册广播
-        IntentFilter filter = new IntentFilter("test");
+        IntentFilter filter = new IntentFilter("com.app.test");
         registerReceiver(receiver, filter);
     }
 

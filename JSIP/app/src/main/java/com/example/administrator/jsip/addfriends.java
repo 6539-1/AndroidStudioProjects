@@ -18,26 +18,33 @@ import android.widget.Toast;
 import android.support.v4.app.FragmentManager;
 import java.util.ArrayList;
 
+import jsip_ua.impl.DeviceImpl;
+
 public class addfriends extends AppCompatActivity {
 
     //private ArrayList<Friend> friendList2=new ArrayList<>();
     //SQLManeger sqlManeger;
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     private String[] mStrs={"123456","654321","987654","12345","65432","1345","65231","97654"};
     private ArrayAdapter adapter;
     private ArrayList<String>   msearchList=new ArrayList<>();
     private String ID;
+    private int is_add;
+    private ArrayList<String> userList=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addfriends);
         getSupportActionBar().setTitle("添加好友");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        is_add=getIntent().getIntExtra("add",-1);
+        userList=getIntent().getStringArrayListExtra("userList");
         final LinearLayout addLine=(LinearLayout)findViewById(R.id.addLine);
         addLine.setVisibility(View.GONE);
         final SearchView searchView=(SearchView)findViewById(R.id.search);
         searchView.setIconifiedByDefault(false);
         final ListView listView_add=(ListView)findViewById(R.id.list_add);
-        adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mStrs);
+        adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userList);
         listView_add.setAdapter(adapter);
         listView_add.setTextFilterEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -70,7 +77,15 @@ public class addfriends extends AppCompatActivity {
                     SearchView.SearchAutoComplete textView = ( SearchView.SearchAutoComplete)
                             searchView.findViewById(R.id.search_src_text);
                     textView.setText(Id);
-                    Toast.makeText(addfriends.this,ID+"添加成功", Toast.LENGTH_SHORT).show();
+                    String add="$add "+ID;
+                    DeviceImpl.getInstance().SendMessage(ServiceIp,add);
+                    Toast.makeText(addfriends.this, "好友申请已发送", Toast.LENGTH_SHORT).show();
+                    /*if(is_add==1) {
+                        Toast.makeText(addfriends.this, "好友："+ID + "添加成功", Toast.LENGTH_SHORT).show();
+                    }
+                    else if(is_add==0){
+                        Toast.makeText(addfriends.this, "用户"+ID + "残忍拒绝了你", Toast.LENGTH_SHORT).show();
+                    }*/
                 }
             });
 
@@ -78,10 +93,10 @@ public class addfriends extends AppCompatActivity {
 
     public void searchItem(String s) {
         msearchList=new ArrayList<>();
-        for (int i=0;i<mStrs.length;i++){
-            int index=mStrs[i].indexOf(s);
+        for (int i=0;i<userList.size();i++){
+            int index=userList.get(i).indexOf(s);
             if (index==0) {
-                msearchList.add(mStrs[i]);
+                msearchList.add(userList.get(i));
             }
         }
     }

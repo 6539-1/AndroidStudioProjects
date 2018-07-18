@@ -15,9 +15,12 @@ import java.util.List;
 
 public class FriendListView extends AppCompatActivity {
     private ArrayList<Friend> friendList2=new ArrayList<>();
+    private String Id;
     public int QL;
     SQLManeger sqlManeger;
     FriendArrayAdapter adapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +32,7 @@ public class FriendListView extends AppCompatActivity {
         }
         getSupportActionBar().setTitle("好友列表");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        sqlManeger=new SQLManeger(FriendListView.this);
+        sqlManeger=new SQLManeger(FriendListView.this,Id);
         friendList2=sqlManeger.query();
         sqlManeger.closeDatabase();
         FriendArrayAdapter adapter = new FriendArrayAdapter(FriendListView.this, R.layout.friend_item, friendList2,Tag);

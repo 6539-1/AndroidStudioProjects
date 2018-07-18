@@ -33,6 +33,7 @@ public class SignUp extends AppCompatActivity {
         SignUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Toast.makeText(context,"注册成功",Toast.LENGTH_LONG).show();
             }
         });

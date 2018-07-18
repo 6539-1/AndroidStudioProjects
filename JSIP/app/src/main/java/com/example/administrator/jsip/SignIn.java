@@ -22,11 +22,16 @@ public class SignIn extends AppCompatActivity {
     private EditText PasswordView;
     private CheckBox is_show_psw;
     private TextView signUpBtn;
+    private SQLManeger signInSQL;
+    private ArrayList<Personal> personals;
+    private String Id;
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        String i = Integer.toString(R.layout.sign_in);
-
-        Log.d("TEST ID",i);
+        //启动服务
+        startService(new Intent(this,MyService.class));
+        signInSQL = new SQLManeger(this,Id);
+        personals=signInSQL.Personalquery();
+        //生成界面
         setContentView(R.layout.sign_in);
         AccountView = findViewById(R.id.dropview);
         setAccountList();
@@ -37,7 +42,9 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String psw = PasswordView.getText().toString();
+
                 Intent intent = new Intent(SignIn.this,MainActivity.class);
+                intent.putExtra("Id",Id);
                 startActivity(intent);
             }
         });
@@ -60,13 +67,15 @@ public class SignIn extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
     }
 
     public void setAccountList() {
         AccountList=new ArrayList<String>();
-        AccountList.add("13154658");
-        AccountList.add("54952655");
-        AccountList.add("79514665");
-
+        if(personals!=null) {
+            for (int i = 0; i < personals.size(); i++) {
+                AccountList.add(Integer.toString(personals.get(i).getId()));
+            }
+        }
     }
 }
