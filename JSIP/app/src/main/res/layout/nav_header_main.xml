@@ -13,7 +13,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <com.example.administrator.jsip.RoundImageView
-        android:id="@+id/imageView"
+        android:id="@+id/image_ID"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:contentDescription="@string/nav_header_desc"
@@ -24,6 +24,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/nickName"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/nav_header_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />

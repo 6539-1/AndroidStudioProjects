@@ -2,6 +2,7 @@ package com.example.administrator.jsip;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -13,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,11 +25,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import jsip_ua.SipProfile;
@@ -36,6 +40,7 @@ import jsip_ua.impl.DeviceImpl;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,
         SharedPreferences.OnSharedPreferenceChangeListener {
+
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     SQLManeger sqlManeger;
     private InnerReceiver receiver = new InnerReceiver();
     private java.util.logging.Handler MsgHandler;
+    private List<Integer> integerList = new ArrayList<>();
     private String Id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +101,7 @@ public class MainActivity extends AppCompatActivity
 
 
         msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
-        final messageAdapter msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
-        final ListView messageList=(ListView)findViewById(R.id.message_list);
+        ListView messageList=(ListView)findViewById(R.id.message_list);
         messageList.setAdapter(msgAdapter);
         messageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -110,6 +115,7 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra("friendname",friendName);
                 intent.putExtra("Id",Id);
                 //intent.putStringArrayListExtra("messageList",rcvMsg);
+                intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
 
             }
@@ -222,11 +228,42 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent=new Intent(MainActivity.this,FriendListView.class);
-            startActivity(intent);
+            String[] friend_qunliao=null;
+            for (int j=0;j<friendList.size();j++){
+                friend_qunliao[j]=friendList.get(j).getName();
+            }
+            final String[] items=friend_qunliao;
+            integerList = new ArrayList<>();
+            AlertDialog dialog=new AlertDialog.Builder(this).setTitle("选择成员").setIcon(R.mipmap.pic1)
+                    .setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String hint="";
+                            for (int j=0;j<integerList.size();j++){
+                                hint=items[integerList.get(j)]+hint;
+                            }
+                            Toast.makeText(MainActivity.this, "已向"+hint+"发送请求", Toast.LENGTH_SHORT).show();
+                        }
+                    }).setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                            int a=i;
+                            if (b){
+                                integerList.add(a);
+                            }
+                            else {
+                                if(integerList.size()>0) {
+                                    integerList.remove(a);
+                                }
+                            }
+                        }
+                    }).create();
+            dialog.show();
             return true;
         }
         if(id==R.id.action_add){
+            Intent intent_add=new Intent(this,addfriends.class);
+            startActivity(intent_add);
             return true;
         }
 
@@ -278,6 +315,17 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
+            View view=this.getLayoutInflater().inflate(R.layout.edit_msg,null);
+            AlertDialog dialog_edit=new AlertDialog.Builder(this).setView(view)
+                    .setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            EditText edit_nickName=(EditText)findViewById(R.id.edit_username);
+                            EditText edit_ID=(EditText)findViewById(R.id.edit_ID);
+
+                        }
+                    }).create();
+            dialog_edit.show();
 
         } else if (id == R.id.nav_share) {
 
@@ -313,7 +361,16 @@ public class MainActivity extends AppCompatActivity
 
             String msg = intent.getStringExtra("message");
             System.out.println("aaaaaaaaa:"+msg);
-            if (msg.equals("DATABASE_CHANGED"));
+            if (msg.equals("DATABASE_CHANGED")){
+                switch (intent.getStringExtra("nickname")){
+                    case "p1992":
+                        String msg_last=intent.getStringExtra("message_last");
+                        message newMsg=new message("卢冬冬",R.mipmap.pic5,msg_last,"");
+                        msgList.set(1,newMsg);
+                        msgAdapter.notifyDataSetChanged();
+                        break;
+                }
+            };
 
             //pushMessage(msg);
             rcvMsg.add(msg);
