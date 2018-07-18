@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private java.util.logging.Handler MsgHandler;
     private List<Integer> integerList = new ArrayList<>();
     private String Id;
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

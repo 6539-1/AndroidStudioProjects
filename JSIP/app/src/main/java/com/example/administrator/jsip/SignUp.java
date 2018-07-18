@@ -46,7 +46,7 @@ public class SignUp extends AppCompatActivity {
                 //DropView.initHandler(handler);
                 //handler.handleMessage(ImageMsg);
                 //handler.handleMessage(Message );
-                String regMsg = "$reg "+ Account +" "+nickname+" "+ psw+" " +ImageId;
+                String regMsg = "$reg "+ Account +" "+nickname+" "+ psw+" " +"0";
                 DeviceImpl.getInstance().SendMessage(ServiceIp,regMsg);
                 Toast.makeText(context,regMsg,Toast.LENGTH_LONG).show();
                 //等待服务器响应

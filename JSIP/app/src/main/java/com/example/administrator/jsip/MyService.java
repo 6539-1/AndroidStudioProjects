@@ -73,16 +73,13 @@ public class MyService extends Service implements SipUADeviceListener {
         String M[]=rmessage.split(" ");
         switch(M[0]){
             case "$reg":{
-                if (M[1].equals("success"))
-                    intent_deal.putExtra("reg",true);
+                if (M[1].equals("success")) {
+                    this.Id=M[2];
+                    intent_deal.putExtra("reg", true);
+                }
                 else {
                     intent_deal.putExtra("reg",false);
                 }
-
-                    this.Id=M[2];//注册成功
-                else
-                    ;//注册失败
-                break;
             }
             case "$log":{
                 switch(M[1]){
