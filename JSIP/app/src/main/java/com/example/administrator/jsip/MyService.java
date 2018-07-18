@@ -18,8 +18,10 @@ import jsip_ua.impl.DeviceImpl;
 import jsip_ua.impl.SipEvent;
 
 public class MyService extends Service implements SipUADeviceListener {
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     SipProfile sipProfile;
     String reciveMessage;
+    String Id;
     Handler mHandler;
     ArrayList<LocalMessage> rmessage = new ArrayList<>();
     SharedPreferences prefs;
@@ -52,58 +54,8 @@ public class MyService extends Service implements SipUADeviceListener {
     @Override
     public void onSipUAMessageArrived(SipEvent event) {
         String msg = event.content;
-        System.out.println("msgmsgmsgmsg"+msg);
         setReciveMessage(msg);
-
-        SQLManeger sqlm = new SQLManeger(this);
-        String M[]=msg.split(" ");
-        String flag = M[0];
-        String nickname=null;
-        String message=null;
-        switch (flag){
-            case("$sent") :{
-                nickname = M[1];
-                String Rtime = M[2];
-                message = M[3];
-                for (int i = 4;;i++){
-                    if (M[i].equals("$end")){
-                        break;
-                    }
-                    message+=" "+M[i];
-                }
-                LocalMessage lmsg = new LocalMessage(Rtime,message,nickname,1,0);
-                rmessage.add(lmsg);
-                sqlm.addMessage(rmessage,"p1992");
-                break;
-            }
-            case("$sentall"):{
-                String Gid = M[1];
-                nickname = M[2];
-                String Rtime = M[3];
-                message = M[4];
-                for (int i = 5;;i++){
-                    if (M[i].equals("$end")){
-                        break;
-                    }
-                    message+=" "+M[i];
-                }
-                message=nickname+":"+message;
-                LocalMessage lmsg = new LocalMessage(Rtime,message,Gid,1,0);
-                rmessage.add(lmsg);
-                sqlm.addMessage(rmessage,"p1992");
-                break;
-            }
-        }
-               ArrayList<LocalMessage> testList = new ArrayList<>();
-                testList = sqlm.Messagequery("p1992");
-                Intent intent = new Intent("com.app.test");
-                intent.putExtra("message","DATABASE_CHANGED");
-                intent.putExtra("nickname",nickname);
-                intent.putExtra("message_last",message);
-                sendBroadcast(intent);
-
-        sqlm.closeDatabase();
-
+        deal(msg);
     }
     public void setReciveMessage(String msg){
         this.reciveMessage = msg;
@@ -117,7 +69,7 @@ public class MyService extends Service implements SipUADeviceListener {
         switch(M[0]){
             case "$reg":{
                 if (M[1].equals("success"))
-                    ;//注册成功
+                    this.Id=M[2];//注册成功
                 else
                     ;//注册失败
                 break;
@@ -133,6 +85,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     case "success":{//登录成功
                         String name=M[2];
                         int head=Integer.valueOf(M[3]).intValue();
+                        this.Id=M[4];
                     }
                         break;
                     default:
@@ -145,25 +98,51 @@ public class MyService extends Service implements SipUADeviceListener {
                     case "none": {//查无此人
                         break;
                     }
-                    case "error2": {//拒绝
+                    case "error": {//拒绝
                         String id = M[2];
+                        String msg = "用户"+id+"拒绝你的好友申请";
+                        SQLManeger sqlManeger = new SQLManeger(this);
+                        sqlManeger.addSystem(msg,Id);
+                        sqlManeger.closeDatabase();
                         break;
                     }
                     case "success": {//申请成功
                         String id = M[2];
+                        String msg = "用户"+id+"同意你的好友申请，现在开始愉快地聊天吧";
+                        SQLManeger sqlManeger = new SQLManeger(this);
+                        sqlManeger.addSystem(msg,Id);
+                        sqlManeger.closeDatabase();
                         break;
                     }
                     default:{
                         String id = M[1];
                         String name = M[2];
-                        //请求申请
+                        String msg = "用户"+name+"("+id+")"+"申请加为好友";//请求申请
+                        SQLManeger sqlManeger = new SQLManeger(this);
+                        sqlManeger.addSystem(msg,Id);
+                        sqlManeger.closeDatabase();
                         break;
                     }
                 }
             }
             case "$sent": {
                 String id = M[1];
-                String Rtime = M[2];
+                String content = M[2];
+                for (int i = 3;;i++){
+                    if (M[i].equals("$end")){
+                        break;
+                    }
+                    content+=" "+M[i];
+                }
+                SQLManeger sqlManeger = new SQLManeger(this);
+                LocalMessage lmsg = new LocalMessage(sqlManeger.getNickname(Id,id),content,0,0,Id,id);
+                sqlManeger.addMessage(lmsg,Id);
+                sqlManeger.closeDatabase();
+                break;
+            }
+            case "$sentall":{
+                String g_id = M[1];
+                String id = M[2];
                 String content = M[3];
                 for (int i = 4;;i++){
                     if (M[i].equals("$end")){
@@ -171,27 +150,17 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     content+=" "+M[i];
                 }
-                LocalMessage lmsg = new LocalMessage(Rtime,content,id,1,0);
-                break;
-            }
-            case "$sentall":{
-                String q_id = M[1];
-                String name = M[2];
-                String Rtime = M[3];
-                String content = M[4];
-                for (int i = 5;;i++){
-                    if (M[i].equals("$end")){
-                        break;
-                    }
-                    content+=" "+M[i];
-                }
-                LocalMessage lmsg = new LocalMessage(Rtime,content,q_id,1,0);
+                SQLManeger sqlManeger = new SQLManeger(this);
+                LocalMessage lmsg = new LocalMessage(sqlManeger.getNickname(Id,id),content,0,0,Id,g_id);
+                sqlManeger.addMessage(lmsg,Id);
+                sqlManeger.closeDatabase();
                 break;
             }
             case "$flush":{
                 List<Friend> friendList= new ArrayList<>();
-                for(int i=1;;i++){
-                    if(M[i].equals("$end"))
+                int i=1;
+                for(i=1;;i=i+4){
+                    if(M[i].equals("$group"))
                         break;
                     Friend friend=new Friend(
                             Integer.valueOf(M[i]).intValue(),
@@ -201,14 +170,32 @@ public class MyService extends Service implements SipUADeviceListener {
                     );
                     friendList.add(friend);
                 }
+                for(i=1;;i++){
+                    if(M[i].equals("$end"))
+                        break;
+                    Friend friend=new Friend(
+                            Integer.valueOf(M[i]).intValue(),
+                            "   ",
+                            0,
+                            2
+                    );
+                    friendList.add(friend);
+                }
+                SQLManeger sqlManeger = new SQLManeger(this);
+                sqlManeger.add(friendList,Id);
+                sqlManeger.closeDatabase();
                 break;
             }
-            case "creategroup":{    // 创群成功
-                String id=M[1];
+            case "$creategroup":{    // 创群成功
+                DeviceImpl.getInstance().SendMessage(ServiceIp,"$flush");
                 break;
             }
 
         }
 
+    }
+
+    public void setId(String Id){
+        this.Id = Id;
     }
 }

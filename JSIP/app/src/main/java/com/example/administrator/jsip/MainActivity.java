@@ -37,15 +37,11 @@ import java.util.List;
 import jsip_ua.SipProfile;
 import jsip_ua.impl.DeviceImpl;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener ,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
-    private SharedPreferences prefs;
-    private SipProfile sipProfile;
     private messageAdapter msgAdapter = null;
     private long lastBack = 0;
     private ArrayList<Friend> friendList=new ArrayList<>();
@@ -69,26 +65,11 @@ public class MainActivity extends AppCompatActivity
         final Toolbar toolbar;toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //inidl
-        sipProfile = new SipProfile();
-        HashMap<String, String> customHeaders = new HashMap<>();
-        customHeaders.put("customHeader1","customValue1");
-        customHeaders.put("customHeader2","customValue2");
+
         onRestart();
-        DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
 
-
-        //change
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // register preference change listener
-        prefs.registerOnSharedPreferenceChangeListener(this);
-        initializeSipFromPreferences();
         initFriend();
         //数据库
-        sqlManeger=new SQLManeger(MainActivity.this,Id);
-        sqlManeger.add(friendList);
-        sqlManeger.closeDatabase();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -269,34 +250,6 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                          String key) {
-        if (key.equals("pref_proxy_ip")) {
-            sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "10.28.144.154")));
-        } else if (key.equals("pref_proxy_port")) {
-            sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
-                    "pref_proxy_port", "5060")));
-        }  else if (key.equals("pref_sip_user")) {
-            sipProfile.setSipUserName(prefs.getString("pref_sip_user",
-                    "alice"));
-        } else if (key.equals("pref_sip_password")) {
-            sipProfile.setSipPassword(prefs.getString("pref_sip_password",
-                    "1234"));
-        }
-
-    }
-
-    @SuppressWarnings("static-access")
-    private void initializeSipFromPreferences() {
-        sipProfile.setRemoteIp((prefs.getString("pref_proxy_ip", "127.0.0.1")));
-        sipProfile.setRemotePort(Integer.parseInt(prefs.getString(
-                "pref_proxy_port", "5050")));
-        sipProfile.setSipUserName(prefs.getString("pref_sip_user", "alice"));
-        sipProfile.setSipPassword(prefs
-                .getString("pref_sip_password", "1234"));
-
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -307,7 +260,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent intent = new Intent();
-            intent.putExtra("Id",1);
+            intent.putExtra("Id",Id);
             intent.setClass(MainActivity.this,FriendListView.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {

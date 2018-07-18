@@ -7,27 +7,53 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-*
-* */
-
 public class SQLManeger {
-
     private SQLHelper sqlHelper;
     private SQLiteDatabase sqldb;
-    private String Id;
 
-    public SQLManeger(Context context,String Id){
-        sqlHelper=new SQLHelper(context,1,Id);
-        this.Id = Id;
+    private String FRIEND_TABLE_NAME;
+    private String MESSAGE_TABLE_NAME;
+    private String SYSTEM_TABLE_NAME;
+
+    private String SYSTEM_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS" + SYSTEM_TABLE_NAME + "("
+            + "content varchar(20) NOT NULL,"
+            + "state integer NOT NULL"
+            + ");";
+    private String FRIEND_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + FRIEND_TABLE_NAME + "("
+            + "id integer NOT NULL,"
+            + "name varchar(20) NOT NULL,"
+            + "image intger NOT NULL,"
+            + "state integer NOT NULL"
+            + ");";
+    private String MESSAGE_CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS " + MESSAGE_TABLE_NAME + "("
+            + "id varchar(20) NOT NULL,"
+            + "origin_id varchar(20) NOT NULL"
+            + "nickname varchar(20) NOT NULL,"
+            + "content varchar(20) NOT NULL,"
+            + "state integer NOT NULL,"
+            + "isMine integer NOT NULL,"
+            + ");";
+
+    public SQLManeger(Context context){
+        sqlHelper=new SQLHelper(context,1);
         sqldb=sqlHelper.getWritableDatabase();
-        //sqldb.execSQL("INSERT INTO friendtable(id,name,image,state) VALUES (1,'ss',1,1)");
     }
+
+    public void CreateTable(String Id){
+        MESSAGE_TABLE_NAME = "MESSAGE_" + Id;
+        FRIEND_TABLE_NAME = "FRIENDTABLE_" + Id;
+        SYSTEM_TABLE_NAME = "SYSTEMTABLE_" + Id;
+        sqldb.execSQL(FRIEND_CREATE_TABLE_SQL);
+        sqldb.execSQL(MESSAGE_CREATE_TABLE_SQL);
+        sqldb.execSQL(SYSTEM_CREATE_TABLE_SQL);
+    }
+
     /*
     * 往表Friendtable中添加数据
     * @parms List<Friend>
     * */
-    public void add(List<Friend> list){
+
+    public void add(List<Friend> list,String Id){
         sqldb.execSQL("delete from friendtable_"+Id);
         sqldb.beginTransaction();
         try{
@@ -51,11 +77,12 @@ public class SQLManeger {
     * 从数据库中读取好友列表
     * @parms
     * */
-    public ArrayList<Friend> query(){
+    public ArrayList<Friend> query(String Id){
         ArrayList<Friend> friend_list=new ArrayList<>();
         Cursor cursor=sqldb.query("friendtable_"+Id,null,null,null,null,null,null);
         if (cursor != null) {
             while(cursor.moveToNext()) {
+                if (cursor.getInt(cursor.getColumnIndex("state"))==2)continue;
                 Friend friend = new Friend(
                         cursor.getInt(cursor.getColumnIndex("id")),
                         cursor.getString(cursor.getColumnIndex("name")),
@@ -68,40 +95,55 @@ public class SQLManeger {
         cursor.close();
         return friend_list;
     }
+    //获取群ID
+    public ArrayList<Integer> get_group_Id(String Id){
+        ArrayList<Integer> Id_list=new ArrayList<>();
+        Cursor cursor=sqldb.query("friendtable_"+Id,null,null,null,null,null,null);
+        if (cursor != null) {
+            while(cursor.moveToNext()) {
+                if (cursor.getInt(cursor.getColumnIndex("state"))!=2)continue;
+                Id_list.add(cursor.getInt(cursor.getColumnIndex("id")));
+            }
+        }
+        cursor.close();
+        return Id_list;
+    }
     /*
     * 删除一名好友
     * */
-    public void deleteFriend(Friend friend){
+    public void deleteFriend(Friend friend,String Id){
         String friendId = Integer.toString(friend.getID());
         sqldb.execSQL("DELETE " + friendId + " FROM FRIENDTABLE_"+Id);
+    }
+
+    public String getNickname(String Id,String id){
+        String[] args = {id};
+        String Nickname="";
+        Cursor cursor=sqldb.query("FriendTable_"+Id,null,"id=?",args,null,null,null);
+        if (cursor!=null){
+            cursor.getString(cursor.getColumnIndex("id"));
+        }
+        cursor.close();
+        return Nickname;
     }
     /*
     * 往数据库的一张表名为OriginName的Message表中添加数据
     * @parms List<LocalMessage> , OriginName : String
     * */
-    public void addMessage(List<LocalMessage> list){
-        sqldb.beginTransaction();
-        try{
-            for (LocalMessage localMessage:list){
-                sqldb.execSQL("INSERT INTO MESSAGE_"+Id +"(time,content,state,nickname,isMine) VALUES(?,?,?,?,?,?,?)",
-                        new Object[]{localMessage.getTime(),localMessage.getId(),localMessage.getOrigin_Id(),localMessage.getNickname(),localMessage.getContent(),localMessage.getState(),localMessage.getIsMine()});
-            }
-            sqldb.setTransactionSuccessful();
-        }finally {
-            sqldb.endTransaction();
-        }
+    public void addMessage(LocalMessage localMessage,String Id){
+        sqldb.execSQL("INSERT INTO MESSAGE_"+Id +"(content,state,nickname,isMine) VALUES(?,?,?,?,?,?)",
+                        new Object[]{localMessage.getId(),localMessage.getOrigin_Id(),localMessage.getNickname(),localMessage.getContent(),localMessage.getState(),localMessage.getIsMine()});
     }
     /*
     * 从数据库中名为OriginName的表中读取消息
     * */
-    public ArrayList<LocalMessage> Messagequery(String Origin_Id){
+    public ArrayList<LocalMessage> Messagequery(String Origin_Id,String Id){
         ArrayList<LocalMessage> MessageList=new ArrayList<LocalMessage>();
-        String[] args = {Origin_Id};
-        Cursor cursor=sqldb.query("MESSAGE_"+Id,null,"origin_id=?",args,null,null,null);
+        String[] args = {Origin_Id,"0"};
+        Cursor cursor=sqldb.query("MESSAGE_"+Id,null,"origin_id=? and state=?",args,null,null,null);
         if (cursor != null) {
             while(cursor.moveToNext()) {
                 LocalMessage localMessage = new LocalMessage(
-                        cursor.getString(cursor.getColumnIndex("time")),
                         cursor.getString(cursor.getColumnIndex("content")),
                         cursor.getString(cursor.getColumnIndex("nickname")),
                         cursor.getInt(cursor.getColumnIndex("state")),
@@ -113,8 +155,12 @@ public class SQLManeger {
             }
         }
         cursor.close();
+
         return MessageList;
     }
+
+    //123
+
     /*
     * 往数据库中的Personal表添加一行信息
     * */
@@ -155,6 +201,25 @@ public class SQLManeger {
         sqldb.execSQL("DELETE FROM PERSONAL WHERE ID = "+ id);
         sqldb.setTransactionSuccessful();
         sqldb.endTransaction();
+    }
+
+    public void addSystem(String systemMsgs,String Id){
+        sqldb.beginTransaction();
+        sqldb.execSQL("INSERT INTO SYSTEMTABLE_"+Id+" (content) VALUES(?)", new Object[]{systemMsgs});
+        sqldb.setTransactionSuccessful();
+        sqldb.endTransaction();
+    }
+
+    public ArrayList<String> Systemquery(String Id){
+        ArrayList<String> SystemMsg = new ArrayList<>();
+        Cursor cursor = sqldb.query("SYSTEMTABLE_"+Id,null,null,null,null,null,null);
+        if (cursor!=null){
+            while (cursor.moveToNext()){
+                SystemMsg.add(cursor.getString(cursor.getColumnIndex("content")));
+            }
+        }
+        cursor.close();
+        return SystemMsg;
     }
 
     public void closeDatabase(){

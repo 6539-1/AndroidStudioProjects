@@ -1,6 +1,7 @@
 package com.example.administrator.jsip;
 
 import android.content.Context;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 
 import java.util.ArrayList;
+import android.os.Handler;
 
 public class imageDropView extends GridLayout {
     private Context context;
@@ -19,6 +21,8 @@ public class imageDropView extends GridLayout {
     //private ImageView imageView;
     private ImageView choose_image;
     private PopupWindow imageWindow;
+    private Handler imageHandler;
+    private final static int SetImage=1;
 
     private int[] arrImages = new int[]{
             R.mipmap.img1,R.mipmap.img2,R.mipmap.img3,
@@ -65,6 +69,10 @@ public class imageDropView extends GridLayout {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 choose_image.setImageResource(arrImages[i]);
+                //Message msg= new Message();
+                //msg.what= SetImage;
+                //msg.obj=i;
+                //imageHandler.sendMessage(msg);
                 closePopupWindow();
                 //这里添加后面的设置数据库头像
             }
@@ -81,8 +89,12 @@ public class imageDropView extends GridLayout {
         });
     }
 
-    private void closePopupWindow(){
+    public void closePopupWindow(){
         imageWindow.dismiss();
         imageWindow = null;
+    }
+
+    public void initHandler(Handler handler){
+        this.imageHandler = handler;
     }
 }
