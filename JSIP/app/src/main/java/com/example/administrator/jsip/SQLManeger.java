@@ -3,6 +3,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,9 +122,12 @@ public class SQLManeger {
     public String getNickname(String Id,String id){
         String[] args = {id};
         String Nickname="";
-        Cursor cursor=sqldb.query("FriendTable_"+Id,null,"id=?",args,null,null,null);
+        Cursor cursor=sqldb.query("friendtable_"+Id,null,"id=?",args,null,null,null);
         if (cursor!=null){
-            cursor.getString(cursor.getColumnIndex("id"));
+            while (cursor.moveToNext()) {
+                //if (cursor.getInt(cursor.getColumnIndex("id")).equals(id))
+                Nickname = cursor.getString(cursor.getColumnIndex("name"));
+            }
         }
         cursor.close();
         return Nickname;
@@ -133,8 +137,26 @@ public class SQLManeger {
     * @parms List<LocalMessage> , OriginName : String
     * */
     public void addMessage(LocalMessage localMessage,String Id){
-        sqldb.execSQL("INSERT INTO MESSAGE_"+Id +"(id,origin_id,content,state,nickname,isMine) VALUES(?,?,?,?,?,?)",
-                        new Object[]{localMessage.getId(),localMessage.getOrigin_Id(),localMessage.getContent(),localMessage.getState(),localMessage.getNickname(),localMessage.getIsMine()});
+        Log.d("zsmj",localMessage.getContent()+localMessage.getOrigin_Id()+localMessage.getId());
+        //sqldb.execSQL("INSERT INTO MESSAGE_"+Id +"(id,origin_id,nickname,content,state,isMine) VALUES(?,?,?,?,?,?)",
+         //               new Object[]{localMessage.getId(),localMessage.getOrigin_Id(),localMessage.getNickname(),localMessage.getContent(),localMessage.getState(),localMessage.getIsMine()});
+
+        ContentValues values = new ContentValues();
+        values.put("id",localMessage.getId());
+        values.put("origin_id",localMessage.getOrigin_Id());
+        values.put("nickname",localMessage.getNickname());
+        values.put("content",localMessage.getContent());
+        values.put("state",localMessage.getState());
+        values.put("isMine",localMessage.getIsMine());
+        sqldb.insert("message_"+Id,null,values);
+        values.clear();
+        Cursor cursor=sqldb.query("MESSAGE_"+Id,null,null,null,null,null,null);
+        if (cursor != null) {
+            while (cursor.moveToNext()){
+                Log.d( "qwwe",cursor.getString(cursor.getColumnIndex("content")));
+            }
+        }
+        cursor.close();
     }
     /*
     * 从数据库中名为Message_id的表中读取消息
@@ -185,12 +207,14 @@ public class SQLManeger {
     public String get_one_message(String Id,String one){
         String Message="";
         String[] args = {one};
+        List<String> list=new ArrayList<>();
         Cursor cursor=sqldb.query("MESSAGE_"+Id,null,"origin_id=?",args,null,null,null);
         if (cursor != null) {
-            while(cursor.moveToNext()) {
-                        Message=cursor.getString(cursor.getColumnIndex("content"));
+            while (cursor.moveToNext()){
+                list.add(cursor.getString(cursor.getColumnIndex("content")));
             }
         }
+        Message=list.get(list.size()-1);
         cursor.close();
         return Message;
     }

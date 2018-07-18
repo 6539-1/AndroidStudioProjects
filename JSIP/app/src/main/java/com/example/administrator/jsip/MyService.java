@@ -153,7 +153,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     content+=" "+M[i];
                 }
                 SQLManeger sqlManeger = new SQLManeger(this);
-                LocalMessage lmsg = new LocalMessage(sqlManeger.getNickname(Id,id),content,0,0,Id,id);
+                LocalMessage lmsg = new LocalMessage(sqlManeger.getNickname(Id,id),content,0,0,id,Id);
                 sqlManeger.addMessage(lmsg,Id);
                 sqlManeger.closeDatabase();
                 intent_deal.putExtra("sent",id);

@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity
         friendList=sqlManeger.query(Id);
         sqlManeger.closeDatabase();
 
-        initMessage();
+        //initMessage();
 
         msgAdapter=new messageAdapter(MainActivity.this,R.layout.id_list_name,msgList);
         ListView messageList=(ListView)findViewById(R.id.message_list);
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity
                 name.add(sqlManeger.getNickname(Id,id.get(i)));
                 head.add(sqlManeger.getHead(Id,id.get(i)));
             }else {
-                head.add(10);
+                head.add(1);
                 name.add(id.get(i));
             }
         }
