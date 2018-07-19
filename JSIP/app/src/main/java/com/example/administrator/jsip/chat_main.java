@@ -89,11 +89,13 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         recyclerView.setLayoutManager(linearLayout1);
         adapter = new ChatAdapter(chat_main.this,mDatas);
         recyclerView.setAdapter(adapter);
+        final LinearLayout leftLinearLayout=(LinearLayout)findViewById(R.id.left_layout);
+        LinearLayout rightLinearLayout=(LinearLayout)findViewById(R.id.right_layout);
         Button btnSend = (Button) findViewById(R.id.btnSend);
-        ImageButton sdButton = (ImageButton) findViewById(R.id.sdButton);
+        //ImageButton sdButton = (ImageButton) findViewById(R.id.sdButton);
         mAudioRecorderButton=findViewById(R.id.adButton);
         btnSend.setOnClickListener(this);
-        sdButton.setOnClickListener(this);
+        //sdButton.setOnClickListener(this);
         mAudioRecorderButton.setAudioFinishRecorderListener(new AudioRecorderButton.AudioFinishRecorderListener() {
             @Override
             public void onFinish(float seconds, String filePath) {
@@ -104,7 +106,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 String bstypeFile = fs.getBasedFile();
                 Log.i("99999999999", bstypeFile);
                 DeviceImpl.getInstance().SendMessage(ServiceIp, "$sentv "+user+" "+filePath+" "+bstypeFile+" $end");
-                Recorder recorder = new Recorder(seconds,filePath,null);
+                Recorder recorder = new Recorder(seconds,"Me: "+filePath,null);
                 pushMessage(recorder);
             }
         });
@@ -208,7 +210,6 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 editTextMessage.requestFocus();
                 //DeviceImpl.getInstance().SendDTMF();
                 break;
-            case (R.id.sdButton):
 
         }
     }

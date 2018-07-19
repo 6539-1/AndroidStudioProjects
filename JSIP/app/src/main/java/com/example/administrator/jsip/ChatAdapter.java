@@ -60,8 +60,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
        // System.out.println("vvvvvvvvvvvvvvvvv");
-        View view = View.inflate(mContext,R.layout.croom,null);
-        final ViewHolder holder = new ViewHolder(view);
+        //View view = View.inflate(mContext,R.layout.croom,null);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View itemView = inflater.inflate(R.layout.croom,viewGroup,false);
+        final ViewHolder holder = new ViewHolder(itemView);
         return holder;
     }
 
@@ -92,11 +94,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
                 if (aduioMessage.filePath.startsWith("Me: ")){
                     viewHolder1.leftlayout.setVisibility(View.GONE);
                     viewHolder1.rightlayout.setVisibility(View.VISIBLE);
-                    viewHolder1.RAccount.setImageResource(R.drawable.picr3);
+                    viewHolder1.RAccount.setImageResource(R.mipmap.adj);
                     viewHolder1.RAccount.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            String test1 = rAccountList.get(position).filePath;
+                            String test1 = rAccountList.get(position).filePath.substring(3);
                             MediaManager.playSound(test1, new MediaPlayer.OnCompletionListener() {
                                 @Override
                                 public void onCompletion(MediaPlayer mediaPlayer) {
@@ -110,7 +112,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
                 }else {
                     viewHolder1.leftlayout.setVisibility(View.VISIBLE);
                     viewHolder1.rightlayout.setVisibility(View.GONE);
-                    viewHolder1.LAccount.setImageResource(R.drawable.picr3);
+                    viewHolder1.LAccount.setImageResource(R.mipmap.adj);
                     viewHolder1.LAccount.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {

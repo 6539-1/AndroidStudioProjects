@@ -12,7 +12,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="2.1"
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
@@ -31,17 +31,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal">
+            android:layout_gravity="bottom">
 
-            <ImageButton
-                android:id="@+id/sdButton"
+            <com.example.administrator.jsip.AudioRecorderButton
+                android:id="@+id/adButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.1"
                 android:layout_gravity="left"
-                android:background="@android:color/transparent"
-                app:srcCompat="@mipmap/adj" />
+                android:layout_weight="0.1"
+                android:background="@mipmap/adj"
+                />
 
             <EditText
                 android:id="@+id/editTextMessage"
@@ -60,14 +59,7 @@
                 android:textColor="#faf7f7"
                 android:text="send" />
 
-        <com.example.administrator.jsip.AudioRecorderButton
-            android:id="@+id/adButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:layout_weight="0.2"
-            android:text="voice"
-            />
+
 
     </LinearLayout>
 

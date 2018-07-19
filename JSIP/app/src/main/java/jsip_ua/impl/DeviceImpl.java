@@ -28,8 +28,8 @@ import android.util.Log;
 public class DeviceImpl implements IDevice,Serializable {
 
 	private static DeviceImpl device;
-	private String ServiceIp = "sip:alice@192.168.43.73:5006";
-	//private String ServiceIp = "sip:alice@10.206.17.104:5006";
+	//private String ServiceIp = "sip:alice@192.168.43.73:5006";
+	private String ServiceIp = "sip:alice@10.206.17.106:5006";
 	Context context;
 	SipManager 	 sipManager;
 	SipProfile 	 sipProfile;
