@@ -22,8 +22,8 @@ public class MyService extends Service implements SipUADeviceListener {
     Handler mHandler;
     ArrayList<LocalMessage> rmessage = new ArrayList<>();
     SharedPreferences prefs;
-    private String ServiceIp = "sip:alice@10.206.17.104:5006";
-    //private String ServiceIp = "sip:alice@192.168.43.73:5006";
+    //private String ServiceIp = "sip:alice@10.206.17.104:5006";
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sipProfile = new SipProfile();

@@ -35,6 +35,9 @@ public class addfriends extends AppCompatActivity {
     private String ID;
     private ArrayList<String> userList=new ArrayList<>();
     private InnerReceiver receiver = new InnerReceiver();
+    private ArrayList<Friend> friendList=new ArrayList<>();
+    SQLManeger sqlManeger;
+    private String Id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +50,10 @@ public class addfriends extends AppCompatActivity {
         final SearchView searchView=(SearchView)findViewById(R.id.search);
         searchView.setIconifiedByDefault(false);
         final ListView listView_add=(ListView)findViewById(R.id.list_add);
+        this.Id=getIntent().getStringExtra("Id");
+        sqlManeger=new SQLManeger(this);
+        friendList=sqlManeger.query(Id);
+        sqlManeger.closeDatabase();
         adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userList);
         listView_add.setAdapter(adapter);
         listView_add.setTextFilterEnabled(true);
@@ -81,9 +88,19 @@ public class addfriends extends AppCompatActivity {
                     SearchView.SearchAutoComplete textView = ( SearchView.SearchAutoComplete)
                             searchView.findViewById(R.id.search_src_text);
                     textView.setText(Id);
-                    String add="$add "+ID;
-                    DeviceImpl.getInstance().SendMessage(ServiceIp,add);
-                    Toast.makeText(addfriends.this, "好友申请已发送", Toast.LENGTH_SHORT).show();
+                    boolean is_friends=false;
+                    for(int i=0;i<friendList.size();i++){
+                        if(ID.equals(Integer.toString(friendList.get(i).getID()))){
+                            is_friends=true;
+                            Toast.makeText(addfriends.this, "好友已存在", Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+                    }
+                    if(!is_friends) {
+                        String add = "$add " + ID;
+                        DeviceImpl.getInstance().SendMessage(ServiceIp, add);
+                        Toast.makeText(addfriends.this, "好友申请已发送", Toast.LENGTH_SHORT).show();
+                    }
                     /*if(is_add==1) {
                         Toast.makeText(addfriends.this, "好友："+ID + "添加成功", Toast.LENGTH_SHORT).show();
                     }
@@ -151,7 +168,6 @@ public class addfriends extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String select="$addfailed "+id;
                                 DeviceImpl.getInstance().SendMessage(ServiceIp,select);
-
                             }
                         }).create();
                 dialog.show();
