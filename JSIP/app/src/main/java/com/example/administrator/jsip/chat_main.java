@@ -56,7 +56,6 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private TextView textViewChat;
     private ListView listView;
     ArrayList<LocalMessage> rmessage = new ArrayList<>();
-    private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
     private Handler MsgHandler;
     private String friendName;
@@ -112,10 +111,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         //editTextTo = (EditText) findViewById(R.id.editTextTo);
 
         editTextMessage = (EditText) findViewById(R.id.editTextMessage);
-        listView = (ListView) findViewById(android.R.id.list);
-        adapter = new ChatMessageAdapter(chat_main.this, android.R.id.text1,
-                items);
-        listView.setAdapter(adapter);
+
         /*
         SQLManeger dbmanager = new SQLManeger(ctn);
         //ArrayList<LocalMessage> getDblist= new ArrayList<>();
@@ -137,7 +133,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
 //                }
 //            }
 //        };
-       // DeviceImpl.getInstance().setHandler(msgHandler);
+       // DeviceImpl.getInstance().setHandler(msgHandler);      db
         friendName  = getIntent().getStringExtra("friendname");
         getSupportActionBar().setTitle(friendName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -256,15 +252,15 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
             //使用intent获取发送过来的数据
             String msg = intent.getStringExtra("sent");
             if (msg.equals(sent)) {
+                ArrayList<LocalMessage> testList = SQLManeger.getSqlManeger().get_message("1");
                 String Message=SQLManeger.getSqlManeger().get_one_message(Id,msg);
-                pushMessage(Message);
-                if(testList.get(testList.size()-1).getState()==1){
-                    Recorder mul=new Recorder(0,null,(String) testList.get(testList.size()-1).getContent());
+                if(testList.get(testList.size()-1).getState()==0){
+                    Recorder mul=new Recorder(0,null,Message);
                     pushMessage(mul);
                 }
-                else if (testList.get(testList.size()-1).getState()==2){
+                else if (testList.get(testList.size()-1).getState()==1){
                     System.out.println("this is fpath in Chatmain-------------------: "+testList.get(testList.size()-1).getContent());
-                    Recorder mul = new Recorder(0,testList.get(testList.size()-1).getContent(),null);
+                    Recorder mul = new Recorder(0,Message,null);
                     pushMessage(mul);
                 }
                 //SQLManeger.getSqlManeger().closeDatabase();

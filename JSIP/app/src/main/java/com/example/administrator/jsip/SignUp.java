@@ -23,6 +23,7 @@ public class SignUp extends AppCompatActivity {
     private ImageView newImage;
     private SignUp.InnerReceiver receiver = new SignUp.InnerReceiver();
     private String ServiceIp = "sip:alice@192.168.43.73:5006";
+    //private String ServiceIp = "sip:alice@10.206.17.104:5006";
     Context context;
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);

@@ -26,7 +26,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -74,8 +76,14 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        ImageView img_owner=(ImageView)findViewById(R.id.image_ID);
+        int pic=getIntent().getIntExtra("pic",-1);
+        img_owner.setImageResource(pic);
+        TextView id_owner=(TextView)findViewById(R.id.nickName);
+        String nickname=getIntent().getStringExtra("nickName");
+        id_owner.setText(nickname);
+
         friendList=SQLManeger.getSqlManeger().query(Id);
-        //SQLManeger.getSqlManeger().closeDatabase();
 
         initMessage();
 
@@ -108,8 +116,7 @@ public class MainActivity extends AppCompatActivity
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
-                        refresh();
+                        initMessage();
                         msgAdapter.notifyDataSetChanged();
                         Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
 
@@ -118,7 +125,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 }, 1200);
 
-                // System.out.println(Thread.currentThread().getName());
 
                 // 这个不能写在外边，不然会直接收起来
                 //swipeRefreshLayout.setRefreshing(false);
@@ -143,37 +149,26 @@ public class MainActivity extends AppCompatActivity
             if(SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(friends.get(i).getID()),Id).size()!=0){
                 newMsg=SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(friends.get(i).getID()),Id).get(0);
                 MessageList.add(newMsg);
-                tag++;
-            }
-        }
-        for (int i=0;i<g_id.size();i++){
-            if(SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(g_id.get(i)),Id).size()!=0) {
-                newMsg = SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(g_id.get(i)), Id).get(0);
-                MessageList.add(newMsg);
             }
         }
         for (int i=0;i<MessageList.size();i++){
             id.add(MessageList.get(i).getOrigin_Id());
         }
         for (int i=0;i<id.size();i++){
-            if (i<=tag){
                 name.add(SQLManeger.getSqlManeger().getNickname(Id,id.get(i)));
                 head.add(SQLManeger.getSqlManeger().getHead(Id,id.get(i)));
-            }else {
-                head.add(1);
-                name.add(id.get(i));
-            }
         }
+
         for (int i=0;i<id.size();i++) {
-            if (i<tag)
                 msgList.add(new message(id.get(i),name.get(i),head.get(i),MessageList.get(i).getContent(),"1"));
-            else
-                msgList.add(new message(id.get(i),name.get(i),head.get(i),MessageList.get(i).getContent(),"2"));
+        }
+        head.clear();
+        name.clear();
+        MessageList.clear();
+        for (int i=0;i<g_id.size();i++){
+            msgList.add(new message(Integer.toString(g_id.get(i)),Integer.toString(g_id.get(i)),1,SQLManeger.getSqlManeger().get_one_message(Id,Integer.toString(g_id.get(i))),Integer.toString(2)));
         }
         //SQLManeger.getSqlManeger().closeDatabase();
-
-    }
-    private void refresh(){
 
     }
 
@@ -246,8 +241,9 @@ public class MainActivity extends AppCompatActivity
         }
         if(id==R.id.action_add){
             Intent intent_add=new Intent(this,addfriends.class);
+            intent_add.putExtra("Id",Id);
             startActivity(intent_add);
-            String person_list="$list "+Id+" $end";
+            String person_list="$addall "+Id+" $end";
             DeviceImpl.getInstance().SendMessage(ServiceIp,person_list);
             return true;
         }
@@ -287,15 +283,10 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_end) {
-            if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toast.makeText(getApplicationContext(), "再按一次注销账户", Toast.LENGTH_SHORT).show();
-                exitTime = System.currentTimeMillis();
-            } else {
-                DeviceImpl.getInstance().SendMessage(ServiceIp,"$quit");
-                Toast.makeText(getApplicationContext(), "注销账户", Toast.LENGTH_SHORT).show();
-                finish();
-            }
+        } else if (id == R.id.nav_send) {
+             DeviceImpl.getInstance().SendMessage(ServiceIp,"$quit");
+             Toast.makeText(getApplicationContext(), "注销账户", Toast.LENGTH_SHORT).show();
+             finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

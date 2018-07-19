@@ -184,8 +184,8 @@ public class SQLManeger {
         if (cursor != null) {
             while(cursor.moveToNext()) {
                 LocalMessage localMessage = new LocalMessage(
-                        cursor.getString(cursor.getColumnIndex("content")),
                         cursor.getString(cursor.getColumnIndex("nickname")),
+                        cursor.getString(cursor.getColumnIndex("content")),
                         cursor.getInt(cursor.getColumnIndex("state")),
                         cursor.getInt(cursor.getColumnIndex("isMine")),
                         cursor.getString(cursor.getColumnIndex("origin_id")),
@@ -230,7 +230,8 @@ public class SQLManeger {
                 list.add(cursor.getString(cursor.getColumnIndex("content")));
             }
         }
-        Message=list.get(list.size()-1);
+        if (list.size()>0)
+            Message=list.get(list.size()-1);
         cursor.close();
         return Message;
     }
@@ -266,6 +267,8 @@ public class SQLManeger {
         cursor.close();
         return PersonalList;
     }
+
+
     /*
     * 从Personal表中删除一行
     * */
