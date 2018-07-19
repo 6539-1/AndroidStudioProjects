@@ -227,7 +227,6 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     @Override
     protected void onRestart() {
         super.onRestart();
-        //注册广播
         IntentFilter filter = new IntentFilter("com.app.deal_msg");
         registerReceiver(receiver, filter);
     }
@@ -251,7 +250,6 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //使用intent获取发送过来的数据
             String msg = intent.getStringExtra("sent");
             System.out.print("msg-----------------"+msg);
             Log.i("msginchatmain", msg);
@@ -267,10 +265,10 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                     Recorder mul = new Recorder(0,Message,null);
                     pushMessage(mul);
                 }
-                //SQLManeger.getSqlManeger().closeDatabase();
             }
         }
     }
+
     class Recorder{
 
         float time;

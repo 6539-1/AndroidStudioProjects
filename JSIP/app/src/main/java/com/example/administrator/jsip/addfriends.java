@@ -53,7 +53,7 @@ public class addfriends extends AppCompatActivity {
         searchView.setIconifiedByDefault(false);
         listView_add=(ListView)findViewById(R.id.list_add);
         this.Id=getIntent().getStringExtra("Id");
-        friendList= SQLManeger.getSqlManeger().query(Id);
+        friendList=SQLManeger.getSqlManeger().query(Id);
         adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userList);
         listView_add.setAdapter(adapter);
         userList.add("搜索ID");

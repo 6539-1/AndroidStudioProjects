@@ -39,9 +39,11 @@ public class FriendListView extends AppCompatActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             Friend friend=friendList2.get(position);
             String ID=Integer.toString(friend.getID());
+            String name=friendList2.get(position).getName();
             Intent intent=new Intent(FriendListView.this,chat_main.class);
             intent.putExtra("Id",Id);
             intent.putExtra("user",ID);
+            intent.putExtra("friendname",name);
             startActivity(intent);
         }
     });

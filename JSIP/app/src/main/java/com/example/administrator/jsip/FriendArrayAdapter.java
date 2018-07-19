@@ -15,6 +15,13 @@ public class FriendArrayAdapter extends ArrayAdapter<Friend>{
         private int resourceId;
     public boolean Tag;
 
+    private int[] arrImages = new int[]{
+            R.mipmap.img1,R.mipmap.img2,R.mipmap.img3,
+            R.mipmap.img4,R.mipmap.img5, R.mipmap.img6,
+            R.mipmap.img7,R.mipmap.img8,R.mipmap.img9
+    };
+    private String[] f_state = {"离线","在线"};
+
     public FriendArrayAdapter(Context context, int TextViewResourceId, List<Friend> objects){
         super(context,TextViewResourceId,objects);
         resourceId=TextViewResourceId;
@@ -35,37 +42,23 @@ public class FriendArrayAdapter extends ArrayAdapter<Friend>{
             viewHolder=new ViewHolder();
             viewHolder.friendImage=(ImageView) view.findViewById(R.id.friend_image);
             viewHolder.friendName=(TextView) view.findViewById(R.id.friend_name);
-            viewHolder.checkBox=(CheckBox)view.findViewById(R.id.checkbox);
+            viewHolder.friend_state=(TextView)view.findViewById(R.id.friend_state);
             view.setTag(viewHolder);
         }
         else {
             view=converView;
             viewHolder=(ViewHolder) view.getTag();
         }
-        switch (friend.getImageId()){
-            case 1:
-                viewHolder.friendImage.setImageResource(R.mipmap.pic5);
-                break;
-            case 2:
-                viewHolder.friendImage.setImageResource(R.mipmap.pic2);
-                break;
-            case 3:
-                viewHolder.friendImage.setImageResource(R.mipmap.pic3);
-                break;
-            case 4:
-                viewHolder.friendImage.setImageResource(R.mipmap.pic4);
-                 break;
-            default:
-                viewHolder.friendImage.setImageResource(R.mipmap.pic1);
-                 break;
-        }
+
+        viewHolder.friendImage.setImageResource(arrImages[friend.getImageId()]);
         viewHolder.friendName.setText(friend.getName());
+        viewHolder.friend_state.setText(f_state[friend.getState()]);
         return view;
     }
 
     class ViewHolder{
         ImageView friendImage;
         TextView friendName;
-        CheckBox checkBox;
+        TextView friend_state;
     }
 }

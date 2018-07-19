@@ -41,8 +41,8 @@ import jsip_ua.impl.DeviceImpl;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
-    //private String ServiceIp = "sip:alice@192.168.43.73:5006";
-    private String ServiceIp = "sip:alice@10.206.17.104:5006";
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
+    //private String ServiceIp = "sip:alice@10.206.17.104:5006";
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
