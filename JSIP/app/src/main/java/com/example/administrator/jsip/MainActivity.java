@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra("user",msg.getId());
                 intent.putExtra("friendname",friendName);
                 intent.putExtra("Id",Id);
-
                 //intent.putStringArrayListExtra("messageList",rcvMsg);
                 intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
@@ -246,6 +245,7 @@ public class MainActivity extends AppCompatActivity
         }
         if(id==R.id.action_add){
             Intent intent_add=new Intent(this,addfriends.class);
+            intent_add.putExtra("Id",Id);
             startActivity(intent_add);
             String person_list="$addall "+Id+" $end";
             DeviceImpl.getInstance().SendMessage(ServiceIp,person_list);
