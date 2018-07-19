@@ -36,16 +36,29 @@ public class FriendArrayAdapter extends ArrayAdapter<Friend>{
             viewHolder.friendImage=(ImageView) view.findViewById(R.id.friend_image);
             viewHolder.friendName=(TextView) view.findViewById(R.id.friend_name);
             viewHolder.checkBox=(CheckBox)view.findViewById(R.id.checkbox);
-            if (Tag) {
-                viewHolder.checkBox.setVisibility(View.GONE);
-            }
             view.setTag(viewHolder);
         }
         else {
             view=converView;
             viewHolder=(ViewHolder) view.getTag();
         }
-        viewHolder.friendImage.setImageResource(friend.getImageId());
+        switch (friend.getImageId()){
+            case 1:
+                viewHolder.friendImage.setImageResource(R.mipmap.pic5);
+                break;
+            case 2:
+                viewHolder.friendImage.setImageResource(R.mipmap.pic2);
+                break;
+            case 3:
+                viewHolder.friendImage.setImageResource(R.mipmap.pic3);
+                break;
+            case 4:
+                viewHolder.friendImage.setImageResource(R.mipmap.pic4);
+                 break;
+            default:
+                viewHolder.friendImage.setImageResource(R.mipmap.pic1);
+                 break;
+        }
         viewHolder.friendName.setText(friend.getName());
         return view;
     }

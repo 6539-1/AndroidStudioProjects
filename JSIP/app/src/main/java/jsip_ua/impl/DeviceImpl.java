@@ -44,7 +44,7 @@ public class DeviceImpl implements IDevice,Serializable {
 		@Override
 		public void onSipUAMessageArrived(SipEvent event) {
 			String msg = event.content;
-			System.out.println("msgmsgmsgmsg"+msg);
+			System.out.println("m"+msg);
 			setReciveMessage(msg);
 			Message msg_rec = mHandler.obtainMessage();
 			msg_rec.what = 1;

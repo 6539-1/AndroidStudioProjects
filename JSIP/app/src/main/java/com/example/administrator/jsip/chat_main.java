@@ -22,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,13 +54,15 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private String ServiceIp = "sip:server@10.206.17.100:5050";
     private EditText editTextMessage;
     private TextView textViewChat;
-    private RecyclerView recyclerView;
+    private ListView listView;
     ArrayList<LocalMessage> rmessage = new ArrayList<>();
-    private ChatAdapter adapter = null;
+    private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
     private Handler MsgHandler;
     private String friendName;
     private Context ctn;
+    private String Id;
+    private String sent;
     private InnerReceiver receiver = new InnerReceiver();
     private ArrayAdapter<Recorder> mAdapter;
     private ArrayList<Recorder> mDatas =new ArrayList<>();
@@ -68,6 +71,8 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Id = getIntent().getStringExtra("Id");
+        sent=getIntent().getStringExtra("user");
         ctn= this;
         setContentView(R.layout.activity_chat_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -107,12 +112,20 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         //editTextTo = (EditText) findViewById(R.id.editTextTo);
 
         editTextMessage = (EditText) findViewById(R.id.editTextMessage);
+        listView = (ListView) findViewById(android.R.id.list);
+        adapter = new ChatMessageAdapter(chat_main.this, android.R.id.text1,
+                items);
+        listView.setAdapter(adapter);
+        /*
         SQLManeger dbmanager = new SQLManeger(ctn);
         //ArrayList<LocalMessage> getDblist= new ArrayList<>();
         ArrayList<LocalMessage> testList = new ArrayList<>();
+
         testList = dbmanager.Messagequery("p1992");//p1992 = friendname
+
         dbmanager.closeDatabase();
         historyMsg(testList);
+        */
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
 //        android.os.Handler msgHandler = new android.os.Handler(){
 //            @Override
@@ -184,7 +197,13 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case (R.id.btnSend):
-                DeviceImpl.getInstance().SendMessage(ServiceIp, "$sent 1111 2222 "+editTextMessage.getText().toString()+" $end" );
+                int user=Integer.parseInt(sent);
+                String add;
+                if (user<10000)
+                    add="$sentall ";
+                else add="$sent ";
+                String mess =  add + user +" "+ editTextMessage.getText().toString() + " $end";
+                DeviceImpl.getInstance().SendMessage(ServiceIp,mess);
                 Recorder mulMessage = new Recorder(0,null,"Me: " + editTextMessage.getText().toString());
                 pushMessage(mulMessage);
                 editTextMessage.setText("");
@@ -211,7 +230,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     protected void onRestart() {
         super.onRestart();
         //注册广播
-        IntentFilter filter = new IntentFilter("com.app.test");
+        IntentFilter filter = new IntentFilter("com.app.deal_msg");
         registerReceiver(receiver, filter);
     }
 
@@ -221,20 +240,24 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         //取消广播
         unregisterReceiver(receiver);
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     public class InnerReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
-            String msg = intent.getStringExtra("message");
-            System.out.println("bbbbbbbbb:"+msg);
-            if (msg.equals("DATABASE_CHANGED")){
-                SQLManeger dbmanager = new SQLManeger(ctn);
-                //ArrayList<LocalMessage> getDblist= new ArrayList<>();
-                ArrayList<LocalMessage> testList = new ArrayList<>();
-                testList = dbmanager.Messagequery("p1992");//p1992 = friendname
-                dbmanager.closeDatabase();
-                System.out.println("this is testlist size :"+testList.size());
+            String msg = intent.getStringExtra("sent");
+            if (msg.equals(sent)) {
+                String Message=SQLManeger.getSqlManeger().get_one_message(Id,msg);
+                pushMessage(Message);
                 if(testList.get(testList.size()-1).getState()==1){
                     Recorder mul=new Recorder(0,null,(String) testList.get(testList.size()-1).getContent());
                     pushMessage(mul);
@@ -244,21 +267,10 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                     Recorder mul = new Recorder(0,testList.get(testList.size()-1).getContent(),null);
                     pushMessage(mul);
                 }
-
-//                for (int i=0;i<testList.size();i++){
-//
-//                }
-//
-//            };
-//            ArrayList rMessageList = new ArrayList();
-            //rMessageList = getIntent().getStringArrayListExtra("messageList");
-
+                //SQLManeger.getSqlManeger().closeDatabase();
+            }
         }
     }
-
-
-}
-
     class Recorder{
 
         float time;
@@ -294,5 +306,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
             this.rcvMessage = msg;
         }
     }
+
+
 }
 

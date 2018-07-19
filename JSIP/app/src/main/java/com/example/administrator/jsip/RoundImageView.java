@@ -17,6 +17,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.ImageView;
 
+import com.example.administrator.jsip.R;
 
 
 public class RoundImageView extends android.support.v7.widget.AppCompatImageView {

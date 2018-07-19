@@ -5,10 +5,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:weightSum="2.2"
     tools:context=".chat_main">
 
@@ -24,75 +20,46 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:stackFromBottom="true"
+            android:divider="@android:color/transparent"
             android:transcriptMode="alwaysScroll"></android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
 
 
-        <!--<LinearLayout-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="0.1"-->
-        <!--android:orientation="horizontal" >-->
 
-        <!--<TextView-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="0.25"-->
-        <!--android:text="Peer Address" />-->
 
-        <!--<EditText-->
-        <!--android:id="@+id/editTextTo"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="0.75"-->
-        <!--android:text="sip:100@178.62.4.88:5050" />-->
-        <!--</LinearLayout>-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.25"
-        android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/sdButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:layout_gravity="left"
+                android:background="@android:color/transparent"
+                app:srcCompat="@mipmap/adj" />
 
-        <ImageButton
-            android:id="@+id/sdButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            app:srcCompat="@mipmap/pic5" />
+            <EditText
+                android:id="@+id/editTextMessage"
+                android:layout_width="270dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:hint="请输入信息" />
 
-        <!--<com.example.administrator.jsip.AudioRecorderButton-->
-            <!--android:id="@+id/id_recorder_button"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="7dp"-->
-            <!--android:layout_marginLeft="50dp"-->
-            <!--android:layout_marginRight="50dp"-->
-            <!--android:layout_marginTop="7dp"-->
-            <!--android:background="@drawable/btn_recorder_normal"-->
-            <!--android:gravity="center"-->
-            <!--android:minHeight="0dp"-->
-            <!--android:padding="5dp"-->
-            <!--android:text="@string/str_recorder_normal"-->
-            <!--android:textColor="#727272"-->
-            <!--android:visibility="invisible" />-->
+            <Button
+                android:id="@+id/btnSend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_weight="0.1"
+                android:background="#f755a8e2"
+                android:textColor="#faf7f7"
+                android:text="send" />
 
-        <EditText
-            android:id="@+id/editTextMessage"
-            android:layout_width="223dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.8"
-            android:text="Hello from android" />
-
-        <Button
-            android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="5dp"
-            android:layout_weight="0.2"
-            android:text="Send" />
         <com.example.administrator.jsip.AudioRecorderButton
             android:id="@+id/adButton"
             android:layout_width="wrap_content"

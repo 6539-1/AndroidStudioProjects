@@ -15,23 +15,22 @@ import java.util.List;
 
 public class FriendListView extends AppCompatActivity {
     private ArrayList<Friend> friendList2=new ArrayList<>();
-    public int QL;
-    SQLManeger sqlManeger;
+    private String Id;
+    //SQLManeger sqlManeger;
     FriendArrayAdapter adapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friend_list_view);
-        QL=getIntent().getIntExtra("qunliao",0);
-        boolean Tag=false;
-        if(QL==1){
-             Tag=true;
-        }
+        Id=getIntent().getStringExtra("Id");
         getSupportActionBar().setTitle("好友列表");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        sqlManeger=new SQLManeger(FriendListView.this);
-        friendList2=sqlManeger.query();
-        FriendArrayAdapter adapter = new FriendArrayAdapter(FriendListView.this, R.layout.friend_item, friendList2,Tag);
+        //sqlManeger=new SQLManeger(FriendListView.this);
+        friendList2=SQLManeger.getSqlManeger().query(Id);
+        //SQLManeger.getSqlManeger().closeDatabase();
+        FriendArrayAdapter adapter = new FriendArrayAdapter(FriendListView.this, R.layout.friend_item, friendList2);
 
         ListView listviews = (ListView) findViewById(R.id.list_views);
         listviews.setAdapter(adapter);
@@ -39,7 +38,11 @@ public class FriendListView extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             Friend friend=friendList2.get(position);
-            Toast.makeText(FriendListView.this,friend.getName(),Toast.LENGTH_SHORT).show();
+            String ID=Integer.toString(friend.getID());
+            Intent intent=new Intent(FriendListView.this,chat_main.class);
+            intent.putExtra("Id",Id);
+            intent.putExtra("user",ID);
+            startActivity(intent);
         }
     });
 }
@@ -47,7 +50,7 @@ public class FriendListView extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        sqlManeger.closeDatabase();
+        //SQLManeger.getSqlManeger().closeDatabase();
         super.onBackPressed();
     }
     @Override
@@ -55,7 +58,6 @@ public class FriendListView extends AppCompatActivity {
         finish();
         return super.onOptionsItemSelected(item);
     }
-
 
 }
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_marginRight="30dp"
+    android:layout_marginLeft="30dp"
+    android:layout_marginTop="20dp"
+    android:layout_below="@+id/psw_input"
+    android:id="@+id/image_input"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:text="头像"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:background="@null"
+        android:id="@+id/image_new"/>
+</LinearLayout>
