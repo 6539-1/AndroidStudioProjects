@@ -163,6 +163,7 @@ public class MyService extends Service implements SipUADeviceListener {
                 SQLManeger.getSqlManeger().addMessage(lmsg,Id);
                 //SQLManeger.getSqlManeger().closeDatabase();
                 intent_deal.putExtra("sent",id);
+                break;
             }
             case ("$sentv"):{
                 String id = M[1];
