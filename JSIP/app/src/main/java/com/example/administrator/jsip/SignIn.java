@@ -130,6 +130,7 @@ public class SignIn extends AppCompatActivity{
             String nickname=intent.getStringExtra("nickname");
             int pic_owner=intent.getIntExtra("pic_owner",-1);
             if(is_SignIn==0) {
+
                 DeviceImpl.getInstance().SendMessage(ServiceIp,"$flush");
                 DeviceImpl.getInstance().SendMessage(ServiceIp,"$message");
                 Intent intent_Id = new Intent(SignIn.this, MainActivity.class);
