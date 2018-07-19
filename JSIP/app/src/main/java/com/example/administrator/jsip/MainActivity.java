@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<String> rcvMsg=new ArrayList<>();
     private messageAdapter msgAdapter = null;
     private ArrayList<Friend> friendList=new ArrayList<>();
-    private InnerReceiver receiver = new InnerReceiver();
+    //private InnerReceiver receiver = new InnerReceiver();
     private AceptReceiver receiver_acept=new AceptReceiver();
     private String Id;
     private long exitTime = 0;
@@ -304,8 +304,8 @@ public class MainActivity extends AppCompatActivity
     protected void onRestart() {
         super.onRestart();
         //注册广播
-        IntentFilter filter = new IntentFilter("com.app.test");
-        registerReceiver(receiver, filter);
+//        IntentFilter filter = new IntentFilter("com.app.test");
+//        registerReceiver(receiver, filter);
         IntentFilter filter_acept=new IntentFilter("com.app.deal_msg");
         registerReceiver(receiver_acept,filter_acept);
     }
@@ -314,35 +314,35 @@ public class MainActivity extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         //取消广播
-        unregisterReceiver(receiver);
+        //unregisterReceiver(receiver);
         unregisterReceiver(receiver_acept);
     }
 
-    public class InnerReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //使用intent获取发送过来的数据
-
-            String msg = intent.getStringExtra("message");
-            System.out.println("aaaaaaaaa:"+msg);
-            if (msg.equals("DATABASE_CHANGED")){
-                switch (intent.getStringExtra("nickname")){
-                    case "p1992":
-                        String msg_last=intent.getStringExtra("message_last");
-                        message newMsg=new message("卢冬冬",R.mipmap.pic5,msg_last,"");
-                        msgList.set(1,newMsg);
-                        msgAdapter.notifyDataSetChanged();
-                        break;
-                }
-            };
-
-            //pushMessage(msg);
-            rcvMsg.add(msg);
-            message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
-            msgList.set(0,newMsg);
-        }
-    }
+//    public class InnerReceiver extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            //使用intent获取发送过来的数据
+//
+//            String msg = intent.getStringExtra("message");
+//            System.out.println("aaaaaaaaa:"+msg);
+//            if (msg.equals("DATABASE_CHANGED")){
+//                switch (intent.getStringExtra("nickname")){
+//                    case "p1992":
+//                        String msg_last=intent.getStringExtra("message_last");
+//                        message newMsg=new message("卢冬冬",R.mipmap.pic5,msg_last,"");
+//                        msgList.set(1,newMsg);
+//                        msgAdapter.notifyDataSetChanged();
+//                        break;
+//                }
+//            };
+//
+//            //pushMessage(msg);
+//            rcvMsg.add(msg);
+//            message newMsg = new message("卢冬冬",R.mipmap.pic5,rcvMsg.get(rcvMsg.size()-1),"20:11");
+//            msgList.set(0,newMsg);
+//        }
+//    }
     public class AceptReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {

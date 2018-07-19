@@ -198,7 +198,25 @@ public class SQLManeger {
 
         return MessageList;
     }
-
+    public int getLastState(String Id){
+        ArrayList<LocalMessage> localMessages = new ArrayList<>();
+        Cursor cursor=sqldb.query("MESSAGE_"+Id,null,null,null,null,null,null);
+        if (cursor != null) {
+            while(cursor.moveToNext()) {
+                LocalMessage localMessage = new LocalMessage(
+                        cursor.getString(cursor.getColumnIndex("content")),
+                        cursor.getString(cursor.getColumnIndex("nickname")),
+                        cursor.getInt(cursor.getColumnIndex("state")),
+                        cursor.getInt(cursor.getColumnIndex("isMine")),
+                        cursor.getString(cursor.getColumnIndex("origin_id")),
+                        cursor.getString(cursor.getColumnIndex("id"))
+                );
+                localMessages.add(localMessage);
+            }
+        }
+        cursor.close();
+        return localMessages.get(localMessages.size()-1).getState();
+    }
     public ArrayList<LocalMessage> get_message(String Id){
         ArrayList<LocalMessage> localMessages = new ArrayList<>();
         String[] args = {"0"};
