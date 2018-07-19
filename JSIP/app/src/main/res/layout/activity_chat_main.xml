@@ -7,22 +7,23 @@
     android:orientation="vertical"
     android:weightSum="2.2"
     tools:context=".chat_main">
+
     <LinearLayout
 
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2.1"
-        android:orientation="vertical"
-        >
-        <ListView
-            android:id="@android:id/list"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rcyc_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:stackFromBottom="true"
             android:divider="@android:color/transparent"
-            android:transcriptMode="alwaysScroll">
-        </ListView>
+            android:transcriptMode="alwaysScroll"></android.support.v7.widget.RecyclerView>
     </LinearLayout>
+
 
 
 
@@ -57,9 +58,16 @@
                 android:layout_weight="0.1"
                 android:background="#f755a8e2"
                 android:textColor="#faf7f7"
-                android:text="发送" />
+                android:text="send" />
 
-
+        <com.example.administrator.jsip.AudioRecorderButton
+            android:id="@+id/adButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_weight="0.2"
+            android:text="voice"
+            />
 
     </LinearLayout>
 
