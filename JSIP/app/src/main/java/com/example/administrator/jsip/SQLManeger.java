@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SQLManeger {
+
+
+    private static SQLManeger sqlManeger;
+    private Context context;
     private SQLHelper sqlHelper;
     private SQLiteDatabase sqldb;
 
@@ -20,9 +24,21 @@ public class SQLManeger {
     private String FRIEND_CREATE_TABLE_SQL;
     private String MESSAGE_CREATE_TABLE_SQL;
 
-    public SQLManeger(Context context){
-        sqlHelper=new SQLHelper(context,1);
-        sqldb=sqlHelper.getWritableDatabase();
+    private SQLManeger(){
+
+    }
+
+    public void init(Context context){
+        this.context = context;
+        sqlHelper = new SQLHelper(context,1);
+        sqldb = sqlHelper.getWritableDatabase();
+    }
+
+    public static SQLManeger getSqlManeger() {
+        if(sqlManeger==null){
+            sqlManeger = new SQLManeger();
+        }
+        return sqlManeger;
     }
 
     public void CreateTable(String Id){
@@ -285,8 +301,9 @@ public class SQLManeger {
         String[] args = {origin_id};
         Cursor cursor = sqldb.query("friendTable_"+Id,col,"id=?",args,null,null,null);
         if (cursor!=null){
-             Head = cursor.getInt(cursor.getColumnIndex("image"));
-
+            while (cursor.moveToNext()) {
+                Head = cursor.getInt(cursor.getColumnIndex("image"));
+            }
         }
         cursor.close();
         return Head;
