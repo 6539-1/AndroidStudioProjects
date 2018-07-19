@@ -55,12 +55,14 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private String friendName;
     private Context ctn;
     private String Id;
+    private String sent;
     private InnerReceiver receiver = new InnerReceiver();
     @Override
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Id = getIntent().getStringExtra("Id");
+        sent=getIntent().getStringExtra("user");
         ctn= this;
         setContentView(R.layout.activity_chat_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -158,24 +160,12 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case (R.id.btnSend):
-                int sentAll=getIntent().getIntExtra("sentAll",0);
-                String add="$sent 123456 ";
-                switch (sentAll) {
-                    case 0:add="$sentall 666 ";
-                        break;
-                    case 1:add="$sent 654321 ";
-                        break;
-                    case 2:add="$sent 987654 ";
-                        break;
-                    case 3:
-                        break;
-                    case 4: add="$sent 123456 ";
-                        break;
-                    default:
-                            break;
-                }
-                String mess =  add+ "20:20:20 " + editTextMessage.getText().toString() + " $end";
-
+                int user=Integer.parseInt(sent);
+                String add;
+                if (user<10000)
+                    add="$sentall ";
+                else add="$sent ";
+                String mess =  add + user +" "+ editTextMessage.getText().toString() + " $end";
                 DeviceImpl.getInstance().SendMessage(ServiceIp,mess);
                 pushMessage("Me: " + editTextMessage.getText().toString());
                 editTextMessage.setText("");
@@ -207,7 +197,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     protected void onRestart() {
         super.onRestart();
         //注册广播
-        IntentFilter filter = new IntentFilter("com.app.test");
+        IntentFilter filter = new IntentFilter("com.app.deal_msg");
         registerReceiver(receiver, filter);
     }
 
@@ -231,30 +221,16 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         @Override
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
-            String msg = intent.getStringExtra("message");
-            System.out.println("bbbbbbbbb:"+msg);
-            if (msg.equals("DATABASE_CHANGED")){
-                SQLManeger dbmanager = new SQLManeger(ctn);
-                //ArrayList<LocalMessage> getDblist= new ArrayList<>();
-                ArrayList<LocalMessage> testList = new ArrayList<>();
-
-               // testList = dbmanager.Messagequery("p1992");//p1992 = friendname
-
-                pushMessage((String) testList.get(testList.size()-1).getContent());
-                dbmanager.closeDatabase();
-//                for (int i=0;i<testList.size();i++){
-//
-//                }
-//
-//            };
-//            ArrayList rMessageList = new ArrayList();
-            //rMessageList = getIntent().getStringArrayListExtra("messageList");
-
+            String msg = intent.getStringExtra("sent");
+            if (msg.equals(sent)) {
+                String Message=SQLManeger.getSqlManeger().get_one_message(Id,msg);
+                pushMessage(Message);
+                //SQLManeger.getSqlManeger().closeDatabase();
+            }
         }
     }
 
 
-}
     public class ChatMessageAdapter extends ArrayAdapter<String> {
         List<String> messages = null;
         LinearLayout leftlayout;

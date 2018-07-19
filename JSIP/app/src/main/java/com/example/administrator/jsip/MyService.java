@@ -63,9 +63,9 @@ public class MyService extends Service implements SipUADeviceListener {
             case "$reg":{
                 if (M[1].equals("success")) {
                     this.Id=M[2];
-                    SQLManeger sqlManeger = new SQLManeger(this);
-                    sqlManeger.CreateTable(Id);
-                    sqlManeger.closeDatabase();
+                    //SQLManeger sqlManeger = new SQLManeger(this);
+                    SQLManeger.getSqlManeger().CreateTable(Id);
+                    //SQLManeger.getSqlManeger().closeDatabase();
                     intent_deal.putExtra("reg", true);
                 }
                 else {
@@ -86,9 +86,9 @@ public class MyService extends Service implements SipUADeviceListener {
                         String name=M[2];
                         int head=Integer.valueOf(M[3]).intValue();
                         this.Id=M[4];
-                        SQLManeger sqlManeger = new SQLManeger(this);
-                        sqlManeger.CreateTable(Id);
-                        sqlManeger.closeDatabase();
+                        //SQLManeger sqlManeger = new SQLManeger(this);
+                        SQLManeger.getSqlManeger().CreateTable(Id);
+                        //SQLManeger.getSqlManeger().closeDatabase();
                         intent_deal.putExtra("log",0);
                     }
                         break;
@@ -115,18 +115,18 @@ public class MyService extends Service implements SipUADeviceListener {
                         String id = M[2];
                         intent_deal.putExtra("add",0);
                         String msg = "用户"+id+"拒绝你的好友申请";
-                        SQLManeger sqlManeger = new SQLManeger(this);
-                        sqlManeger.addSystem(msg,Id);
-                        sqlManeger.closeDatabase();
+                        //SQLManeger sqlManeger = new SQLManeger(this);
+                        SQLManeger.getSqlManeger().addSystem(msg,Id);
+                        //SQLManeger.getSqlManeger().closeDatabase();
                         break;
                     }
                     case "success": {//申请成功
                         String id = M[2];
                         intent_deal.putExtra("add",1);
                         String msg = "用户"+id+"同意你的好友申请，现在开始愉快地聊天吧";
-                        SQLManeger sqlManeger = new SQLManeger(this);
-                        sqlManeger.addSystem(msg,Id);
-                        sqlManeger.closeDatabase();
+                        //SQLManeger sqlManeger = new SQLManeger(this);
+                        SQLManeger.getSqlManeger().addSystem(msg,Id);
+                        //SQLManeger.getSqlManeger().closeDatabase();
                         break;
                     }
                     default:{
@@ -135,9 +135,9 @@ public class MyService extends Service implements SipUADeviceListener {
                         intent_deal.putExtra("id",id);
                         intent_deal.putExtra("add",2);
                         String msg = "用户"+name+"("+id+")"+"申请加为好友";//请求申请
-                        SQLManeger sqlManeger = new SQLManeger(this);
-                        sqlManeger.addSystem(msg,Id);
-                        sqlManeger.closeDatabase();
+                        //SQLManeger sqlManeger = new SQLManeger(this);
+                        SQLManeger.getSqlManeger().addSystem(msg,Id);
+                        //SQLManeger.getSqlManeger().closeDatabase();
                         //请求申请
                         break;
                     }
@@ -152,10 +152,11 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     content+=" "+M[i];
                 }
-                SQLManeger sqlManeger = new SQLManeger(this);
-                LocalMessage lmsg = new LocalMessage(sqlManeger.getNickname(Id,id),content,0,0,Id,id);
-                sqlManeger.addMessage(lmsg,Id);
-                sqlManeger.closeDatabase();
+                //SQLManeger sqlManeger = new SQLManeger(this);
+                LocalMessage lmsg = new LocalMessage(SQLManeger.getSqlManeger().getNickname(Id,id),content,0,0,id,Id);
+                SQLManeger.getSqlManeger().addMessage(lmsg,Id);
+                //SQLManeger.getSqlManeger().closeDatabase();
+                intent_deal.putExtra("sent",id);
                 break;
             }
             case "$sentall":{
@@ -168,10 +169,11 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     content+=" "+M[i];
                 }
-                SQLManeger sqlManeger = new SQLManeger(this);
-                LocalMessage lmsg = new LocalMessage(sqlManeger.getNickname(Id,id),content,0,0,g_id,Id);
-                sqlManeger.addMessage(lmsg,Id);
-                sqlManeger.closeDatabase();
+                //SQLManeger sqlManeger = new SQLManeger(this);
+                LocalMessage lmsg = new LocalMessage(SQLManeger.getSqlManeger().getNickname(Id,id),content,0,0,g_id,Id);
+                SQLManeger.getSqlManeger().addMessage(lmsg,Id);
+                //SQLManeger.getSqlManeger().closeDatabase();
+                intent_deal.putExtra("sent",g_id);
                 break;
             }
             case "$flush":{
@@ -192,16 +194,16 @@ public class MyService extends Service implements SipUADeviceListener {
                     if(M[i+1].equals("$end"))
                         break;
                     Friend friend=new Friend(
-                            Integer.valueOf(M[i]).intValue(),
+                            Integer.valueOf(M[i+1]).intValue(),
                             "   ",
                             0,
                             2
                     );
                     friendList.add(friend);
                 }
-                SQLManeger sqlManeger = new SQLManeger(this);
-                sqlManeger.add(friendList,Id);
-                sqlManeger.closeDatabase();
+                //SQLManeger sqlManeger = new SQLManeger(this);
+                SQLManeger.getSqlManeger().add(friendList,Id);
+                //SQLManeger.getSqlManeger().closeDatabase();
                 intent_deal.putExtra("flush",true);
                 break;
             }

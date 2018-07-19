@@ -46,10 +46,10 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<String> rcvMsg=new ArrayList<>();
     private messageAdapter msgAdapter = null;
     private ArrayList<Friend> friendList=new ArrayList<>();
-    SQLManeger sqlManeger;
     private InnerReceiver receiver = new InnerReceiver();
     private AceptReceiver receiver_acept=new AceptReceiver();
     private String Id;
+    private long exitTime = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        sqlManeger=new SQLManeger(this);
-        friendList=sqlManeger.query(Id);
-        sqlManeger.closeDatabase();
+
+        friendList=SQLManeger.getSqlManeger().query(Id);
+        //SQLManeger.getSqlManeger().closeDatabase();
 
         initMessage();
 
@@ -88,12 +88,10 @@ public class MainActivity extends AppCompatActivity
                 message msg=msgList.get(position);
                 friendName = msg.getId_name();
                 Intent intent=new Intent(MainActivity.this,chat_main.class);
-
-                int sentAll=position;
-                intent.putExtra("sentAll",sentAll);
-
+                intent.putExtra("user",msg.getId());
                 intent.putExtra("friendname",friendName);
                 intent.putExtra("Id",Id);
+
                 //intent.putStringArrayListExtra("messageList",rcvMsg);
                 intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
@@ -129,9 +127,9 @@ public class MainActivity extends AppCompatActivity
 
     }
     private void initMessage() {
-        SQLManeger sqlManeger = new SQLManeger(this);
-        ArrayList<Friend> friends = sqlManeger.query(Id);
-        ArrayList<Integer> g_id = sqlManeger.get_group_Id(Id);
+
+        ArrayList<Friend> friends = SQLManeger.getSqlManeger().query(Id);
+        ArrayList<Integer> g_id = SQLManeger.getSqlManeger().get_group_Id(Id);
 
         ArrayList<Integer> head = new ArrayList<>();
         ArrayList<String> name = new ArrayList<>();
@@ -142,15 +140,15 @@ public class MainActivity extends AppCompatActivity
         LocalMessage newMsg;
         int tag=0;
         for (int i=0;i<friends.size();i++){
-            if(sqlManeger.get_message_by_id(Integer.toString(friends.get(i).getID()),Id).size()!=0){
-                newMsg=sqlManeger.get_message_by_id(Integer.toString(friends.get(i).getID()),Id).get(0);
+            if(SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(friends.get(i).getID()),Id).size()!=0){
+                newMsg=SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(friends.get(i).getID()),Id).get(0);
                 MessageList.add(newMsg);
                 tag++;
             }
         }
         for (int i=0;i<g_id.size();i++){
-            if(sqlManeger.get_message_by_id(Integer.toString(g_id.get(i)),Id).size()!=0) {
-                newMsg = sqlManeger.get_message_by_id(Integer.toString(g_id.get(i)), Id).get(0);
+            if(SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(g_id.get(i)),Id).size()!=0) {
+                newMsg = SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(g_id.get(i)), Id).get(0);
                 MessageList.add(newMsg);
             }
         }
@@ -159,10 +157,10 @@ public class MainActivity extends AppCompatActivity
         }
         for (int i=0;i<id.size();i++){
             if (i<=tag){
-                name.add(sqlManeger.getNickname(Id,id.get(i)));
-                head.add(sqlManeger.getHead(Id,id.get(i)));
+                name.add(SQLManeger.getSqlManeger().getNickname(Id,id.get(i)));
+                head.add(SQLManeger.getSqlManeger().getHead(Id,id.get(i)));
             }else {
-                head.add(10);
+                head.add(1);
                 name.add(id.get(i));
             }
         }
@@ -172,7 +170,7 @@ public class MainActivity extends AppCompatActivity
             else
                 msgList.add(new message(id.get(i),name.get(i),head.get(i),MessageList.get(i).getContent(),"2"));
         }
-        sqlManeger.closeDatabase();
+        //SQLManeger.getSqlManeger().closeDatabase();
 
     }
     private void refresh(){
@@ -181,11 +179,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // if (drawer.isDrawerOpen(GravityCompat.START)) {
+            //  drawer.closeDrawer(GravityCompat.START);
+        // } else {
+            //super.onBackPressed();
+        // }
+        if ((System.currentTimeMillis() - exitTime) > 2000) {
+            Toast.makeText(getApplicationContext(), "再按一次注销账户", Toast.LENGTH_SHORT).show();
+            exitTime = System.currentTimeMillis();
         } else {
-            super.onBackPressed();
+            DeviceImpl.getInstance().SendMessage(ServiceIp,"$quit");
+            Toast.makeText(getApplicationContext(), "注销账户", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -282,8 +288,15 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_end) {
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(getApplicationContext(), "再按一次注销账户", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                DeviceImpl.getInstance().SendMessage(ServiceIp,"$quit");
+                Toast.makeText(getApplicationContext(), "注销账户", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
