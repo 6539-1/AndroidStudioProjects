@@ -7,11 +7,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import jsip_ua.SipProfile;
 import jsip_ua.SipUADeviceListener;
 import jsip_ua.impl.DeviceImpl;
@@ -71,10 +68,13 @@ public class MyService extends Service implements SipUADeviceListener {
                     SQLManeger.getSqlManeger().CreateTable(Id);
                     //SQLManeger.getSqlManeger().closeDatabase();
                     intent_deal.putExtra("reg", true);
+                    break;
                 }
                 else {
                     intent_deal.putExtra("reg",false);
+                    break;
                 }
+
             }
             case "$log":{
                 switch(M[1]){
@@ -162,6 +162,7 @@ public class MyService extends Service implements SipUADeviceListener {
                 LocalMessage lmsg = new LocalMessage(SQLManeger.getSqlManeger().getNickname(Id,id),content,0,0,id,Id);
                 SQLManeger.getSqlManeger().addMessage(lmsg,Id);
                 //SQLManeger.getSqlManeger().closeDatabase();
+                System.out.println("sentidinmyservice      "+id);
                 intent_deal.putExtra("sent",id);
                 break;
             }
@@ -178,7 +179,7 @@ public class MyService extends Service implements SipUADeviceListener {
                 FileTransfer ff = new FileTransfer(filename,content);
                 String rcvfpath = ff.getfPth();
                 System.out.println("file path in Myserver11111111111:"+rcvfpath);
-                LocalMessage lmsg = new LocalMessage(SQLManeger.getSqlManeger().getNickname(Id,id),rcvfpath,1,0,id,Id);
+                LocalMessage lmsg = new LocalMessage(SQLManeger.getSqlManeger().getNickname(Id,id),rcvfpath,1,1,id,Id);
                 SQLManeger.getSqlManeger().addMessage(lmsg,Id);
                 intent_deal.putExtra("sent",id);
                 break;

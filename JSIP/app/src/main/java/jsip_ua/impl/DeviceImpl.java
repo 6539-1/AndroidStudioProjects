@@ -178,7 +178,7 @@ public class DeviceImpl implements IDevice,Serializable {
 		try {
 
 			this.sipManager.SendMessage(ServiceIp, message);
-			Log.i("sbbbbbbbbbbbb", message);
+			//Log.i("sbbbbbbbbbbbb", message);
 		} catch (NotInitializedException e) {
 			e.printStackTrace();
 		}

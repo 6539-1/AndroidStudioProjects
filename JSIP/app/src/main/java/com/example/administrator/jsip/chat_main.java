@@ -62,8 +62,8 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private String friendName;
     private Context ctn;
     private String Id;
-    private String sent;
-    private InnerReceiver receiver = new InnerReceiver();
+    private String user;
+    private chat_main.InnerReceiver receiver = new InnerReceiver();
     private ChatAdapter adapter;
     private RecyclerView recyclerView;
     private ArrayList<Recorder> mDatas =new ArrayList<>();
@@ -73,7 +73,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Id = getIntent().getStringExtra("Id");
-        sent=getIntent().getStringExtra("user");
+        user=getIntent().getStringExtra("user");
         ctn= this;
         setContentView(R.layout.activity_chat_main);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -103,7 +103,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 FileTransfer fs = new FileTransfer(fileTosent);
                 String bstypeFile = fs.getBasedFile();
                 Log.i("99999999999", bstypeFile);
-                DeviceImpl.getInstance().SendMessage(ServiceIp, "$sentv "+sent+" "+filePath+" "+bstypeFile+" $end");
+                DeviceImpl.getInstance().SendMessage(ServiceIp, "$sentv "+user+" "+filePath+" "+bstypeFile+" $end");
                 Recorder recorder = new Recorder(seconds,filePath,null);
                 pushMessage(recorder);
             }
@@ -195,12 +195,12 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case (R.id.btnSend):
-                int user=Integer.parseInt(sent);
+                int userid=Integer.parseInt(user);
                 String add;
-                if (user<10000)
+                if (userid<10000)
                     add="$sentall ";
                 else add="$sent ";
-                String mess =  add + user +" "+ editTextMessage.getText().toString() + " $end";
+                String mess =  add + userid +" "+ editTextMessage.getText().toString() + " $end";
                 DeviceImpl.getInstance().SendMessage(ServiceIp,mess);
                 Recorder mulMessage = new Recorder(0,null,"Me: " + editTextMessage.getText().toString());
                 pushMessage(mulMessage);
@@ -253,17 +253,15 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
             String msg = intent.getStringExtra("sent");
             System.out.print("msg-----------------"+msg);
             Log.i("msginchatmain", msg);
-            ArrayList<LocalMessage> testList = SQLManeger.getSqlManeger().get_message(Id);
-
-            if (msg.equals(sent)) {
+            if (msg.equals(user)) {
                 String Message=SQLManeger.getSqlManeger().get_one_message(Id,msg);
-                Log.i("stateinchatmain", Integer.toString(testList.get(testList.size()-1).getState()));
-                if(testList.get(testList.size()-1).getState()==0){
+                int lastState = SQLManeger.getSqlManeger().getLastState(Id);
+                if(lastState==0){
                     Recorder mul=new Recorder(0,null,Message);
                     pushMessage(mul);
                 }
-                else if (testList.get(testList.size()-1).getState()==1){
-                    System.out.println("this is fpath in Chatmain-------------------: "+testList.get(testList.size()-1).getContent());
+                else if (lastState==1){
+                    System.out.println("this is fpath in Chatmain-------------------: "+Message);
                     Recorder mul = new Recorder(0,Message,null);
                     pushMessage(mul);
                 }

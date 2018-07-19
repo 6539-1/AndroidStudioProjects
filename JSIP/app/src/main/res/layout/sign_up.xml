@@ -18,9 +18,9 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="请输入4位数字"
+            android:hint="请输入6位数字"
             android:digits="0123456789"
-            android:maxLength="4"
+            android:maxLength="6"
             android:layout_weight="1"
             android:textCursorDrawable="@null"
             android:background="@null"

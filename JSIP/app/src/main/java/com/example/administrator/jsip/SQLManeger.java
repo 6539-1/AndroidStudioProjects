@@ -198,7 +198,25 @@ public class SQLManeger {
 
         return MessageList;
     }
-
+    public int getLastState(String Id){
+        ArrayList<LocalMessage> localMessages = new ArrayList<>();
+        Cursor cursor=sqldb.query("MESSAGE_"+Id,null,null,null,null,null,null);
+        if (cursor != null) {
+            while(cursor.moveToNext()) {
+                LocalMessage localMessage = new LocalMessage(
+                        cursor.getString(cursor.getColumnIndex("content")),
+                        cursor.getString(cursor.getColumnIndex("nickname")),
+                        cursor.getInt(cursor.getColumnIndex("state")),
+                        cursor.getInt(cursor.getColumnIndex("isMine")),
+                        cursor.getString(cursor.getColumnIndex("origin_id")),
+                        cursor.getString(cursor.getColumnIndex("id"))
+                );
+                localMessages.add(localMessage);
+            }
+        }
+        cursor.close();
+        return localMessages.get(localMessages.size()-1).getState();
+    }
     public ArrayList<LocalMessage> get_message(String Id){
         ArrayList<LocalMessage> localMessages = new ArrayList<>();
         String[] args = {"0"};
@@ -236,7 +254,7 @@ public class SQLManeger {
         return Message;
     }
     /*
-    * 往数据库中的Personal表添加一行信息
+    * 往数据库中的Personal表添加信息
     * */
     public void addPerson(ArrayList<Personal> personals){
         sqldb.beginTransaction();
@@ -247,6 +265,15 @@ public class SQLManeger {
         }
         sqldb.setTransactionSuccessful();
         sqldb.endTransaction();
+    }
+
+    public void addOnePerson(Personal person){
+        ContentValues values = new ContentValues();
+        values.put("id",person.getId());
+        values.put("nickname",person.getNickname());
+        values.put("imageid",person.getImage_id());
+        sqldb.insert("personaltable",null,values);
+        values.clear();
     }
     /*
     * 从数据库中读取所有个人信息
