@@ -1,12 +1,15 @@
 package com.example.administrator.jsip;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,6 +45,10 @@ public class SignIn extends AppCompatActivity{
     private ArrayList<Personal> personals;
     private String Id;
     private SignIn.InnerReceiver receiver = new SignIn.InnerReceiver();
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static int REQUEST_PERMISSION_CODE = 1;
     private int[] arrImages = new int[]{
             R.mipmap.img1,R.mipmap.img2,R.mipmap.img3,
             R.mipmap.img4,R.mipmap.img5, R.mipmap.img6,
@@ -52,6 +59,10 @@ public class SignIn extends AppCompatActivity{
         /*
          * 初始化发送方法
          * */
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_PERMISSION_CODE);
+        }
         sipProfile = new SipProfile();
         HashMap<String, String> customHeaders = new HashMap<>();
         customHeaders.put("customHeader1","customValue1");
@@ -59,7 +70,6 @@ public class SignIn extends AppCompatActivity{
         DeviceImpl.getInstance().Initialize(getApplicationContext(), sipProfile,customHeaders);
         SQLManeger.getSqlManeger().init(this);
         startService(new Intent(this,MyService.class));
-
         onRestart();
         setContentView(R.layout.sign_in);
         AccountView = findViewById(R.id.dropview);

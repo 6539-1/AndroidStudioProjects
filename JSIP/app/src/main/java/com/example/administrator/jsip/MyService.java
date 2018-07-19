@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +54,10 @@ public class MyService extends Service implements SipUADeviceListener {
     @Override
     public void onSipUAMessageArrived(SipEvent event) {
         String msg = event.content;
+        setReciveMessage(msg);
         deal(msg);
     }
+
 
     public void deal(String rmessage){
         Intent intent_deal=new Intent("com.app.deal_msg");
@@ -108,7 +111,6 @@ public class MyService extends Service implements SipUADeviceListener {
                 }
                 intent_deal.putExtra("userList",userlist);
                 break;
-
             }
             case "$add":{
                 switch(M[1]) {
@@ -159,6 +161,22 @@ public class MyService extends Service implements SipUADeviceListener {
                 SQLManeger.getSqlManeger().addMessage(lmsg,Id);
                 //SQLManeger.getSqlManeger().closeDatabase();
                 intent_deal.putExtra("sent",id);
+            }
+            case ("$sentv"):{
+                String id = M[1];
+                String filename = M[2];
+                String content = M[3];
+                for (int i = 4;;i++){
+                    if (M[i].equals("$end")){
+                        break;
+                    }
+                    content+=" "+M[i];
+                }
+                FileTransfer ff = new FileTransfer(filename,content);
+                String rcvfpath = ff.getfPth();
+                System.out.println("file path in Myserver11111111111:"+rcvfpath);
+                LocalMessage lmsg = new LocalMessage(SQLManeger.getSqlManeger().getNickname(Id,id),rcvfpath,1,0,id,Id);
+                SQLManeger.getSqlManeger().addMessage(lmsg,Id);
                 break;
             }
             case "$sentall":{
@@ -216,8 +234,13 @@ public class MyService extends Service implements SipUADeviceListener {
                 intent_deal.putExtra("creategroup",true);
                 break;
             }
-
         }
         sendBroadcast(intent_deal);
+    }
+    public void setReciveMessage(String msg){
+        this.reciveMessage = msg;
+    }
+    public String getReciveMessage(){
+        return reciveMessage;
     }
 }
