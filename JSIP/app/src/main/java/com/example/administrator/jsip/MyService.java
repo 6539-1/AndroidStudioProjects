@@ -90,6 +90,8 @@ public class MyService extends Service implements SipUADeviceListener {
                         SQLManeger.getSqlManeger().CreateTable(Id);
                         //SQLManeger.getSqlManeger().closeDatabase();
                         intent_deal.putExtra("log",0);
+                        intent_deal.putExtra("pic_owner",head);
+                        intent_deal.putExtra("nickname",name);
                     }
                         break;
                     default:

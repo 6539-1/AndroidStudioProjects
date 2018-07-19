@@ -26,7 +26,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -39,8 +41,8 @@ import jsip_ua.impl.DeviceImpl;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
-    private String ServiceIp = "sip:alice@192.168.43.73:5006";
-    //private String ServiceIp = "sip:alice@10.206.17.104:5006";
+    //private String ServiceIp = "sip:alice@192.168.43.73:5006";
+    private String ServiceIp = "sip:alice@10.206.17.104:5006";
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
@@ -74,8 +76,14 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        ImageView img_owner=(ImageView)findViewById(R.id.image_ID);
+        int pic=getIntent().getIntExtra("pic",-1);
+        img_owner.setImageResource(pic);
+        TextView id_owner=(TextView)findViewById(R.id.nickName);
+        String nickname=getIntent().getStringExtra("nickName");
+        id_owner.setText(nickname);
+
         friendList=SQLManeger.getSqlManeger().query(Id);
-        //SQLManeger.getSqlManeger().closeDatabase();
 
         initMessage();
 
@@ -108,8 +116,7 @@ public class MainActivity extends AppCompatActivity
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
-                        refresh();
+                        initMessage();
                         msgAdapter.notifyDataSetChanged();
                         Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
 
@@ -118,7 +125,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 }, 1200);
 
-                // System.out.println(Thread.currentThread().getName());
 
                 // 这个不能写在外边，不然会直接收起来
                 //swipeRefreshLayout.setRefreshing(false);
@@ -163,9 +169,6 @@ public class MainActivity extends AppCompatActivity
             msgList.add(new message(Integer.toString(g_id.get(i)),Integer.toString(g_id.get(i)),1,SQLManeger.getSqlManeger().get_one_message(Id,Integer.toString(g_id.get(i))),Integer.toString(2)));
         }
         //SQLManeger.getSqlManeger().closeDatabase();
-
-    }
-    private void refresh(){
 
     }
 
@@ -280,7 +283,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_end) {
+        } else if (id == R.id.nav_send) {
              DeviceImpl.getInstance().SendMessage(ServiceIp,"$quit");
              Toast.makeText(getApplicationContext(), "注销账户", Toast.LENGTH_SHORT).show();
              finish();

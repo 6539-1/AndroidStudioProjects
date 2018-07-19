@@ -127,12 +127,16 @@ public class SignIn extends AppCompatActivity{
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
             int is_SignIn = intent.getIntExtra("log",-1);
+            String nickname=intent.getStringExtra("nickname");
+            int pic_owner=intent.getIntExtra("pic_owner",-1);
             if(is_SignIn==0) {
 
                 DeviceImpl.getInstance().SendMessage(ServiceIp,"$flush");
                 DeviceImpl.getInstance().SendMessage(ServiceIp,"$message");
                 Intent intent_Id = new Intent(SignIn.this, MainActivity.class);
                 intent_Id.putExtra("Id", Id);
+                intent_Id.putExtra("nickName",nickname);
+                intent_Id.putExtra("pic",pic_owner);
                 startActivity(intent_Id);
 
             }
