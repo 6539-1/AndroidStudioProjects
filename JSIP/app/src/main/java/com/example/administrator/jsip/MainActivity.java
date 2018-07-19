@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     private InnerReceiver receiver = new InnerReceiver();
     private AceptReceiver receiver_acept=new AceptReceiver();
     private String Id;
+    private long exitTime = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,11 +179,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // if (drawer.isDrawerOpen(GravityCompat.START)) {
+            //  drawer.closeDrawer(GravityCompat.START);
+        // } else {
+            //super.onBackPressed();
+        // }
+        if ((System.currentTimeMillis() - exitTime) > 2000) {
+            Toast.makeText(getApplicationContext(), "再按一次注销账户", Toast.LENGTH_SHORT).show();
+            exitTime = System.currentTimeMillis();
         } else {
-            super.onBackPressed();
+            DeviceImpl.getInstance().SendMessage(ServiceIp,"$quit");
+            Toast.makeText(getApplicationContext(), "注销账户", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -278,8 +287,15 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_end) {
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(getApplicationContext(), "再按一次注销账户", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                DeviceImpl.getInstance().SendMessage(ServiceIp,"$quit");
+                Toast.makeText(getApplicationContext(), "注销账户", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

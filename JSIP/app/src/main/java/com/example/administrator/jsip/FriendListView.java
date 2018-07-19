@@ -59,6 +59,5 @@ public class FriendListView extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
 }
 
