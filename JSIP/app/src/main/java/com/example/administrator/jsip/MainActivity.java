@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity
 
     }
     private void initMessage() {
-
+        msgList.clear();
         ArrayList<Friend> friends = SQLManeger.getSqlManeger().query(Id);
         ArrayList<Integer> g_id = SQLManeger.getSqlManeger().get_group_Id(Id);
 

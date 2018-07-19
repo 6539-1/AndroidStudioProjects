@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -110,6 +111,7 @@ public class MyService extends Service implements SipUADeviceListener {
                     userlist.add(M[i]);
                 }
                 intent_deal.putExtra("userList",userlist);
+                Log.i("list---------------------", userlist.toString());
                 break;
             }
             case "$add":{
@@ -177,6 +179,7 @@ public class MyService extends Service implements SipUADeviceListener {
                 System.out.println("file path in Myserver11111111111:"+rcvfpath);
                 LocalMessage lmsg = new LocalMessage(SQLManeger.getSqlManeger().getNickname(Id,id),rcvfpath,1,0,id,Id);
                 SQLManeger.getSqlManeger().addMessage(lmsg,Id);
+                intent_deal.putExtra("sent",id);
                 break;
             }
             case "$sentall":{

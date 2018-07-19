@@ -103,7 +103,7 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 FileTransfer fs = new FileTransfer(fileTosent);
                 String bstypeFile = fs.getBasedFile();
                 Log.i("99999999999", bstypeFile);
-                DeviceImpl.getInstance().SendMessage(ServiceIp, "$sentv 1111 2222 "+filePath+" "+bstypeFile+" $end");
+                DeviceImpl.getInstance().SendMessage(ServiceIp, "$sentv "+sent+" "+filePath+" "+bstypeFile+" $end");
                 Recorder recorder = new Recorder(seconds,filePath,null);
                 pushMessage(recorder);
             }
@@ -253,9 +253,13 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
             String msg = intent.getStringExtra("sent");
+            System.out.print("msg-----------------"+msg);
+            Log.i("msginchatmain", msg);
+            ArrayList<LocalMessage> testList = SQLManeger.getSqlManeger().get_message(Id);
+
             if (msg.equals(sent)) {
-                ArrayList<LocalMessage> testList = SQLManeger.getSqlManeger().get_message("1");
                 String Message=SQLManeger.getSqlManeger().get_one_message(Id,msg);
+                Log.i("stateinchatmain", Integer.toString(testList.get(testList.size()-1).getState()));
                 if(testList.get(testList.size()-1).getState()==0){
                     Recorder mul=new Recorder(0,null,Message);
                     pushMessage(mul);
