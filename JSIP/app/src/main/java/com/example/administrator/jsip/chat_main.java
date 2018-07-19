@@ -43,8 +43,8 @@ import java.util.logging.LogRecord;
 
 public class chat_main extends AppCompatActivity implements OnClickListener {
     private EditText editTextTo;
-    //private String ServiceIp = "sip:alice@192.168.43.73:5006";
-    private String ServiceIp = "sip:alice@10.206.17.104:5006";
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
+    //private String ServiceIp = "sip:alice@10.206.17.104:5006";
     private EditText editTextMessage;
     private TextView textViewChat;
     private ListView listView;

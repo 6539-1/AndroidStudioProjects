@@ -39,8 +39,8 @@ import jsip_ua.impl.DeviceImpl;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
-    //private String ServiceIp = "sip:alice@192.168.43.73:5006";
-    private String ServiceIp = "sip:alice@10.206.17.104:5006";
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
+    //private String ServiceIp = "sip:alice@10.206.17.104:5006";
     private List<message> msgList=new ArrayList<>();
     private String friendName;
     private ArrayList<String> rcvMsg=new ArrayList<>();
@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity
         if(id==R.id.action_add){
             Intent intent_add=new Intent(this,addfriends.class);
             startActivity(intent_add);
-            String person_list="$list "+Id+" $end";
+            String person_list="$addall "+Id+" $end";
             DeviceImpl.getInstance().SendMessage(ServiceIp,person_list);
             return true;
         }
@@ -289,14 +289,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_end) {
-            if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toast.makeText(getApplicationContext(), "再按一次注销账户", Toast.LENGTH_SHORT).show();
-                exitTime = System.currentTimeMillis();
-            } else {
-                DeviceImpl.getInstance().SendMessage(ServiceIp,"$quit");
-                Toast.makeText(getApplicationContext(), "注销账户", Toast.LENGTH_SHORT).show();
-                finish();
-            }
+             DeviceImpl.getInstance().SendMessage(ServiceIp,"$quit");
+             Toast.makeText(getApplicationContext(), "注销账户", Toast.LENGTH_SHORT).show();
+             finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
