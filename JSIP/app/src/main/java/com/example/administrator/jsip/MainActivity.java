@@ -349,7 +349,7 @@ public class MainActivity extends AppCompatActivity
             String qunhao=intent.getStringExtra("qunhao");
             boolean is_qun=intent.getBooleanExtra("creategroup",false);
             if(is_qun){
-                message newQun=new message(qunhao,R.mipmap.pic6,"","");
+                message newQun=new message(qunhao,R.mipmap.pic6,"","2");
                 msgList.add(newQun);
                 msgAdapter.notifyDataSetChanged();
                 Toast.makeText(MainActivity.this,"创建成功", Toast.LENGTH_SHORT).show();
