@@ -33,7 +33,7 @@ public class messageAdapter extends ArrayAdapter<message>{
         img_id.setImageResource(arrImages[msg.getImgId()]);
         name_id.setText(msg.getId_name());
         msg_last.setText(msg.getMsg_last());
-        time_last.setText(msg.getTime());
+        //time_last.setText(msg.getTime());
         return view;
     }
 

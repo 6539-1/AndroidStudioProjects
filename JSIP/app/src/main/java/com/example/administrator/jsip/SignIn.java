@@ -128,6 +128,7 @@ public class SignIn extends AppCompatActivity{
             //使用intent获取发送过来的数据
             int is_SignIn = intent.getIntExtra("log",-1);
             if(is_SignIn==0) {
+
                 DeviceImpl.getInstance().SendMessage(ServiceIp,"$flush");
                 DeviceImpl.getInstance().SendMessage(ServiceIp,"$message");
                 Intent intent_Id = new Intent(SignIn.this, MainActivity.class);

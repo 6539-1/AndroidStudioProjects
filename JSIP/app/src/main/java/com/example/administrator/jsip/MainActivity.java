@@ -143,32 +143,24 @@ public class MainActivity extends AppCompatActivity
             if(SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(friends.get(i).getID()),Id).size()!=0){
                 newMsg=SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(friends.get(i).getID()),Id).get(0);
                 MessageList.add(newMsg);
-                tag++;
-            }
-        }
-        for (int i=0;i<g_id.size();i++){
-            if(SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(g_id.get(i)),Id).size()!=0) {
-                newMsg = SQLManeger.getSqlManeger().get_message_by_id(Integer.toString(g_id.get(i)), Id).get(0);
-                MessageList.add(newMsg);
             }
         }
         for (int i=0;i<MessageList.size();i++){
             id.add(MessageList.get(i).getOrigin_Id());
         }
         for (int i=0;i<id.size();i++){
-            if (i<=tag){
                 name.add(SQLManeger.getSqlManeger().getNickname(Id,id.get(i)));
                 head.add(SQLManeger.getSqlManeger().getHead(Id,id.get(i)));
-            }else {
-                head.add(1);
-                name.add(id.get(i));
-            }
         }
+
         for (int i=0;i<id.size();i++) {
-            if (i<tag)
                 msgList.add(new message(id.get(i),name.get(i),head.get(i),MessageList.get(i).getContent(),"1"));
-            else
-                msgList.add(new message(id.get(i),name.get(i),head.get(i),MessageList.get(i).getContent(),"2"));
+        }
+        head.clear();
+        name.clear();
+        MessageList.clear();
+        for (int i=0;i<g_id.size();i++){
+            msgList.add(new message(Integer.toString(g_id.get(i)),Integer.toString(g_id.get(i)),1,SQLManeger.getSqlManeger().get_one_message(Id,Integer.toString(g_id.get(i))),Integer.toString(2)));
         }
         //SQLManeger.getSqlManeger().closeDatabase();
 
