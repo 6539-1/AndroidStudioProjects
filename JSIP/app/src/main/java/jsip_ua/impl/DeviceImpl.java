@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 // ISSUE#17: commented those, as we need to decouple the UI details
 //import org.mobicents.restcomm.android.sdk.ui.IncomingCall;
@@ -173,7 +174,9 @@ public class DeviceImpl implements IDevice,Serializable {
 	@Override
 	public void SendMessage(String to, String message) {
 		try {
+
 			this.sipManager.SendMessage(to, message);
+			Log.i("sbbbbbbbbbbbb", message);
 		} catch (NotInitializedException e) {
 			e.printStackTrace();
 		}

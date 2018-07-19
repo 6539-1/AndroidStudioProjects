@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 public class FriendArrayAdapter extends ArrayAdapter<Friend>{
-    private int resourceId;
+        private int resourceId;
     public boolean Tag;
 
     public FriendArrayAdapter(Context context, int TextViewResourceId, List<Friend> objects){

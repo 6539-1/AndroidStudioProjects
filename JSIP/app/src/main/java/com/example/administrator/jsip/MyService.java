@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import jsip_ua.SipProfile;
@@ -85,7 +86,26 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     message+=" "+M[i];
                 }
-                LocalMessage lmsg = new LocalMessage(Rtime,nickname,message,1,0);
+                LocalMessage lmsg = new LocalMessage(Rtime,message,nickname,1,0);
+                rmessage.add(lmsg);
+                sqlm.addMessage(rmessage,"p1992");
+                break;
+            }
+            case ("$sentv"):{
+                String nickname = M[1];
+                String Rtime = M[2];
+                String fileName = M[3];
+                String message = M[4];
+                for (int i = 5;;i++){
+                    if (M[i].equals("$end")){
+                        break;
+                    }
+                    message+=" "+M[i];
+                }
+                FileTransfer ff = new FileTransfer(fileName,message);
+                String rcvfpath = ff.getfPth();
+                System.out.println("file path in Myserver11111111111:"+rcvfpath);
+                LocalMessage lmsg = new LocalMessage(Rtime,rcvfpath,nickname,2,0);
                 rmessage.add(lmsg);
                 sqlm.addMessage(rmessage,"p1992");
                 break;
@@ -101,14 +121,15 @@ public class MyService extends Service implements SipUADeviceListener {
                     }
                     message+=" "+M[i];
                 }
-                LocalMessage lmsg = new LocalMessage(Rtime,Gid,message,1,0);
+                LocalMessage lmsg = new LocalMessage(Rtime,message,Gid,1,0);
                 rmessage.add(lmsg);
                 sqlm.addMessage(rmessage,nickname);
                 break;
             }
         }
-               ArrayList<LocalMessage> testList = new ArrayList<>();
-                testList = sqlm.Messagequery("p1992");
+                sqlm.closeDatabase();
+//               ArrayList<LocalMessage> testList = new ArrayList<>();
+//                testList = sqlm.Messagequery("p1992");
                 Intent intent = new Intent("com.app.test");
                 intent.putExtra("message","DATABASE_CHANGED");
                 sendBroadcast(intent);

@@ -901,7 +901,7 @@ public class SipManager implements SipListener, ISipManager, Serializable {
 		try {
 			return this.addressFactory.createAddress("sip:"
 					+ getSipProfile().getSipUserName() + "@"
-					+ getSipProfile().getLocalEndpoint() + ";transport=udp"
+					+ getSipProfile().getLocalEndpoint() + ";transport=tcp"
 					+ ";registering_acc=" + getSipProfile().getRemoteIp());
 		} catch (ParseException e) {
 			return null;
