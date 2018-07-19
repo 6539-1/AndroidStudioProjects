@@ -36,7 +36,6 @@ public class addfriends extends AppCompatActivity {
     private ArrayList<String> userList=new ArrayList<>();
     private InnerReceiver receiver = new InnerReceiver();
     private ArrayList<Friend> friendList=new ArrayList<>();
-    SQLManeger sqlManeger;
     private String Id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +50,7 @@ public class addfriends extends AppCompatActivity {
         searchView.setIconifiedByDefault(false);
         final ListView listView_add=(ListView)findViewById(R.id.list_add);
         this.Id=getIntent().getStringExtra("Id");
-        sqlManeger=new SQLManeger(this);
-        friendList=sqlManeger.query(Id);
-        sqlManeger.closeDatabase();
+        friendList= SQLManeger.getSqlManeger().query(Id);
         adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userList);
         listView_add.setAdapter(adapter);
         listView_add.setTextFilterEnabled(true);
