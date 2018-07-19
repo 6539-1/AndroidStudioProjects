@@ -77,11 +77,11 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         ImageView img_owner=(ImageView)findViewById(R.id.image_ID);
-        int pic=getIntent().getIntExtra("pic",-1);
-        img_owner.setImageResource(pic);
-        TextView id_owner=(TextView)findViewById(R.id.nickName);
-        String nickname=getIntent().getStringExtra("nickName");
-        id_owner.setText(nickname);
+        //int pic=getIntent().getIntExtra("pic",-1);
+        //img_owner.setImageResource(pic);
+        //TextView id_owner=(TextView)findViewById(R.id.nickName);
+        //String nickname=getIntent().getStringExtra("nickName");
+        //id_owner.setText(nickname);
 
         friendList=SQLManeger.getSqlManeger().query(Id);
 
