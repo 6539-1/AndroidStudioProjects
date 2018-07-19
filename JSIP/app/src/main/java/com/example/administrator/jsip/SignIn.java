@@ -86,8 +86,9 @@ public class SignIn extends AppCompatActivity{
 
         if(AccountList.size()!=0) {
             AccountView.setDefaultAccount(AccountList);
+            findHead(AccountList.get(0));
         }
-        findHead(AccountList.get(0));
+
         Accounttext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {
