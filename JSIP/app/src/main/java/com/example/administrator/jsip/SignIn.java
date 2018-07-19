@@ -33,7 +33,6 @@ public class SignIn extends AppCompatActivity{
     private EditText PasswordView;
     private CheckBox is_show_psw;
     private TextView signUpBtn;
-    private SQLManeger signInSQL;
     private SharedPreferences prefs;
     private ArrayList<Personal> personals;
     private String Id;
@@ -55,9 +54,9 @@ public class SignIn extends AppCompatActivity{
         setContentView(R.layout.sign_in);
         AccountView = findViewById(R.id.dropview);
         setAccountList();
-        signInSQL = new SQLManeger(this);
-        personals=signInSQL.Personalquery();
-        signInSQL.closeDatabase();
+        SQLManeger.getSqlManeger().init(this);
+        personals=SQLManeger.getSqlManeger().Personalquery();
+        //SQLManeger.getSqlManeger().closeDatabase();
 
         if(AccountList.size()!=0) {
             AccountView.setDefaultAccount(AccountList);

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLHelper extends SQLiteOpenHelper {
 
+   // private static SQLHelper mInstance = null;
     private static final String DB_NAME = "communication.db";
     public String PERSONAL_TABLE_NAME = "personaltable";
 
@@ -16,6 +17,12 @@ public class SQLHelper extends SQLiteOpenHelper {
             + "imageid integer NOT NULL"
             + ");";
 
+   // public static SQLHelper getInstance(Context context){
+    //    if (mInstance == null){
+    //        mInstance = new SQLHelper(context.getApplicationContext(),1);
+    //    }
+    //    return mInstance;
+  //  }
 
     public SQLHelper(Context context ,int version) {
         super(context, DB_NAME, null, version);

@@ -16,7 +16,7 @@ import java.util.List;
 public class FriendListView extends AppCompatActivity {
     private ArrayList<Friend> friendList2=new ArrayList<>();
     private String Id;
-    SQLManeger sqlManeger;
+    //SQLManeger sqlManeger;
     FriendArrayAdapter adapter;
 
 
@@ -27,9 +27,9 @@ public class FriendListView extends AppCompatActivity {
         Id=getIntent().getStringExtra("Id");
         getSupportActionBar().setTitle("好友列表");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        sqlManeger=new SQLManeger(FriendListView.this);
-        friendList2=sqlManeger.query(Id);
-        sqlManeger.closeDatabase();
+        //sqlManeger=new SQLManeger(FriendListView.this);
+        friendList2=SQLManeger.getSqlManeger().query(Id);
+        //SQLManeger.getSqlManeger().closeDatabase();
         FriendArrayAdapter adapter = new FriendArrayAdapter(FriendListView.this, R.layout.friend_item, friendList2);
 
         ListView listviews = (ListView) findViewById(R.id.list_views);
@@ -50,7 +50,7 @@ public class FriendListView extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        sqlManeger.closeDatabase();
+        //SQLManeger.getSqlManeger().closeDatabase();
         super.onBackPressed();
     }
     @Override

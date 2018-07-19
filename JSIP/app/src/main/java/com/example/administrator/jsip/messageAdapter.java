@@ -12,6 +12,11 @@ import java.util.List;
 
 public class messageAdapter extends ArrayAdapter<message>{
     private int resourceId;
+    private int[] arrImages = new int[]{
+            R.mipmap.img1,R.mipmap.img2,R.mipmap.img3,
+            R.mipmap.img4,R.mipmap.img5, R.mipmap.img6,
+            R.mipmap.img7,R.mipmap.img8,R.mipmap.img9
+    };
     public messageAdapter(Context context, int textViewResourceId, List<message> object){
         super(context,textViewResourceId,object);
         resourceId=textViewResourceId;
@@ -25,7 +30,7 @@ public class messageAdapter extends ArrayAdapter<message>{
         TextView name_id=(TextView)view.findViewById(R.id.name_id);
         TextView msg_last=(TextView)view.findViewById(R.id.msg_last) ;
         TextView time_last=(TextView)view.findViewById(R.id.time_last);
-        img_id.setImageResource(msg.getImgId());
+        img_id.setImageResource(arrImages[msg.getImgId()]);
         name_id.setText(msg.getId_name());
         msg_last.setText(msg.getMsg_last());
         time_last.setText(msg.getTime());
