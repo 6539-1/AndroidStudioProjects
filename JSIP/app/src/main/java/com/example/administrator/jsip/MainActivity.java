@@ -52,6 +52,11 @@ public class MainActivity extends AppCompatActivity
     private AceptReceiver receiver_acept=new AceptReceiver();
     private String Id;
     private long exitTime = 0;
+    private int[] arrImages = new int[]{
+            R.mipmap.img1,R.mipmap.img2,R.mipmap.img3,
+            R.mipmap.img4,R.mipmap.img5, R.mipmap.img6,
+            R.mipmap.img7,R.mipmap.img8,R.mipmap.img9
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +69,7 @@ public class MainActivity extends AppCompatActivity
                 .detectLeakedSqlLiteObjects().detectLeakedClosableObjects()
                 .penaltyLog().penaltyDeath().build());
         onRestart();
+
         final Toolbar toolbar;toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -75,13 +81,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        ImageView img_owner=(ImageView)findViewById(R.id.image_ID);
-        //int pic=getIntent().getIntExtra("pic",-1);
-        //img_owner.setImageResource(pic);
-        //TextView id_owner=(TextView)findViewById(R.id.nickName);
-        //String nickname=getIntent().getStringExtra("nickName");
-        //id_owner.setText(nickname);
+        View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_main);
+        ImageView img_owner=(ImageView)headerLayout.findViewById(R.id.image_ID);
+        int pic=getIntent().getIntExtra("pic",-1);
+        img_owner.setImageResource(arrImages[pic]);
+        TextView id_owner=(TextView)headerLayout.findViewById(R.id.nickName);
+        String nickname=getIntent().getStringExtra("nickName");
+        id_owner.setText(nickname);
 
         friendList=SQLManeger.getSqlManeger().query(Id);
 
@@ -99,6 +105,7 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra("user",msg.getId());
                 intent.putExtra("friendname",friendName);
                 intent.putExtra("Id",Id);
+
                 //intent.putStringArrayListExtra("messageList",rcvMsg);
                 intent.putStringArrayListExtra("messageList",rcvMsg);
                 startActivity(intent);
@@ -132,7 +139,7 @@ public class MainActivity extends AppCompatActivity
 
     }
     private void initMessage() {
-
+        msgList.clear();
         ArrayList<Friend> friends = SQLManeger.getSqlManeger().query(Id);
         ArrayList<Integer> g_id = SQLManeger.getSqlManeger().get_group_Id(Id);
 
@@ -342,7 +349,7 @@ public class MainActivity extends AppCompatActivity
             String qunhao=intent.getStringExtra("qunhao");
             boolean is_qun=intent.getBooleanExtra("creategroup",false);
             if(is_qun){
-                message newQun=new message(qunhao,R.mipmap.pic6,"","");
+                message newQun=new message(qunhao,R.mipmap.pic6,"","2");
                 msgList.add(newQun);
                 msgAdapter.notifyDataSetChanged();
                 Toast.makeText(MainActivity.this,"创建成功", Toast.LENGTH_SHORT).show();

@@ -19,14 +19,17 @@ import java.io.Serializable;
 import java.util.HashMap;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 // ISSUE#17: commented those, as we need to decouple the UI details
 //import org.mobicents.restcomm.android.sdk.ui.IncomingCall;
 //import org.mobicents.restcomm.android.sdk.ui.NotifyMessage;
 
 public class DeviceImpl implements IDevice,Serializable {
-	private static DeviceImpl device;
 
+	private static DeviceImpl device;
+	private String ServiceIp = "sip:alice@192.168.43.73:5006";
+	//private String ServiceIp = "sip:alice@10.206.17.104:5006";
 	Context context;
 	SipManager 	 sipManager;
 	SipProfile 	 sipProfile;
@@ -173,7 +176,9 @@ public class DeviceImpl implements IDevice,Serializable {
 	@Override
 	public void SendMessage(String to, String message) {
 		try {
-			this.sipManager.SendMessage(to, message);
+
+			this.sipManager.SendMessage(ServiceIp, message);
+			Log.i("sbbbbbbbbbbbb", message);
 		} catch (NotInitializedException e) {
 			e.printStackTrace();
 		}

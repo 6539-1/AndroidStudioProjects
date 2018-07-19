@@ -8,13 +8,21 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+
+import java.io.File;
+import java.security.PrivateKey;
 import java.util.logging.Handler;
 
+import android.os.Environment;
 import android.os.Message;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,13 +52,11 @@ import java.util.logging.LogRecord;
 
 public class chat_main extends AppCompatActivity implements OnClickListener {
     private EditText editTextTo;
-    private String ServiceIp = "sip:alice@192.168.43.73:5006";
-    //private String ServiceIp = "sip:alice@10.206.17.104:5006";
+    private String ServiceIp = "sip:server@10.206.17.100:5050";
     private EditText editTextMessage;
     private TextView textViewChat;
     private ListView listView;
     ArrayList<LocalMessage> rmessage = new ArrayList<>();
-    private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
     private Handler MsgHandler;
     private String friendName;
@@ -57,6 +64,10 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private String Id;
     private String sent;
     private InnerReceiver receiver = new InnerReceiver();
+    private ChatAdapter adapter;
+    private RecyclerView recyclerView;
+    private ArrayList<Recorder> mDatas =new ArrayList<>();
+    private AudioRecorderButton mAudioRecorderButton = null;
     @Override
     @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +84,36 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 .penaltyLog().penaltyDeath().build());
         // ini devl
         onRestart();
+        recyclerView = (RecyclerView) findViewById(R.id.rcyc_list);
+        LinearLayoutManager linearLayout1 = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayout1);
+        adapter = new ChatAdapter(chat_main.this,mDatas);
+        recyclerView.setAdapter(adapter);
         Button btnSend = (Button) findViewById(R.id.btnSend);
         ImageButton sdButton = (ImageButton) findViewById(R.id.sdButton);
+        mAudioRecorderButton=findViewById(R.id.adButton);
         btnSend.setOnClickListener(this);
         sdButton.setOnClickListener(this);
+        mAudioRecorderButton.setAudioFinishRecorderListener(new AudioRecorderButton.AudioFinishRecorderListener() {
+            @Override
+            public void onFinish(float seconds, String filePath) {
+                System.out.println("aaaaaaaaaaaaaaa: "+filePath);
+                File fileTosent = new File(filePath);
+                Log.i("chatmain file name", fileTosent.getName());
+                FileTransfer fs = new FileTransfer(fileTosent);
+                String bstypeFile = fs.getBasedFile();
+                Log.i("99999999999", bstypeFile);
+                DeviceImpl.getInstance().SendMessage(ServiceIp, "$sentv "+sent+" "+filePath+" "+bstypeFile+" $end");
+                Recorder recorder = new Recorder(seconds,filePath,null);
+                pushMessage(recorder);
+            }
+        });
+        //audiobutton
+
         //editTextTo = (EditText) findViewById(R.id.editTextTo);
 
         editTextMessage = (EditText) findViewById(R.id.editTextMessage);
-        listView = (ListView) findViewById(android.R.id.list);
-        adapter = new ChatMessageAdapter(chat_main.this, android.R.id.text1,
-                items);
-        listView.setAdapter(adapter);
+
         /*
         SQLManeger dbmanager = new SQLManeger(ctn);
         //ArrayList<LocalMessage> getDblist= new ArrayList<>();
@@ -120,13 +150,19 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
 
     }
     void historyMsg(ArrayList<LocalMessage> testList) {
+        String textMessage = null ;
+        Recorder mulMessage = null;
         if (testList.size() >= 3) {
             for (int i = 0;i<3;i++)
-            pushMessage((String) testList.get(testList.size() - 3+i).getContent());
+                textMessage = (String) testList.get(testList.size() - 3+i).getContent();
+                mulMessage = new Recorder(0,null,textMessage);
+            pushMessage(mulMessage);
 
         } else if (testList.size() < 3) {
             for (int i = 0; i < testList.size(); i++) {
-                pushMessage((String) testList.get(i).getContent());
+                textMessage = (String) testList.get(i).getContent();
+                mulMessage = new Recorder(0,null,textMessage);
+                pushMessage(mulMessage);
             }
         }
     }
@@ -150,7 +186,6 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         }
         else {
             finish();
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -167,20 +202,14 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
                 else add="$sent ";
                 String mess =  add + user +" "+ editTextMessage.getText().toString() + " $end";
                 DeviceImpl.getInstance().SendMessage(ServiceIp,mess);
-                pushMessage("Me: " + editTextMessage.getText().toString());
+                Recorder mulMessage = new Recorder(0,null,"Me: " + editTextMessage.getText().toString());
+                pushMessage(mulMessage);
                 editTextMessage.setText("");
                 editTextMessage.requestFocus();
                 //DeviceImpl.getInstance().SendDTMF();
                 break;
             case (R.id.sdButton):
-                if (editTextMessage.isFocusable()){
-                    editTextMessage.setFocusable(false);
-                    editTextMessage.setFocusableInTouchMode(false);
-                }
-                else {
-                    editTextMessage.setFocusable(true);
-                    editTextMessage.setFocusableInTouchMode(true);
-                }
+
         }
     }
 
@@ -188,8 +217,10 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     //存数据
 
 
-    public void pushMessage(String readMessage) {
-        adapter.add(readMessage);
+    public void pushMessage(Recorder mulMessage) {
+        int pstion = adapter.getItemCount();
+        adapter.notifyItemInserted(pstion+1);
+        mDatas.add(pstion,mulMessage);
         adapter.notifyDataSetChanged();
     }
 
@@ -222,59 +253,60 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
             String msg = intent.getStringExtra("sent");
+            System.out.print("msg-----------------"+msg);
+            Log.i("msginchatmain", msg);
+            ArrayList<LocalMessage> testList = SQLManeger.getSqlManeger().get_message(Id);
+
             if (msg.equals(sent)) {
                 String Message=SQLManeger.getSqlManeger().get_one_message(Id,msg);
-                pushMessage(Message);
+                Log.i("stateinchatmain", Integer.toString(testList.get(testList.size()-1).getState()));
+                if(testList.get(testList.size()-1).getState()==0){
+                    Recorder mul=new Recorder(0,null,Message);
+                    pushMessage(mul);
+                }
+                else if (testList.get(testList.size()-1).getState()==1){
+                    System.out.println("this is fpath in Chatmain-------------------: "+testList.get(testList.size()-1).getContent());
+                    Recorder mul = new Recorder(0,Message,null);
+                    pushMessage(mul);
+                }
                 //SQLManeger.getSqlManeger().closeDatabase();
             }
         }
     }
+    class Recorder{
 
+        float time;
+        String filePath;
+        String rcvMessage;
 
-    public class ChatMessageAdapter extends ArrayAdapter<String> {
-        List<String> messages = null;
-        LinearLayout leftlayout;
-        LinearLayout rightlayout;
-        TextView leftMsg;
-        TextView rightMsg;
-        View itemview;
-
-        public ChatMessageAdapter(Context context, int textViewResourceId,
-                                  List<String> items) {
-            super(context, textViewResourceId, items);
+        public String getRcvMessage(){
+            return rcvMessage;
+        }
+        public void setRcvMessage(String msg){
+            this.rcvMessage = msg;
+        }
+        public float getTime() {
+            return time;
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-            if (v == null) {
-                v= LayoutInflater.from(parent.getContext()).inflate(R.layout.croom,parent,false);
-            }
-            String message = items.get(position);
-            if (message != null && !message.isEmpty()) {
-                leftlayout=(LinearLayout)v.findViewById(R.id.left_layout);
-                rightlayout=(LinearLayout)v.findViewById(R.id.right_layout);
-                leftMsg=(TextView)v.findViewById(R.id.left_msg);
-                rightMsg=(TextView)v.findViewById(R.id.right_msg);
-
-                if (leftMsg != null&&rightMsg!=null) {
-
-                    if (message.startsWith("Me: ")) {
-                        leftlayout.setVisibility(View.GONE);
-                        rightlayout.setVisibility(View.VISIBLE);
-                        rightMsg.setText(message.substring(3));
-                    } else {
-                        leftlayout.setVisibility(View.VISIBLE);
-                        rightlayout.setVisibility(View.GONE);
-                        leftMsg.setText(message);
-                    }
-                }
-            }
-            return v;
+        public void setTime(float time) {
+            this.time = time;
         }
 
+        public String getFilePath() {
+            return filePath;
+        }
 
+        public void setFilePath(String filePath) {
+            this.filePath = filePath;
+        }
 
+        public Recorder(float time, String filePath,String msg) {
+            super();
+            this.time = time;
+            this.filePath = filePath;
+            this.rcvMessage = msg;
+        }
     }
 
 
