@@ -10,6 +10,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 
 import java.io.File;
+import java.security.PrivateKey;
 import java.util.logging.Handler;
 
 import android.os.Environment;
@@ -63,7 +64,8 @@ public class chat_main extends AppCompatActivity implements OnClickListener {
     private String Id;
     private String sent;
     private InnerReceiver receiver = new InnerReceiver();
-    private ArrayAdapter<Recorder> mAdapter;
+    private ChatAdapter adapter;
+    private RecyclerView recyclerView;
     private ArrayList<Recorder> mDatas =new ArrayList<>();
     private AudioRecorderButton mAudioRecorderButton = null;
     @Override
