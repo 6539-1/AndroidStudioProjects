@@ -87,6 +87,7 @@ public class SignIn extends AppCompatActivity{
         if(AccountList.size()!=0) {
             AccountView.setDefaultAccount(AccountList);
         }
+        findHead(AccountList.get(0));
         Accounttext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {
@@ -95,21 +96,12 @@ public class SignIn extends AppCompatActivity{
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                Log.d("whj",charSequence.toString());
-                for (int i=0;i<AccountList.size();i++){
-                    if (charSequence.toString().equals(Accounttext.getText())){
-                        HeadView.setImageResource(arrImages[personals.get(i).getImage_id()]);
-                    }
-                }
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                for (int i=0;i<AccountList.size();i++){
-                    if (editable.toString().equals(Accounttext.getText())){
-                        HeadView.setImageResource(arrImages[personals.get(i).getImage_id()]);
-                    }
-                }
+                findHead(editable.toString());
             }
         });
 
@@ -219,6 +211,17 @@ public class SignIn extends AppCompatActivity{
             }
         }
         return result;
+    }
+
+    public void findHead(String s){
+        for (int i=0;i<AccountList.size();i++){
+            if (s.equals(AccountList.get(i))){
+                HeadView.setImageResource(arrImages[personals.get(i).getImage_id()]);
+            }
+            else {
+                HeadView.setImageResource(R.mipmap.android_logo);
+            }
+        }
     }
 
 }

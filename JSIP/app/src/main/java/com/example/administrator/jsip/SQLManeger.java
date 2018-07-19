@@ -236,7 +236,7 @@ public class SQLManeger {
         return Message;
     }
     /*
-    * 往数据库中的Personal表添加一行信息
+    * 往数据库中的Personal表添加信息
     * */
     public void addPerson(ArrayList<Personal> personals){
         sqldb.beginTransaction();
@@ -247,6 +247,15 @@ public class SQLManeger {
         }
         sqldb.setTransactionSuccessful();
         sqldb.endTransaction();
+    }
+
+    public void addOnePerson(Personal person){
+        ContentValues values = new ContentValues();
+        values.put("id",person.getId());
+        values.put("nickname",person.getNickname());
+        values.put("imageid",person.getImage_id());
+        sqldb.insert("personaltable",null,values);
+        values.clear();
     }
     /*
     * 从数据库中读取所有个人信息

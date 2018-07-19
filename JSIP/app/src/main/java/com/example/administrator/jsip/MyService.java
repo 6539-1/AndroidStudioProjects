@@ -7,11 +7,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import jsip_ua.SipProfile;
 import jsip_ua.SipUADeviceListener;
 import jsip_ua.impl.DeviceImpl;
@@ -71,10 +68,13 @@ public class MyService extends Service implements SipUADeviceListener {
                     SQLManeger.getSqlManeger().CreateTable(Id);
                     //SQLManeger.getSqlManeger().closeDatabase();
                     intent_deal.putExtra("reg", true);
+                    break;
                 }
                 else {
                     intent_deal.putExtra("reg",false);
+                    break;
                 }
+
             }
             case "$log":{
                 switch(M[1]){

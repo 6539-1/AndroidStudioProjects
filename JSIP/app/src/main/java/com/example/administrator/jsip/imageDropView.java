@@ -70,10 +70,9 @@ public class imageDropView extends GridLayout {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 choose_image.setImageResource(arrImages[i]);
-                //Message msg= new Message();
-                //msg.what= SetImage;
-                //msg.obj=i;
-                //imageHandler.sendMessage(msg);
+                Intent intent = new Intent("sendImageId");
+                intent.putExtra("imgId",i);
+                context.sendBroadcast(intent);
                 closePopupWindow();
                 //这里添加后面的设置数据库头像
             }
