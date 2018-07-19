@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ public class addfriends extends AppCompatActivity {
     private InnerReceiver receiver = new InnerReceiver();
     private ArrayList<Friend> friendList=new ArrayList<>();
     private String Id;
+    private ListView listView_add;
+    private Handler handler=new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,14 +48,15 @@ public class addfriends extends AppCompatActivity {
         getSupportActionBar().setTitle("添加好友");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final LinearLayout addLine=(LinearLayout)findViewById(R.id.addLine);
-        //addLine.setVisibility(View.GONE);
+        addLine.setVisibility(View.GONE);
         final SearchView searchView=(SearchView)findViewById(R.id.search);
         searchView.setIconifiedByDefault(false);
-        final ListView listView_add=(ListView)findViewById(R.id.list_add);
+        listView_add=(ListView)findViewById(R.id.list_add);
         this.Id=getIntent().getStringExtra("Id");
         friendList= SQLManeger.getSqlManeger().query(Id);
         adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userList);
         listView_add.setAdapter(adapter);
+        userList.add("搜索ID");
         listView_add.setTextFilterEnabled(true);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -67,12 +71,12 @@ public class addfriends extends AppCompatActivity {
                         adapter.getFilter().filter(s);
                         searchItem(s);
                         //adapter=new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, msearchList);
-                        //addLine.setVisibility(View.VISIBLE);
+                        addLine.setVisibility(View.VISIBLE);
                         //adapter.notifyDataSetChanged();
                 }
                 else {
                         listView_add.clearTextFilter();
-                        //addLine.setVisibility(View.GONE);
+                        addLine.setVisibility(View.GONE);
                 }
                 return false;
             }
@@ -142,8 +146,12 @@ public class addfriends extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
             int is_add=intent.getIntExtra("add",-1);
-            userList=intent.getStringArrayListExtra("userList");
+            userList.clear();
+            userList.add("搜索ID");
+            userList.addAll(intent.getStringArrayListExtra("userList"));
             adapter.notifyDataSetChanged();
+
+
             if(is_add==0){
                 Toast.makeText(addfriends.this, "用户"+ID + "残忍拒绝了你", Toast.LENGTH_SHORT).show();
             }
@@ -174,4 +182,5 @@ public class addfriends extends AppCompatActivity {
         }
 
     }
+
    }

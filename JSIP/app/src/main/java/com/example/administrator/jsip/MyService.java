@@ -75,6 +75,7 @@ public class MyService extends Service implements SipUADeviceListener {
                 else {
                     intent_deal.putExtra("reg",false);
                 }
+                break;
             }
             case "$log":{
                 switch(M[1]){
