@@ -45,7 +45,7 @@ public class addfriends extends AppCompatActivity {
         getSupportActionBar().setTitle("添加好友");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final LinearLayout addLine=(LinearLayout)findViewById(R.id.addLine);
-        addLine.setVisibility(View.GONE);
+        //addLine.setVisibility(View.GONE);
         final SearchView searchView=(SearchView)findViewById(R.id.search);
         searchView.setIconifiedByDefault(false);
         final ListView listView_add=(ListView)findViewById(R.id.list_add);
@@ -67,12 +67,12 @@ public class addfriends extends AppCompatActivity {
                         adapter.getFilter().filter(s);
                         searchItem(s);
                         //adapter=new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, msearchList);
-                        addLine.setVisibility(View.VISIBLE);
+                        //addLine.setVisibility(View.VISIBLE);
                         //adapter.notifyDataSetChanged();
                 }
                 else {
                         listView_add.clearTextFilter();
-                        addLine.setVisibility(View.GONE);
+                        //addLine.setVisibility(View.GONE);
                 }
                 return false;
             }
@@ -143,6 +143,7 @@ public class addfriends extends AppCompatActivity {
             //使用intent获取发送过来的数据
             int is_add=intent.getIntExtra("add",-1);
             userList=intent.getStringArrayListExtra("userList");
+            adapter.notifyDataSetChanged();
             if(is_add==0){
                 Toast.makeText(addfriends.this, "用户"+ID + "残忍拒绝了你", Toast.LENGTH_SHORT).show();
             }
