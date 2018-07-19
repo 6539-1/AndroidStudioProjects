@@ -71,15 +71,17 @@ public class AcDropView extends LinearLayout {
         DropBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(popupWindow == null ){
-                    showPopupWindow();
-                    Log.d("init:","init window by if(true)");
-                }else{
+                if (AccountList!=null) {
+                    if (popupWindow == null) {
+                        showPopupWindow();
+                        Log.d("init:", "init window by if(true)");
+                    } else {
                         View mview = findViewById(R.id.dropdownBtn);
                         closePopupWindow(mview);
-                        Log.d("drop","drop window by if(false)");
+                        Log.d("drop", "drop window by if(false)");
                     }
                 }
+            }
 
         });
     }
