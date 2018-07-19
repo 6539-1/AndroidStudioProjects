@@ -24,8 +24,8 @@ import jsip_ua.SipProfile;
 import jsip_ua.impl.DeviceImpl;
 
 public class SignIn extends AppCompatActivity{
-    //private String ServiceIp = "sip:alice@192.168.43.73:5006";
-    private String ServiceIp = "sip:alice@10.206.17.104:5006";
+    private String ServiceIp = "sip:alice@192.168.43.73:5006";
+    //private String ServiceIp = "sip:alice@10.206.17.104:5006";
     private ArrayList<String> AccountList;
     private Button signInBtn;
     private SipProfile sipProfile;
