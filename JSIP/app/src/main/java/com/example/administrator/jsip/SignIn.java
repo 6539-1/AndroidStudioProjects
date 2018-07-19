@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -94,6 +95,7 @@ public class SignIn extends AppCompatActivity{
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                Log.d("whj",charSequence.toString());
                 for (int i=0;i<AccountList.size();i++){
                     if (charSequence.toString().equals(Accounttext.getText())){
                         HeadView.setImageResource(arrImages[personals.get(i).getImage_id()]);
@@ -103,7 +105,11 @@ public class SignIn extends AppCompatActivity{
 
             @Override
             public void afterTextChanged(Editable editable) {
-
+                for (int i=0;i<AccountList.size();i++){
+                    if (editable.toString().equals(Accounttext.getText())){
+                        HeadView.setImageResource(arrImages[personals.get(i).getImage_id()]);
+                    }
+                }
             }
         });
 
