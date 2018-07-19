@@ -52,6 +52,7 @@ public class addfriends extends AppCompatActivity {
         final SearchView searchView=(SearchView)findViewById(R.id.search);
         searchView.setIconifiedByDefault(false);
         listView_add=(ListView)findViewById(R.id.list_add);
+        userList=getIntent().getStringArrayListExtra("userlist");
         this.Id=getIntent().getStringExtra("Id");
         friendList=SQLManeger.getSqlManeger().query(Id);
         adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userList);
@@ -146,11 +147,6 @@ public class addfriends extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             //使用intent获取发送过来的数据
             int is_add=intent.getIntExtra("add",-1);
-            userList.clear();
-            userList.add("搜索ID");
-            userList.addAll(intent.getStringArrayListExtra("userList"));
-            adapter.notifyDataSetChanged();
-
 
             if(is_add==0){
                 Toast.makeText(addfriends.this, "用户"+ID + "残忍拒绝了你", Toast.LENGTH_SHORT).show();

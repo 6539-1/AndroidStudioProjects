@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Friend> friendList=new ArrayList<>();
     //private InnerReceiver receiver = new InnerReceiver();
     private AceptReceiver receiver_acept=new AceptReceiver();
+    private ArrayList<String> user=new ArrayList<>();
     private String Id;
     private long exitTime = 0;
     private int[] arrImages = new int[]{
@@ -124,6 +125,8 @@ public class MainActivity extends AppCompatActivity
                     public void run() {
                         initMessage();
                         msgAdapter.notifyDataSetChanged();
+                        String flush="$flush";
+                        DeviceImpl.getInstance().SendMessage(ServiceIp,flush);
                         Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
 
                         // 加载完数据设置为不刷新状态，将下拉进度收起来
@@ -246,9 +249,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         if(id==R.id.action_add){
-            Intent intent_add=new Intent(this,addfriends.class);
-            intent_add.putExtra("Id",Id);
-            startActivity(intent_add);
+
             String person_list="$addall "+Id+" $end";
             DeviceImpl.getInstance().SendMessage(ServiceIp,person_list);
             return true;
@@ -356,6 +357,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             int is_add=intent.getIntExtra("add",-1);
+            System.out.print(is_add);
             if(is_add==2){
                 final String id=intent.getStringExtra("id");
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -376,6 +378,14 @@ public class MainActivity extends AppCompatActivity
                             }
                         }).create();
                 dialog.show();
+            }
+
+            user=intent.getStringArrayListExtra("userList");
+            if(user!=null){
+                Intent intent_add=new Intent(MainActivity.this,addfriends.class);
+                intent_add.putExtra("Id",Id);
+                intent_add.putExtra("userlist",user);
+                startActivity(intent_add);
             }
         }
     }

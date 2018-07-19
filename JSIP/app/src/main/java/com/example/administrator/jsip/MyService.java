@@ -64,16 +64,13 @@ public class MyService extends Service implements SipUADeviceListener {
             case "$reg":{
                 if (M[1].equals("success")) {
                     this.Id=M[2];
-                    //SQLManeger sqlManeger = new SQLManeger(this);
                     SQLManeger.getSqlManeger().CreateTable(Id);
-                    //SQLManeger.getSqlManeger().closeDatabase();
                     intent_deal.putExtra("reg", true);
-                    break;
                 }
                 else {
                     intent_deal.putExtra("reg",false);
-                    break;
                 }
+                break;
             }
             case "$log":{
                 switch(M[1]){
@@ -95,8 +92,8 @@ public class MyService extends Service implements SipUADeviceListener {
                         intent_deal.putExtra("log",0);
                         intent_deal.putExtra("pic_owner",head);
                         intent_deal.putExtra("nickname",name);
-                    }
                         break;
+                    }
                     default:
                         break;
                 }
@@ -116,12 +113,12 @@ public class MyService extends Service implements SipUADeviceListener {
             case "$add":{
                 switch(M[1]) {
 
-                    case "error2": {//拒绝
+                    case "error": {//拒绝
                         String id = M[2];
                         intent_deal.putExtra("add",0);
                         String msg = "用户"+id+"拒绝你的好友申请";
                         //SQLManeger sqlManeger = new SQLManeger(this);
-                        SQLManeger.getSqlManeger().addSystem(msg,Id);
+                        //SQLManeger.getSqlManeger().addSystem(msg,Id);
                         //SQLManeger.getSqlManeger().closeDatabase();
                         break;
                     }
@@ -130,7 +127,7 @@ public class MyService extends Service implements SipUADeviceListener {
                         intent_deal.putExtra("add",1);
                         String msg = "用户"+id+"同意你的好友申请，现在开始愉快地聊天吧";
                         //SQLManeger sqlManeger = new SQLManeger(this);
-                        SQLManeger.getSqlManeger().addSystem(msg,Id);
+                        //SQLManeger.getSqlManeger().addSystem(msg,Id);
                         //SQLManeger.getSqlManeger().closeDatabase();
                         break;
                     }
@@ -141,12 +138,14 @@ public class MyService extends Service implements SipUADeviceListener {
                         intent_deal.putExtra("add",2);
                         String msg = "用户"+name+"("+id+")"+"申请加为好友";//请求申请
                         //SQLManeger sqlManeger = new SQLManeger(this);
-                        SQLManeger.getSqlManeger().addSystem(msg,Id);
+                        //SQLManeger.getSqlManeger().addSystem(msg,Id);
                         //SQLManeger.getSqlManeger().closeDatabase();
                         //请求申请
                         break;
                     }
+
                 }
+                break;
             }
             case "$sent": {
                 String id = M[1];
